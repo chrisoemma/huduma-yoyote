@@ -4,14 +4,15 @@ import { ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
 const VerticalTabs = ({ tabs, activeTab, onTabPress }:any) => {
   return (
     <ScrollView style={styles.tabsContainer}>
-      {tabs.map((tab:any, index:any) => (
+      {tabs?.map((tab:any, index:any) => (
+
         <TouchableOpacity
           key={index}
           style={[
             styles.tabItem,
-            activeTab === index && styles.activeTabItem,
+            activeTab === tab.id && styles.activeTabItem,
           ]}
-          onPress={() => onTabPress(index)}
+          onPress={() => onTabPress(tab.id)}
         >
           <Text style={styles.tabText}>{tab.name}</Text>
         </TouchableOpacity>

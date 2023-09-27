@@ -19,92 +19,37 @@ import Category from '../../components/Category';
 import TopService from '../../components/TopService';
 import VerticalTabs from '../../components/VerticalTabs';
 import ContentList from '../../components/ContentList';
+import { useSelector,RootStateOrAny } from 'react-redux';
+import { useAppDispatch } from '../../app/store';
+import { getCategoryServices } from './CategorySlice';
 
 
 const CategoryScreen = ({ route, navigation }: any) => {
 
-  let categories = [
-    {
-      name:'Urembo',
-      icon:'dingding'
-    },
-    {
-      name:'Massage',
-      icon:'aliwangwang-o1'
-    },
-    {
-      name:'Chakula',
-      icon:'weibo'
-    },
-    {
-      name:'Dobi',
-      icon:''
-    },
-    {
-      name:'Upambaji',
-      icon:''
-    },
-    {
-      name:'Fundi nguo',
-      icon:''
-    },
-    {
-      name:'Dobi1',
-      icon:''
-    },
-    {
-      name:'Upambaji1',
-      icon:''
-    },
-    {
-      name:'Fundi nguo1',
-      icon:''
-    },
-    {
-      name:'Dobi2',
-      icon:''
-    },
-    {
-      name:'Upambaji2',
-      icon:''
-    },
-    {
-      name:'Fundi nguo2',
-      icon:''
-    },
-    {
-      name:'Dobi3',
-      icon:''
-    },
-    {
-      name:'Upambaji3',
-      icon:''
-    },
-    {
-      name:'Fundi nguo3',
-      icon:''
-    },
-    {
-      name:'Dobi4',
-      icon:''
-    },
-    {
-      name:'Upambaji4',
-      icon:''
-    },
-    {
-      name:'Fundi nguo4',
-      icon:''
-    },
-  ]
+  const { loading, category_services, } = useSelector(
+    (state: RootStateOrAny) => state.categories,
+);
+
+const dispatch = useAppDispatch();
+
+useEffect(() => {
+  dispatch(getCategoryServices());
+}, [dispatch])
 
   const [activeTab, setActiveTab] = useState(0);
   const [contentData, setContentData] = useState([]);
 
   const handleTabPress = async (tabIndex:any) => {
     setActiveTab(tabIndex);
+    console.log('tabIndex',tabIndex)
     // const newData = await fetchDataForTab(tabIndex);
-    setContentData(categories);
+    const categoryServices = category_services.find(
+      (entry) => entry.id === tabIndex
+    );
+    
+    if (categoryServices) {
+      setContentData(categoryServices.services);
+    }
   };
 
   const { t } = useTranslation();
@@ -114,17 +59,13 @@ const CategoryScreen = ({ route, navigation }: any) => {
     >
          <View style={globalStyles.mainContainer}>
           <View style={globalStyles.side}>
-           <VerticalTabs tabs={categories} activeTab={activeTab} onTabPress={handleTabPress} />
+           <VerticalTabs tabs={category_services} activeTab={activeTab} 
+           onTabPress={handleTabPress} />
           </View>
           <View style={globalStyles.sub}>
-          <ContentList data={categories} />
+          <ContentList data={contentData}  navigation={navigation}/>
           </View>
          </View>
-
-
-    
-     
-   
     </SafeAreaView>
   )
 };

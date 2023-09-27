@@ -13,7 +13,7 @@ export const globalStyles = StyleSheet.create({
 },
 
   appView:{
-   marginHorizontal:10
+   margin:10
   },
   categoryWrapper:{
       flexDirection:'row',
@@ -100,6 +100,11 @@ export const globalStyles = StyleSheet.create({
     color: colors.dangerRed,
     fontFamily: 'Prompt-Regular',
   },
+  separator:{
+    borderWidth:0.4,
+    backgroundColor:colors.lightGrey,
+    marginVertical:8 
+},
   inputFieldTitle: {
     fontFamily: 'Prompt-Regular',
     color: colors.primary,
@@ -230,18 +235,55 @@ export const globalStyles = StyleSheet.create({
     height: 200
   },
 
-  mainContainerCategory:{
+  mainContainer:{
    flexDirection:'row',
   
   },
-  sideCategory:{
+  side:{
+    
    flexDirection:'column',
     height:'100%',
-    width:'30%',
+    width:'25%',
     backgroundColor:colors.lightGrey
   },
-  subCategory:{
+  sub:{
+    flex:1,
     flexDirection:'column',
     paddingHorizontal:5
-  }
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    padding: 10,
+    borderRadius: 5,
+  },
+  floatingBtnText: {
+    color: colors.white,
+    fontSize: 16,
+  },
+  circle:{
+    width:100,
+    height:100,
+    borderRadius:100,
+    backgroundColor:'#F7F6FF',
+    alignSelf:'center'
+   },
+   chooseServiceBtn:{
+    marginVertical:5,
+    flexDirection:'row',
+    justifyContent:'flex-end'
+   },
+   chooseBtn:{
+   marginHorizontal:3,
+   backgroundColor:colors.secondary,
+   padding:5,
+   borderRadius:5
+   },
+   otherBtn:{
+    marginHorizontal:3,
+   backgroundColor:colors.warningYellow,
+   padding:5,
+   borderRadius:5
+   }
 });

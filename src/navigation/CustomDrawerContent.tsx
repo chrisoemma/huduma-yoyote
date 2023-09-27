@@ -11,6 +11,8 @@ import { useTranslation } from 'react-i18next';
 
 //import { globalStyles } from '../style/global';
 import { colors } from '../utils/colors';
+import { userLogout } from '../features/auth/userSlice';
+import { useDispatch } from 'react-redux';
 //import TextView from '../components/TextView';
 //import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
 //import { services } from '../utils/app-services';
@@ -192,35 +194,34 @@ const CustomDrawerContent = (props: any) => {
       
     ]
 //}
- // const dispatch = useDispatch();
+ const dispatch = useDispatch();
 
 
-  const confirmLogout = () =>
-    Alert.alert('Logout', 'Are you sure you want to log out?', [
-      {
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Logout'),
-        style: 'cancel',
-      },
-      {
-        text: 'OK',
-        onPress: () => {
-//dispatch(userLogout());
-        },
-      },
-    ]);
+ const confirmLogout = () =>
+ Alert.alert(`${t('screens:logout')}`, `${t('screens:areYouSureLogout')}`, [
+   {
+     text: `${t('screens:cancel')}`,
+     onPress: () => console.log('Cancel Logout'),
+     style: 'cancel',
+   },
+   {
+     text: `${t('screens:ok')}`,
+     onPress: () => {
+       dispatch(userLogout());
+     },
+   },
+ ]);
 
   return (
     <DrawerContentScrollView {...props}>
       <DrawerHeader>
         <Image
-          source={require('./../../assets/images/logo-horiz.png')}
+          source={require('./../../assets/images/logo.jpg')}
           style={{
             width: '60%',
             height: 60,
           }}
         />
-
         <View>
           <Text style={{
             marginTop:10,

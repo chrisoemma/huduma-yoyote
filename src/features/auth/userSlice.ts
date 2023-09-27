@@ -2,14 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { API_URL } from '../../utils/config';
 
-import * as RootNavigation from './../../navigation/RootNavigation';
-
 interface User {
   id: number;
-  email: string;
   phone: string;
-  first_name: string;
-  last_name: string;
+  name: string;
 
 }
 
@@ -17,7 +13,6 @@ interface UserData {
   status: boolean;
   user: User;
   token: string;
-  config: Object;
 }
 
 interface UserLoginDTO {
@@ -26,13 +21,11 @@ interface UserLoginDTO {
 }
 
 interface UserRegisterDTO {
-  first_name: string;
-  last_name: string;
+  name: string;
   phone: string;
   password: string;
-  business_name: string;
-  doc_url: string;
-  account: string;
+  app_type: string;
+  email:string;
 }
 
 interface PhoneVerificationDTO {

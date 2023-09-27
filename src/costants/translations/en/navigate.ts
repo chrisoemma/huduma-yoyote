@@ -6,5 +6,14 @@ export default {
     whatsapp:'Whatsapp',
     support:'Support',
     language:'Language',
-    logout:'Logout'
+    logout:'Logout',
+    requestedServices:'Requested Services',
+    categories:'Categories',
+    singleCategory:'Single Category',
+    service:'Service',
+    singleService:'Single Service',
+    serviceProvider:'Service Provider',
+    serviceRequest:'Service Request',
+    editAccount:'Edit Account',
+    
   };

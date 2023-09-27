@@ -6,5 +6,13 @@ export default {
     whatsapp: 'WhatsApp',
     support: 'Msaada',
     language: 'Lugha',
-    logout: 'Toka'
+    logout: 'Toka',
+    requestedServices:'Huduma Zilizoombwa',
+    categories:'Kategoria',
+    singleCategory:'Kategoria moja',
+    service:'Huduma',
+    singleService:'Huduma moja',
+    serviceProvider:'Mtoa Huduma',
+    serviceRequest:'Omba Huduma',
+    editAccount:'Hariri Akaunti',
   };

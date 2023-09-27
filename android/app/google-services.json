@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "85605460745",
+    "firebase_url": "https://huduma-yoyote-3333-default-rtdb.firebaseio.com",
+    "project_id": "huduma-yoyote-3333",
+    "storage_bucket": "huduma-yoyote-3333.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85605460745:android:46fa87f871ffb52f7d41d8",
+        "android_client_info": {
+          "package_name": "com.hudumapopote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "85605460745-v54btth7rma4i4pvtmtnh07buuut5ps6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd2wajABVTi3zBs5U5eoEPrBxdmoUU19I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "85605460745-v54btth7rma4i4pvtmtnh07buuut5ps6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85605460745:android:aafb8cea77c44cc47d41d8",
+        "android_client_info": {
+          "package_name": "com.hudumapopote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "85605460745-v54btth7rma4i4pvtmtnh07buuut5ps6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd2wajABVTi3zBs5U5eoEPrBxdmoUU19I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "85605460745-v54btth7rma4i4pvtmtnh07buuut5ps6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,7 +3,7 @@ import {SafeAreaView, ScrollView, Text, TouchableOpacity} from 'react-native';
 
 import {useForm, Controller} from 'react-hook-form';
 import {RootStateOrAny, useSelector} from 'react-redux';
-import {globalStyles} from '../../style/global';
+import {globalStyles} from '../../styles/global';
 import {useTogglePasswordVisibility} from '../../hooks/useTogglePasswordVisibility';
 import PhoneInput from 'react-native-phone-number-input';
 import {Container} from '../../components/Container';
@@ -13,9 +13,11 @@ import {ButtonText} from '../../components/ButtonText';
 import {TextInputField} from '../../components/TextInputField';
 import {useAppDispatch} from '../../app/store';
 import {userVerify} from './userSlice';
+import { useTranslation } from 'react-i18next';
 
 const VerifyScreen = ({route, navigation}: any) => {
   const {nextPage} = route.params;
+  const { t } = useTranslation();
 
   const {user, loading, status} = useSelector(
     (state: RootStateOrAny) => state.user,
@@ -59,7 +61,7 @@ const VerifyScreen = ({route, navigation}: any) => {
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <Container>
           <BasicView style={globalStyles.marginTop60}>
-            <Text style={globalStyles.mediumHeading}>Verify</Text>
+            <Text style={globalStyles.mediumHeading}>{t('auth:verify')}</Text>
           </BasicView>
 
           <BasicView>
@@ -69,7 +71,7 @@ const VerifyScreen = ({route, navigation}: any) => {
           <BasicView>
             <Text
               style={[globalStyles.inputFieldTitle, globalStyles.marginTop20]}>
-              Code
+              {t('auth:code')}
             </Text>
 
             <Controller
@@ -91,14 +93,14 @@ const VerifyScreen = ({route, navigation}: any) => {
 
             {errors.code && (
               <Text style={globalStyles.errorMessage}>
-                Verification code is required
+                {t('auth:verifyCode')}
               </Text>
             )}
           </BasicView>
 
           <BasicView style={globalStyles.marginTop30}>
             <Button loading={loading} onPress={handleSubmit(onSubmit)}>
-              <ButtonText>Verify</ButtonText>
+              <ButtonText>{t('auth:verify')}</ButtonText>
             </Button>
           </BasicView>
 
@@ -109,7 +111,7 @@ const VerifyScreen = ({route, navigation}: any) => {
               }}
               style={[globalStyles.marginTop20, globalStyles.centerView]}>
               <Text style={globalStyles.touchablePlainTextSecondary}>
-                Already have an account? Login
+                {t('auth:alredyHaveAccount')}
               </Text>
             </TouchableOpacity>
           </BasicView>

@@ -2,20 +2,24 @@ import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 //import { RootStateOrAny, useSelector } from 'react-redux';
 //import AuthStack from './AuthNavigator';
-import DrawerNavigator from './DrawerNavigator';
 import AppStack from './AppStack';
+import ServiceProviders from '../features/serviceproviders/ServiceProviders';
+import AuthStack from './AuthNavigator';
+import { useSelector,RootStateOrAny } from 'react-redux';
 
 
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
 
- // const { user, loading } = useSelector((state: RootStateOrAny) => state.user);
+  const { user, loading } = useSelector((state: RootStateOrAny) => state.user);
 
-  // useEffect(() => {
-  // }, [user]);
+  useEffect(() => {
+  }, [user]);
 
-  return (<AppStack />);
+  return user.token == null ? <AuthStack /> : (<AppStack />);
 };
+
+
 
 export default Navigation;

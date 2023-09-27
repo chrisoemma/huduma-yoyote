@@ -36,7 +36,7 @@ function CustomHeaderToggle() {
 const drawerNavOptions: any = {
   headerTitle: () => (
     <Image
-      source={require('./../../assets/images/logo-horiz.png')}
+      source={require('./../../assets/images/logo.jpg')}
       style={globalStyles.horizontalLogo}
     />
   ),

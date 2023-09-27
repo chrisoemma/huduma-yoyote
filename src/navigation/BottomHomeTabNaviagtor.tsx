@@ -8,6 +8,8 @@ import Home from '../features/home/Home';
 import { colors } from '../utils/colors';
 import { useTranslation } from 'react-i18next';
 import CategoryScreen from '../features/category/CategoryScreen';
+import Requests from '../features/requests/Requests';
+import Account from '../features/account/Account';
 
 
 const Tab = createBottomTabNavigator();
@@ -22,7 +24,6 @@ const HomeStack = () => {
   return (
     <Stack.Navigator initialRouteName="Home" screenOptions={screenOptions}>
       <Stack.Screen name="Home" component={Home} />
-
     </Stack.Navigator>
   );
 };
@@ -58,12 +59,12 @@ export default function BottomHomeTabNavigator() {
        />
       <Tab.Screen 
       name="Requests" 
-      component={Home}
+      component={Requests}
       options={{ tabBarLabel: t('navigate:requests') }}
       />
       <Tab.Screen 
       name="Account" 
-      component={Home}
+      component={Account}
       options={{ tabBarLabel: t('navigate:account') }}
       />
     </Tab.Navigator>

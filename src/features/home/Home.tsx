@@ -17,64 +17,54 @@ import { useTranslation } from 'react-i18next';
 import Banner from '../../components/Banner';
 import Category from '../../components/Category';
 import TopService from '../../components/TopService';
+import { useSelector,RootStateOrAny } from 'react-redux';
+import { useAppDispatch } from '../../app/store'
+import { getCategories } from '../category/CategorySlice';
+import { getServices } from '../Service/ServiceSlice';
 
 
 const Home = ({ route, navigation }: any) => {
 
+  const { loading, categories, } = useSelector(
+    (state: RootStateOrAny) => state.categories,
+);
+const {services} = useSelector(
+  (state: RootStateOrAny) => state.services,
+);
+
+const dispatch = useAppDispatch();
+
+useEffect(() => {
+  dispatch(getCategories());
+  dispatch(getServices());
+}, [])
+
   let bannerImages = [
     {
-      img_url:''
+      id:1,
+      img_url:'banner.jpg'
     },
-    {
-      img_url:''
-    }
+    { id:2,
+      img_url:'banner-1.jpg'
+    },
+   
   ]
 
-  let categories = [
-    {
-      name:'Urembo',
-      icon:'dingding'
-    },
-    {
-      name:'Massage',
-      icon:'aliwangwang-o1'
-    },
-    {
-      name:'Chakula',
-      icon:'weibo'
-    },
-    // {
-    //   name:'Dobi',
-    //   icon:''
-    // },
-    // {
-    //   name:'Upambaji',
-    //   icon:''
-    // },
-    // {
-    //   name:'Fundi nguo',
-    //   icon:''
-    // },
-  ]
-  const  services =[
-    {
-      name:'kushonea wigi'
-    },
-    {
-      name:'Kuuza dread original'
-    },
-    {
-      name:'suti'
-    },
-    {
-      name:'Kutengeneza sofa'
-    }
-  ]
+
+  //console.log('services',services);
 
   const handleCategoryPress = (category)=>{
-    console.log('category',category);
+   // console.log('category',category);
         navigation.navigate('Single category',{
           category:category,
+        })
+  }
+
+  
+  const handleServicePress = (service)=>{
+   // console.log('service',service);
+        navigation.navigate('Service providers',{
+          service:service,
         })
   }
 
@@ -123,21 +113,23 @@ const Home = ({ route, navigation }: any) => {
             style={{ alignItems: "flex-end" }}
             onPress={() => navigation.navigate('Categories')}
           >
-            <Text style={globalStyles.seeAll}>View All</Text>
+            <Text style={globalStyles.seeAll}>{t('screens:viewAll')}</Text>
           </TouchableOpacity>
-          <Text style={globalStyles.serviceText}>Top Service</Text>
+          <Text style={globalStyles.serviceText}>{t('screens:topService')}</Text>
           <View style={globalStyles.topServices}>
-            {services.map(service=>(
-               <TopService service={service} />
+            {services?.map(service=>(
+               <TopService 
+               service={service}
+               onPress={() => handleServicePress(service)} 
+                />
             ))
             }
-           
           </View>
           <TouchableOpacity
             style={{ alignItems: "flex-end" }}
-            onPress={() => {}}
+            onPress={() => navigation.navigate('Categories')}
           >
-            <Text style={globalStyles.seeAll}>View All</Text>
+            <Text style={globalStyles.seeAll}>{t('screens:viewAll')}</Text>
           </TouchableOpacity>
          </View>
         

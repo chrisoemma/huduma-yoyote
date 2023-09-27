@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 touchableOpacityStyles: {
 
   backgroundColor: colors.lightView,
-  width:120,
+  width:'30%',
   height :95,
   borderRadius :18,
   elevation :20,

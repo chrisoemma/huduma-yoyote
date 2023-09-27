@@ -5,17 +5,19 @@ import { colors } from '../utils/colors';
 
 const TopService = ({ onPress, iconType, service }: any) => {
 
+     
     return (
         <TouchableOpacity
             activeOpacity={0.5}
             onPress={onPress}
             style={styles.touchableOpacityStyles}
+            key={service.id}
         >
             <Image
-                source={require('./../../assets/images/banner-3.jpg')}
+                source={{uri:service.images[0].img_url}}
                 style={{
                     resizeMode: "cover",
-                    width: 180,
+                    width: '100%',
                     height: 100,
                     borderRadius: 10,
                 }}
@@ -29,7 +31,7 @@ const TopService = ({ onPress, iconType, service }: any) => {
 
 const styles = StyleSheet.create({
     touchableOpacityStyles: {
-        width: 180,
+        width:'45%',
         height: 150,
         borderRadius: 18,
         paddingVertical: 8,

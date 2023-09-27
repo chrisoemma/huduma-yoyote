@@ -1,17 +1,25 @@
 import React from 'react';
 import { FlatList, View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 
-const ContentList = ({ data,navigation }: any) => {
+const ContentList = ({ data,navigation,onPress }: any) => {
   const itemsPerRow = 3;
   const screenWidth = Dimensions.get('window').width;
 
+  const handleServicePress = (service)=>{
+    
+        navigation.navigate('Service providers',{
+          service:service,
+        })
+  }
+
   const renderItem = ({ item }: any) => (
+  
     <TouchableOpacity 
     style={[styles.contentItem, { width: screenWidth / itemsPerRow }]}
-    onPress={()=>{}}
+    onPress={()=>handleServicePress(item)}
     >
       <Image
-        source={require('./../../assets/images/banner-3.jpg')}
+        source={{uri:item.images[0].img_url}}
         style={{
           resizeMode: 'cover',
           width: 55,
@@ -20,6 +28,7 @@ const ContentList = ({ data,navigation }: any) => {
         }}
         
       />
+      
       <Text>{item.name}</Text>
     </TouchableOpacity>
   );

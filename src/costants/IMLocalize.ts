@@ -51,6 +51,9 @@ i18n
   .use(initReactI18next)
   // set options
   .init({
+  compatibilityJSON: 'v3', 
+  lng:'en',
+  fallbackLng: 'en',
     resources: LANGUAGES,
     react: {
       useSuspense: false

@@ -7,13 +7,11 @@ import { persistStore } from 'redux-persist';
 import './src/costants/IMLocalize';
 
 import Navigation from './src/navigation';
-//import { navigationRef } from './src/navigation/RootNavigation';
-//import store from './src/app/store';
-//import LoginScreen from './src/features/auth/Login';
-// import SplashScreen from 'react-native-splash-screen';
-// import { MenuProvider } from 'react-native-popup-menu';
+import { navigationRef } from './src/navigation/RootNavigation';
+import store from './src/app/store';
 
-//let persistor = persistStore(store);
+
+let persistor = persistStore(store);
 
 const App = () => {
   // React.useEffect(() => {
@@ -22,13 +20,14 @@ const App = () => {
 
   return (
    
-      // <Provider store={store}>
-      //   <PersistGate loading={null} persistor={persistor}>
-          <NavigationContainer >
-            <Navigation />
-          </NavigationContainer>
-      //   </PersistGate>
-      // </Provider>
+    <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <NavigationContainer ref={navigationRef}>
+     
+        <Navigation />
+      </NavigationContainer>
+    </PersistGate>
+  </Provider>
      
   
   );

@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useForm, Controller } from 'react-hook-form';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { userLogin } from './userSlice';
-import { globalStyles } from '../../style/global';
+import { globalStyles } from '../../styles/global';
 import { useTogglePasswordVisibility } from '../../hooks/useTogglePasswordVisibility';
 import PhoneInput from 'react-native-phone-number-input';
 import { colors } from '../../utils/colors';
@@ -22,9 +22,13 @@ import { Container } from '../../components/Container';
 import { BasicView } from '../../components/BasicView';
 import Button from '../../components/Button';
 import { ButtonText } from '../../components/ButtonText';
+import { useTranslation } from 'react-i18next';
 
 const LoginScreen = ({ route, navigation }: any) => {
+
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const { user, loading, status } = useSelector(
     (state: RootStateOrAny) => state.user,
   );
@@ -73,7 +77,7 @@ const LoginScreen = ({ route, navigation }: any) => {
             />
           </View>
           <View>
-            <Text style={globalStyles.largeHeading}>Login</Text>
+            <Text style={globalStyles.largeHeading}>{t('auth:login')}</Text>
           </View>
           <View>
             <BasicView style={globalStyles.centerView}>
@@ -86,7 +90,7 @@ const LoginScreen = ({ route, navigation }: any) => {
                   globalStyles.inputFieldTitle,
                   globalStyles.marginTop10,
                 ]}>
-                Phone
+                 {t('auth:phone')}
               </Text>
               <Controller
                 control={control}
@@ -96,7 +100,7 @@ const LoginScreen = ({ route, navigation }: any) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <PhoneInput
                     ref={phoneInput}
-                    placeholder="700 111 222"
+                    placeholder="714 055 666"
                     defaultValue={value}
                     defaultCode="TZ"
                     countryPickerProps={{
@@ -122,7 +126,7 @@ const LoginScreen = ({ route, navigation }: any) => {
               />
               {errors.phone && (
                 <Text style={globalStyles.errorMessage}>
-                  Phone number is required.
+                  {t('auth:phoneRequired')}
                 </Text>
               )}
             </BasicView>
@@ -132,7 +136,7 @@ const LoginScreen = ({ route, navigation }: any) => {
                   globalStyles.inputFieldTitle,
                   globalStyles.marginTop20,
                 ]}>
-                Password
+              {t('auth:password')}
               </Text>
 
               <View style={globalStyles.passwordInputContainer}>
@@ -146,7 +150,7 @@ const LoginScreen = ({ route, navigation }: any) => {
                     <TextInput
                       style={globalStyles.passwordInputField}
                       secureTextEntry={passwordVisibility}
-                      placeholder="Enter Password"
+                      placeholder={t('auth:enterPassword')}
                       onBlur={onBlur}
                       onChangeText={onChange}
                       value={value}
@@ -160,7 +164,7 @@ const LoginScreen = ({ route, navigation }: any) => {
               </View>
               {errors.phone && (
                 <Text style={globalStyles.errorMessage}>
-                  Password is required.
+                  {t('auth:passwordRequired')}
                 </Text>
               )}
             </BasicView>
@@ -175,12 +179,12 @@ const LoginScreen = ({ route, navigation }: any) => {
                   globalStyles.marginTop10,
                 ]}>
                 <Text style={globalStyles.touchablePlainTextSecondary}>
-                  Forgot Password?
+                 {t('auth:forgotPassword')}
                 </Text>
               </TouchableOpacity>
 
               <Button loading={loading} onPress={handleSubmit(onSubmit)}>
-                <ButtonText>Login</ButtonText>
+                <ButtonText>{t('auth:login')}</ButtonText>
               </Button>
             </BasicView>
 
@@ -190,7 +194,7 @@ const LoginScreen = ({ route, navigation }: any) => {
               }}
               style={[globalStyles.marginTop20, globalStyles.centerView]}>
               <Text style={globalStyles.touchablePlainTextSecondary}>
-                Don't have an account? Register
+              {t('auth:dontHaveAcount')}
               </Text>
             </TouchableOpacity>
           </View>

@@ -14,8 +14,11 @@ import {BasicView} from '../../components/BasicView';
 import {ButtonText} from '../../components/ButtonText';
 import Button from '../../components/Button';
 import { globalStyles } from '../../styles/global';
+import { useTranslation } from 'react-i18next';
 
 const ForgotPasswordScreen = ({route, navigation}: any) => {
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
   const {user, loading, status} = useSelector(
     (state: RootStateOrAny) => state.user,
@@ -73,7 +76,7 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
         <Container>
           <BasicView style={globalStyles.marginTop60}>
             <Text style={globalStyles.mediumHeading}>
-              Forgot{'\n'}Password?
+             {t('auth:forgotPassword')}
             </Text>
           </BasicView>
 
@@ -81,53 +84,57 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
             <Text style={globalStyles.errorMessage}>{message}</Text>
           </BasicView>
 
-          <BasicView style={globalStyles.marginTop30}>
-            <Text
-              style={[globalStyles.inputFieldTitle, globalStyles.marginTop10]}>
-              Phone
-            </Text>
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              render={({field: {onChange, onBlur, value}}) => (
-                <PhoneInput
-                  ref={phoneInput}
-                  placeholder="700 111 222"
-                  defaultValue={value}
-                  defaultCode="TZ"
-                  countryPickerProps={{
-                    countryCodes: ['TZ'],
-                  }}
-                  layout="first"
-                  // onChangeText={}
-                  onChangeFormattedText={text => {
-                    onChange(text);
-                  }}
-                  withDarkTheme
-                  withShadow
-                  autoFocus
-                  containerStyle={globalStyles.phoneInputContainer}
-                  textContainerStyle={globalStyles.phoneInputTextContainer}
-                  textInputStyle={globalStyles.phoneInputField}
-                  textInputProps={{
-                    maxLength: 9,
-                  }}
-                />
-              )}
-              name="phone"
-            />
-            {errors.phone && (
-              <Text style={globalStyles.errorMessage}>
-                Phone number is required.
+          <BasicView>
+              <Text
+                style={[
+                  globalStyles.inputFieldTitle,
+                  globalStyles.marginTop10,
+                ]}>
+                 {t('auth:phone')}
               </Text>
-            )}
-          </BasicView>
+              <Controller
+                control={control}
+                rules={{
+                  required: true,
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <PhoneInput
+                    ref={phoneInput}
+                    placeholder="700 111 222"
+                    defaultValue={value}
+                    defaultCode="TZ"
+                    countryPickerProps={{
+                      countryCodes: ['TZ', 'KE', 'UG', 'RW', 'BI'],
+                    }}
+                    layout="first"
+                    // onChangeText={}
+                    onChangeFormattedText={text => {
+                      onChange(text);
+                    }}
+                    withDarkTheme
+                    withShadow
+                    autoFocus
+                    containerStyle={globalStyles.phoneInputContainer}
+                    textContainerStyle={globalStyles.phoneInputTextContainer}
+                    textInputStyle={globalStyles.phoneInputField}
+                    textInputProps={{
+                      maxLength: 9,
+                    }}
+                  />
+                )}
+                name="phone"
+              />
+              {errors.phone && (
+                <Text style={globalStyles.errorMessage}>
+                  {t('auth:phoneRequired')}
+                </Text>
+              )}
+            </BasicView>
+
 
           <BasicView style={globalStyles.marginTop30}>
             <Button loading={loading} onPress={handleSubmit(onSubmit)}>
-              <ButtonText>Request Password Reset</ButtonText>
+              <ButtonText>{t('auth:requestResetPassword')}</ButtonText>
             </Button>
           </BasicView>
 
@@ -138,7 +145,7 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
               }}
               style={[globalStyles.marginTop20, globalStyles.centerView]}>
               <Text style={globalStyles.touchablePlainTextSecondary}>
-                Already have an account? Login
+               {t('auth:alreadyHaveAccount')}
               </Text>
             </TouchableOpacity>
           </BasicView>

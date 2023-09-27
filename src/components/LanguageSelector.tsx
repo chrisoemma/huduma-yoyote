@@ -2,6 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTranslation } from 'react-i18next';
+import { colors } from '../utils/colors';
+import { setLanguageCode } from '../costants/languageSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../app/rootState';
+
 
 const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -10,10 +15,13 @@ const LANGUAGES = [
 
 const Selector = () => {
   const { t, i18n } = useTranslation();
-  const selectedLanguageCode = i18n.language;
-
-  const setLanguage = (code:any) => {
-    i18n.changeLanguage(code); // Use i18n.changeLanguage instead of return i18n.changeLanguage(code);
+  const selectedLanguageCode = useSelector((state: RootState) => state.language?.selectedLanguageCode);
+ 
+ 
+  const dispatch = useDispatch();
+  const setLanguage = (code) => {
+    dispatch(setLanguageCode(code)); // Dispatch Redux action
+    i18n.changeLanguage(code);
   };
 
   return (
@@ -56,7 +64,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   title: {
-    color: '#444',
+    color:colors.white,
     fontSize: 28,
     fontWeight: '600'
   },
@@ -65,13 +73,13 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    color: '#000',
+    color:colors.primary,
     paddingVertical: 4
   },
   selectedText: {
     fontSize: 18,
     fontWeight: '600',
-    color: 'tomato',
+    color:colors.white,
     paddingVertical: 4
   }
 });
