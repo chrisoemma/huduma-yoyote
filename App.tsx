@@ -9,6 +9,7 @@ import './src/costants/IMLocalize';
 import Navigation from './src/navigation';
 import { navigationRef } from './src/navigation/RootNavigation';
 import store from './src/app/store';
+import { MenuProvider } from 'react-native-popup-menu'; 
 
 
 let persistor = persistStore(store);
@@ -19,12 +20,13 @@ const App = () => {
   // });
 
   return (
-   
+      
     <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <NavigationContainer ref={navigationRef}>
-     
+       <MenuProvider>
         <Navigation />
+       </MenuProvider>
       </NavigationContainer>
     </PersistGate>
   </Provider>

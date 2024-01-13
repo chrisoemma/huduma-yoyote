@@ -57,8 +57,7 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
         console.log(result);
 
         if (result.status) {
-          console.log('Navigate to verify');
-          navigation.navigate('Verify', {nextPage: 'PasswordReset'});
+          navigation.navigate('Verify', {nextPage: 'PasswordReset',phone:result.user.phone});
         } else {
           console.log('dont navigate');
         }
@@ -100,7 +99,7 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <PhoneInput
                     ref={phoneInput}
-                    placeholder="700 111 222"
+                    placeholder="784 333 333"
                     defaultValue={value}
                     defaultCode="TZ"
                     countryPickerProps={{

@@ -1,4 +1,5 @@
 import { Linking } from 'react-native';
+import { GOOGLE_MAPS_API_KEY } from './config';
 
 export const currencyFormatter: any = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -49,6 +50,25 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 }
 
 
+export function validateTanzanianPhoneNumber(phoneNumber) {
+  // Remove any spaces and non-numeric characters
+  const cleanedPhoneNumber = phoneNumber.replace(/\D/g, '');
+
+  // Check the length and format
+  if (cleanedPhoneNumber.match(/^(0\d{9}|255\d{9})$/)) {
+    // Valid Tanzanian phone number format
+    if (cleanedPhoneNumber.startsWith('0')) {
+      return `+255${cleanedPhoneNumber.substring(1)}`;
+    } else if (cleanedPhoneNumber.startsWith('255')) {
+      return `+${cleanedPhoneNumber}`;
+    } else if (cleanedPhoneNumber.startsWith('+255')) {
+      return cleanedPhoneNumber; // No change if already formatted as '+255'
+    }
+  } else {
+    // Invalid phone number format
+    return null;
+  }
+}
 
 export const formatDate = (d) => {
   date = new Date(d);
@@ -89,3 +109,71 @@ export const formatNumber = (number, decPlaces, decSep, thouSep) => {
       : '')
   );
 };
+
+export const getLocationName = async (latitude, longitude) => {
+  try {
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+
+    console.log('data',data)
+
+    if (data.results.length > 0) {
+      const result = data.results[0];
+
+      // Check if there's a formatted address
+      if (result.formatted_address) {
+        return result.formatted_address;
+      }
+
+      // Check if there's a street address
+      const streetAddress = result.address_components.find(component =>
+        component.types.includes('street_address')
+      );
+
+      if (streetAddress) {
+        return streetAddress.long_name;
+      }
+
+      // Check if there's a locality and administrative area level 1
+      const locality = result.address_components.find(component =>
+        ['locality', 'administrative_area_level_1'].includes(component.types[0])
+      );
+
+      if (locality) {
+        return locality.long_name;
+      }
+
+      // If none of the above, return the first address component
+      return result.address_components[0].long_name;
+    } else {
+      return 'Location not found';
+    }
+  } catch (error) {
+    console.error('Error fetching location data:', error);
+    return 'Error fetching location data';
+  }
+};
+
+
+
+
+export function breakTextIntoLines(text, maxLength) {
+  if (text.length <= maxLength) {
+    return text; // No need to break into lines if it's within the maxLength
+  }
+
+  const chunks = [];
+  while (text.length > 0) {
+    chunks.push(text.substring(0, maxLength));
+    text = text.substring(maxLength);
+  }
+
+  return chunks.join('\n');
+}

@@ -23,4 +23,12 @@
     areYouSureLogout:"Are you sure you want to log out?",
     ok:'OK',
     cancel:'Cancel',
+    pleaseAddService:'Please Add Service',
+    requestSentSuccessfully:'Requests Sent Sucessfully',
+    comfirm:'Confirm service request',
+    action:'Action',
+    cancelService:'Cancel Request',
+    requestUpdatedSuccessfully:'Request Updated Successfully',
+    updatePicture:'Update picture',
+    uploading:'uploading'
   };

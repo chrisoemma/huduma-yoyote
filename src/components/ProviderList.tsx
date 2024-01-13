@@ -7,6 +7,7 @@ import { globalStyles } from '../styles/global';
 
 const ProviderList = ({ navigation, onPress, iconType, provider, service }: any) => {
 
+
     return (
         <TouchableOpacity
             onPress={() => navigation.navigate("Service request", {
@@ -17,28 +18,23 @@ const ProviderList = ({ navigation, onPress, iconType, provider, service }: any)
         >
             <View style={globalStyles.circle}>
 
-
-                {provider?.profile_img.startsWith("https://") ?
-                    <Image
-                        source={{ uri: provider?.profile_img }}
-                        style={{
-                            resizeMode: "cover",
-                            width: 90,
-                            height: 95,
-                            borderRadius: 90,
-                            alignSelf: 'center'
-                        }}
-                    />
-                    : <Image
-                        source={require('./../../assets/images/profile.png')}
-                        style={{
-                            resizeMode: "cover",
-                            width: 60,
-                            height: 80,
-                            borderRadius: 20,
-                            alignSelf: 'center'
-                        }}
-                    />}
+            <Image
+      source={
+        provider?.profile_img?.startsWith('https://')
+          ? { uri: provider.profile_img }
+          : provider?.user_img?.startsWith('https://')
+          ? { uri: provider.user_img }
+          : require('./../../assets/images/profile.png') // Default static image
+      }
+      style={{
+        resizeMode: 'cover',
+        width: provider?.user_img?.startsWith('https://') ? 90 : 90,
+        height: provider?.user_img?.startsWith('https://') ? 95 : 95,
+        borderRadius: provider?.user_img?.startsWith('https://') ? 90 : 90,
+        alignSelf: 'center',
+      }}
+    />
+              
             </View>
             <View style={styles.divContent}>
                 <Text>{provider?.name}</Text>
@@ -58,7 +54,6 @@ const ProviderList = ({ navigation, onPress, iconType, provider, service }: any)
 
 const styles = StyleSheet.create({
     touchableOpacityStyles: {
-        width: '42%',
         height: 200,
         borderRadius: 18,
         paddingVertical: 8,

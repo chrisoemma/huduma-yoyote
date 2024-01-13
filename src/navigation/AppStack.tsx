@@ -10,6 +10,7 @@ import RequestedServices from "../features/Service/RequestedServices";
 import Settings from "../features/settings/Settings";
 import { useTranslation } from "react-i18next";
 import EditAccount from "../features/account/EditAccount";
+import ChangePassword from "../features/auth/ChangePassword";
 
   
   const AppStack = () => {
@@ -37,6 +38,11 @@ import EditAccount from "../features/account/EditAccount";
         <Stack.Screen name="Services"
          component={ServiceScreen}
          options={{ title: t('navigate:service') }}
+          />
+
+       <Stack.Screen name="Change Password"
+         component={ChangePassword}
+         options={{ title: t('screens:changePassword') }}
           />
 
          <Stack.Screen name="Edit Account"

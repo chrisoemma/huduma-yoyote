@@ -104,7 +104,7 @@ export const getBestProviders = createAsyncThunk(
        });
        builder.addCase(getProviderSubServices.fulfilled, (state, action) => {
        // console.log('Fulfilled case');
-         console.log(action.payload);
+        // console.log(action.payload);
          if (action.payload.status) {
            state.providerSubServices = action.payload.data.sub_services;
          }

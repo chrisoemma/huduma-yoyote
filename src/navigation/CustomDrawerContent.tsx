@@ -8,14 +8,9 @@ import styled from 'styled-components/native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useTranslation } from 'react-i18next';
 //import { userLogout } from './../features/auth/userSlice';
-
-//import { globalStyles } from '../style/global';
 import { colors } from '../utils/colors';
 import { userLogout } from '../features/auth/userSlice';
-import { useDispatch } from 'react-redux';
-//import TextView from '../components/TextView';
-//import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
-//import { services } from '../utils/app-services';
+import { useDispatch, useSelector,RootStateOrAny } from 'react-redux';
 
 const DrawerHeader = styled.View`
   height: 150px;
@@ -52,112 +47,16 @@ const CustomDrawerContent = (props: any) => {
 
   const { t } = useTranslation();
 
-  //const { user, loading } = useSelector((state: RootStateOrAny) => state.user);
+  const { user, loading } = useSelector((state: RootStateOrAny) => state.user);
 
-  // React.useEffect(() => {
-  // }, [user]);
 
- // let drawerItems = [];
+  React.useEffect(() => {
+  }, [user]);
 
-  // if (user.business == null) {
-  //   drawerItems = [
-  //     {
-  //       name: 'Dashboard',
-  //       icon: 'shield-alt',
-  //       screen: 'Dashboard',
-  //       options: {
-  //         screen: 'Dashboard',
-  //       },
-  //     },
-  //     // {
-  //     //   name: 'Home Visit',
-  //     //   icon: 'home',
-  //     //   screen: 'SearchStack',
-  //     //   options: {
-  //     //     screen: 'Search',
-  //     //     params: {
-  //     //       currentService: services[0],
-  //     //     },
-  //     //   },
-  //     // },
-  //     // {
-  //     //   name: 'Hospital Appointments',
-  //     //   icon: 'hospital-user',
-  //     //   screen: 'SearchStack',
-  //     //   options: {
-  //     //     screen: 'Search',
-  //     //     params: {
-  //     //       currentService: services[1],
-  //     //     },
-  //     //   },
-  //     // },
-  //     {
-  //       name: 'Orders',
-  //       icon: 'dolly',
-  //       screen: 'PatientOrders',
-  //       options: {}
-  //     },
-  //     // {
-  //     //   name: 'Family Dr. / Abroad Hospitals',
-  //     //   icon: 'user-md',
-  //     //   screen: 'SearchStack',
-  //     //   options: {
-  //     //     screen: 'Search',
-  //     //     params: {
-  //     //       currentService: services[2],
-  //     //     },
-  //     //   },
-  //     // },
-  //     {
-  //       name: 'Ambulance',
-  //       icon: 'ambulance',
-  //       screen: 'AmbulancePage',
-  //       options: {},
-  //     },
-  //     {
-  //       name: 'Requests & Consultations',
-  //       icon: 'stethoscope',
-  //       screen: 'ConsultationsStack',
-  //       options: {},
-  //     },
-  //     {
-  //       name: 'Ambulance Requests',
-  //       icon: 'ambulance',
-  //       screen: 'AmbulanceRequestsStack',
-  //       options: {
-  //         screen: 'AmbulanceRequests',
-  //       },
-  //     },
-
-  //     {
-  //       name: 'Pharm/Insurance',
-  //       icon: 'capsules',
-  //       screen: 'Businesses',
-  //       options: {},
-  //     },
-  //     // {
-  //     //   name: 'Blog',
-  //     //   icon: 'newspaper',
-  //     //   screen: 'Blog',
-  //     //   options: {},
-  //     // },
-  //     {
-  //       name: 'Account',
-  //       icon: 'user-circle',
-  //       screen: 'Account',
-  //       options: {},
-  //     },
-
-  //     {
-  //       name: 'Contact Us',
-  //       icon: 'phone',
-  //       screen: 'Contact',
-  //       options: {},
-  //     },
-  //   ];
-
-  // } else {
-  let  drawerItems = [
+  let  drawerItems=[];
+  
+    if(user.client && user.status=='Active'){
+   drawerItems = [
       {
         name: 'Home',
         icon: 'home',
@@ -193,6 +92,7 @@ const CustomDrawerContent = (props: any) => {
       },
       
     ]
+  }
 //}
  const dispatch = useDispatch();
 

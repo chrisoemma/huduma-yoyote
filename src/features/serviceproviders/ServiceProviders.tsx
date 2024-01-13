@@ -62,6 +62,7 @@ useEffect(() => {
           data={activeTab === 'nearMe'?nearProviders:bestProviders}
           renderItem={renderProviderItem}
           keyExtractor={(item) => item.provider_id.toString()}
+          numColumns={2} 
         />
       </View>
     </SafeAreaView>
@@ -97,13 +98,14 @@ const styles = StyleSheet.create({
      // Default text color
   },
   listContainer: {
-   // flex: 1,
+   flex: 1,
+    alignItems:'center',
+    justifyContent:'center'
   },
   itemlistContainer:{ 
-    flexDirection:'row',
+    
     padding: 10,
-    flexWrap:'wrap',
-    justifyContent:'center'
+  
   }
 });
 export default ServiceProviders;

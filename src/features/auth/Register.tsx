@@ -45,12 +45,6 @@ const RegisterScreen = ({ route, navigation }: any) => {
   const { t } = useTranslation();
 
 
-  useEffect(() => {
-    if (status !== '') {
-      setMessage(status);
-    }
-  }, [status]);
-
   const {
     control,
     handleSubmit,
@@ -73,21 +67,20 @@ const RegisterScreen = ({ route, navigation }: any) => {
   };
 
   const onSubmit = async (data: any) => {
-      data.user_type='client';
-      data.email=`${data.phone}@gmail.com`
+      data.app_type='client';
+    
     dispatch(userRegiter(data))
     .unwrap()
     .then(result => {
       console.log('resultsss', result);
       if (result.status) {
-        console.log('excuted this true block')
+        
         ToastAndroid.show("User created successfuly!", ToastAndroid.SHORT);
+        navigation.navigate('Verify',{nextPage:'Verify'});
 
-        navigation.navigate('Login', {
-          screen: 'Login',
-          message: message
-        });
-      } 
+      }else{
+        setDisappearMessage(result.error);
+      }
 
    
     })
@@ -101,8 +94,8 @@ const RegisterScreen = ({ route, navigation }: any) => {
         <Container>
           <View style={globalStyles.centerView}>
             <Image
-              source={require('./../../../assets/images/logo.png')}
-              style={globalStyles.verticalLogo}
+              source={require('./../../../assets/images/logo.jpg')}
+              style={[globalStyles.verticalLogo,{height:100,marginTop:20}]}
             />
           </View>
           <View>

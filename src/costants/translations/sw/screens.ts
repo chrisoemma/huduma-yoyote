@@ -23,5 +23,13 @@ export default {
   areYouSureLogout: "Unauakika unataka kutoka?",
   ok: "Ndio",
   cancel: 'Ghairi',
+  pleaseAddService:'Tafadhali Chagua Huduma ata moja',
+  requestSentSuccessfully:'Ombi limetumwa kikamili',
+  comfirm:'Hakikisha unahitaji huduma',
+  action:'Kitendo',
+  cancelService:'Sitisha Ombi',
+  requestUpdatedSuccessfully:'Ombi Limebadilishwa Kwa Mafanikio',
+  updatePicture:'Hariri picha',
+  uploading:'Inapakia'
  
 };

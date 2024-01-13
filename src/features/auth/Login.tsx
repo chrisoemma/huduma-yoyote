@@ -43,11 +43,19 @@ const LoginScreen = ({ route, navigation }: any) => {
     console.log(user);
   }, [user]);
 
-  useEffect(() => {
-    if (status !== null) {
-      setMessage(status);
-    }
-  }, [status]);
+  // useEffect(() => {
+  //   if (status !== null) {
+  //     setMessage(status);
+  //   }
+  // }, [status]);
+
+  const setDisappearMessage = (message: any) => {
+    setMessage(message);
+
+    setTimeout(() => {
+      setMessage('');
+    }, 5000);
+  };
 
   const {
     control,
@@ -59,11 +67,22 @@ const LoginScreen = ({ route, navigation }: any) => {
       password: '',
     },
   });
-  const onSubmit = (data: any) => {
-    console.log(data);
-    // navigation.navigate('Register');
-    dispatch(userLogin(data));
+  const onSubmit = async(data: any) => {
 
+    try {
+     data.app_type='client';
+    const result = await dispatch(userLogin(data)).unwrap(); 
+
+    if (result.status) {
+       return  true 
+    } else {
+      setDisappearMessage(result.error); 
+    }
+
+   } catch (error) {
+      console.warn(error);
+      return false;
+    }
   };
 
   return (
@@ -72,8 +91,8 @@ const LoginScreen = ({ route, navigation }: any) => {
         <Container>
           <View style={globalStyles.centerView}>
             <Image
-              source={require('./../../../assets/images/logo.png')}
-              style={globalStyles.verticalLogo}
+              source={require('./../../../assets/images/logo.jpg')}
+              style={[globalStyles.verticalLogo,{height:100,marginTop:20}]}
             />
           </View>
           <View>
@@ -81,7 +100,7 @@ const LoginScreen = ({ route, navigation }: any) => {
           </View>
           <View>
             <BasicView style={globalStyles.centerView}>
-              <Text style={globalStyles.errorMessage}>{message}</Text>
+              <Text style={globalStyles.errorMessage}> {message} </Text>
             </BasicView>
 
             <BasicView>

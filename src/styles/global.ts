@@ -96,6 +96,11 @@ export const globalStyles = StyleSheet.create({
     lineHeight: 40,
     color: colors.primary,
   },
+  smallHeading:{
+    fontFamily:'Prompt-Bold',
+    fontSize:27,
+    color:colors.primary
+  },
   errorMessage: {
     color: colors.dangerRed,
     fontFamily: 'Prompt-Regular',

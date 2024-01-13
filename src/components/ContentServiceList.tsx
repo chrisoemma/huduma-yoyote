@@ -37,14 +37,14 @@ const ContentServiceList = ({  data, toggleSubService, selectedSubServices,navig
       <TouchableOpacity   style={[
           styles.addBtn,
           {
-            backgroundColor: selectedSubServices.includes(item?.name)
+            backgroundColor: selectedSubServices.includes(item?.id)
               ? colors.dangerRed
               : colors.secondary,
           },
         ]} 
-      onPress={() => toggleSubService(item?.name)}>
+      onPress={() => toggleSubService(item.id)}>
   <Text style={{ color: colors.white }}>
-    {selectedSubServices.includes(item?.name) ? `${t('screens:remove')}` : `${t('screens:add')}`}
+    {selectedSubServices.includes(item?.id) ? `${t('screens:remove')}` : `${t('screens:add')}`}
   </Text>
 </TouchableOpacity>
 :<View />}
@@ -56,11 +56,15 @@ const ContentServiceList = ({  data, toggleSubService, selectedSubServices,navig
      {data.map((item)=>(
       <RenderItem  
       item={item} 
-      key={item?.name.toString()}
+      key={item?.id.toString()}
       />
      ))
-
      }
+         {/* <FlatList
+          data={data}
+          renderItem={RenderItem}
+          keyExtractor={(item) => item?.id?.toString()}
+        /> */}
     </View>
   );
 };

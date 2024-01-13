@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { View, Text, SafeAreaView, Image, TouchableOpacity, StyleSheet, Button } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, StyleSheet, Button, ToastAndroid } from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { colors } from '../../utils/colors'
 import RatingStars from '../../components/RatinsStars';
@@ -17,6 +17,8 @@ import { makePhoneCall } from '../../utils/utilts';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { getProviderSubServices } from '../serviceproviders/ServiceProviderSlice';
+import { BasicView } from '../../components/BasicView';
+import { createRequest } from '../requests/RequestSlice';
 
 
 const ServiceRequest = ({ navigation, route }: any) => {
@@ -24,8 +26,16 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     const { service, provider } = route.params;
 
-    const { loading, providerSubServices } = useSelector(
+    const { providerSubServices } = useSelector(
         (state: RootStateOrAny) => state.providers,
+    );
+
+    const { loading, requests } = useSelector(
+        (state: RootStateOrAny) => state.requests,
+    );
+
+    const { user } = useSelector(
+        (state: RootStateOrAny) => state.user,
     );
 
     const dispatch = useAppDispatch();
@@ -34,6 +44,16 @@ const ServiceRequest = ({ navigation, route }: any) => {
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [sheetTitle, setSheetTitle] = useState('');
 
+
+    const [userLocation, setUserLocation] = useState(null);
+    const [providerLocation, setProviderLocation] = useState(null);
+    const handleLocationUpdate = useCallback((userLocation, providerLocation) => {
+        setUserLocation(userLocation);
+        setProviderLocation(providerLocation);
+    }, []);
+
+    //console.log('user location', userLocation)
+    //console.log('provider location', providerLocation);
 
     // variables
     const snapPoints = useMemo(() => ['20%', '100%'], []);
@@ -57,8 +77,10 @@ const ServiceRequest = ({ navigation, route }: any) => {
     const [selectedSubservice, setSelectedSubservice] = useState([]);
     const { t } = useTranslation();
 
+   // console.log('selected sub service', selectedSubservice);
 
     const toggleSubService = (subService) => {
+        console.log('toungled_subservice', subService);
         if (selectedSubservice.includes(subService)) {
             setSelectedSubservice(selectedSubservice.filter((s) => s !== subService));
         } else {
@@ -79,124 +101,205 @@ const ServiceRequest = ({ navigation, route }: any) => {
     //       }
     //   }, [navigation, params]);
 
+    const [message, setMessage] = useState("")
+    const setDisappearMessage = (message: any) => {
+        setMessage(message);
+
+        setTimeout(() => {
+            setMessage('');
+        }, 5000);
+    };
+
+    const data = {
+        service_id: '',
+        client_id: '',
+        provider_id: '',
+        request_time: '',
+        sub_service: [],
+        client_latitude: 0,
+        client_longitude: 0,
+        provider_latitude: 0,
+        provider_longitude: 0,
+    };
+
+    const sendRequest = async () => {
+
+        data.service_id = service?.id;
+        data.client_id = user?.client?.id;
+        data.provider_id = provider?.provider_id;
+        data.request_time = new Date().toISOString();
+        data.sub_service = selectedSubservice;
+        data.client_latitude = userLocation.latitude
+        data.client_longitude = userLocation.longitude
+        data.provider_latitude = providerLocation.latitude
+        data.provider_longitude = providerLocation.longitude
+
+
+        console.log('request data', data)
+
+        dispatch(createRequest({ data: data }))
+            .unwrap()
+            .then(result => {
+                if (result.status) {
+
+                    ToastAndroid.show(`${t('screens:requestSentSuccessfully')}`, ToastAndroid.SHORT);
+                    navigation.navigate('Requests', {
+                        screen: 'Requests',
+                    });
+                } else {
+                    setDisappearMessage(
+                        `${t('screens:requestFail')}`,
+                    );
+                    console.log('dont navigate');
+                }
+            })
+            .catch(rejectedValueOrSerializedError => {
+                // handle error here
+                console.log('error');
+                console.log(rejectedValueOrSerializedError);
+            });
+
+    }
+
+
     return (
         <>
             <SafeAreaView
-                style={{
-                    flex: 1, margin: 10,
-                    backgroundColor: colors.whiteBackground
-                }}
+                style={globalStyles.scrollBg}
             >
-                {/* <View style={[globalStyles.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
-                    {provider?.profile_img.startsWith("https://") ?
-                        <Image
-                            source={{ uri: provider?.profile_img }}
-                            style={{
-                                resizeMode: "cover",
-                                width: 90,
-                                height: 95,
-                                borderRadius: 90,
-                                alignSelf: 'center'
-                            }}
-                        />
-                        : <Image
-                            source={require('../../../assets/images/profile.png')}
-                            style={{
-                                resizeMode: "cover",
-                                width: 90,
-                                height: 95,
-                                borderRadius: 90,
-                                alignSelf: 'center'
-                            }}
-                        />}
-                </View> */}
-                {/* <View style={{ flexDirection: 'row' }}>
+                <GestureHandlerRootView style={{ flex: 1, margin: 10 }}>
                     <View>
-                        <Text style={{ marginVertical: 5, color: colors.black }}>{provider?.name}</Text>
-                        <RatingStars rating={provider.average_rating == null ? 0 : provider.average_rating} />
-                        <Text style={{ marginVertical: 5, color: colors.secondary }}>{service?.name}</Text>
+                        <BasicView style={globalStyles.centerView}>
+                            <Text style={globalStyles.errorMessage}>{message}</Text>
+                        </BasicView>
+                        <View style={[globalStyles.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
+
+
+                            <Image
+                                source={
+                                    provider?.profile_img?.startsWith('https://')
+                                        ? { uri: provider.profile_img }
+                                        : provider?.user_img?.startsWith('https://')
+                                            ? { uri: provider.user_img }
+                                            : require('../../../assets/images/profile.png') // Default static image
+                                }
+                                style={{
+                                    resizeMode: 'cover',
+                                    width: provider?.user_img?.startsWith('https://') ? 90 : 90,
+                                    height: provider?.user_img?.startsWith('https://') ? 95 : 95,
+                                    borderRadius: provider?.user_img?.startsWith('https://') ? 90 : 90,
+                                    alignSelf: 'center',
+                                }}
+                            />
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <View>
+                                <Text style={{ marginVertical: 5, color: colors.black }}>{provider?.name}</Text>
+                                <RatingStars rating={provider.average_rating == null ? 0 : provider.average_rating} />
+                                <Text style={{ marginVertical: 5, color: colors.secondary }}>{service?.name}</Text>
+                            </View>
+                            <TouchableOpacity style={{
+                                flexDirection: 'row',
+                                marginHorizontal: 30,
+                                marginVertical: 20,
+                                alignItems: 'flex-end'
+                            }}
+                                onPress={() => makePhoneCall(PhoneNumber)}
+                            >
+                                <Icon
+                                    name="phone"
+                                    color={colors.successGreen}
+                                    size={20}
+                                />
+                                <Text style={{ paddingHorizontal: 5, fontWeight: 'bold' }}>{PhoneNumber}</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View>
+                            <Text>{service?.description}</Text>
+                            <View style={globalStyles.chooseServiceBtn}>
+                                <TouchableOpacity style={globalStyles.chooseBtn}
+                                    onPress={() => handlePresentModalPress('Near providers')}
+                                >
+                                    <Text style={{ color: colors.white }}>{t('screens:chooseService')}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={globalStyles.otherBtn}>
+                                    <Text style={{ color: colors.white }}>{t('screens:otherService')}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
-                    <TouchableOpacity style={{
-                        flexDirection: 'row',
-                        marginHorizontal: 30,
-                        marginVertical: 20,
-                        alignItems: 'flex-end'
-                    }}
-                        onPress={() => makePhoneCall(PhoneNumber)}
-                    >
-                        <Icon
-                            name="phone"
-                            color={colors.successGreen}
-                            size={20}
-                        />
-                        <Text style={{ paddingHorizontal: 5, fontWeight: 'bold' }}>{PhoneNumber}</Text>
-                    </TouchableOpacity>
-                </View> */}
-                <Text>{service?.description}</Text>
-                <View style={globalStyles.chooseServiceBtn}>
-                    <TouchableOpacity style={globalStyles.chooseBtn}
-                        onPress={() => handlePresentModalPress('Near providers')}
-                    >
-                        <Text style={{ color: colors.white }}>{t('screens:chooseService')}</Text>
-                    </TouchableOpacity>
-                    {/* <TouchableOpacity style={globalStyles.otherBtn}>
-                        <Text style={{ color: colors.white }}>{t('screens:otherService')}</Text>
-                    </TouchableOpacity> */}
-                </View>
 
-                {/* <SafeAreaView style={{ flex: 1 }}>
-                    <View style={styles.mapContainer}>
-                     <MapDisplay />
-                </View>
-              </SafeAreaView> */}
+                    <View>
+                        <View style={styles.mapContainer}>
+                            <MapDisplay
+                                onLocationUpdate={handleLocationUpdate}
 
-                <SafeAreaView style={{ flex: 1 }}>
-                    <GestureHandlerRootView style={{ flex: 1 }}>
-                        <BottomSheetModalProvider>
-                            <View style={styles.container}>
-                                <BottomSheetModal
-                                    ref={bottomSheetModalRef}
-                                    index={1}
-                                    snapPoints={snapPoints}
-                                    onChange={handleSheetChanges}
+                            />
+                        </View>
+                    </View>
+
+                    <BottomSheetModalProvider>
+                        <View style={styles.container}>
+                            <BottomSheetModal
+                                ref={bottomSheetModalRef}
+                                index={1}
+
+                                snapPoints={snapPoints}
+                                onChange={handleSheetChanges}
+
+                            >
+                                <BottomSheetScrollView
+                                    contentContainerStyle={styles.contentContainer}
+                                >
+                                    <Text style={styles.title}>{t('screens:Services')}</Text>
+
+
+                                    <View style={globalStyles.subCategory}>
+                                        <ContentServiceList
+                                            data={providerSubServices}
+                                            toggleSubService={toggleSubService}
+                                            selectedSubServices={selectedSubservice}
+                                            screen="new"
+                                        />
+                                    </View>
+
+                                </BottomSheetScrollView>
+                                <View style={{ flexDirection: 'row', }}>
+                                    {selectedSubservice.length > 1 && (
+                                        <TouchableOpacity
+                                            style={[globalStyles.floatingButton, { backgroundColor: colors.dangerRed, right: '70%', }]}
+                                            onPress={handleClearAll}
+                                        >
+                                            <Text style={globalStyles.floatingBtnText}>{t('screens:clearAll')}</Text>
+                                        </TouchableOpacity>
+                                    )}
+
+                                </View>
+
+                                <TouchableOpacity
+                                    style={[globalStyles.floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
+                                    loading={loading}
+                                    onPress={() => {
+                                        if (selectedSubservice.length > 0) {
+                                            sendRequest();
+                                        } else {
+                                            ToastAndroid.show(`${t('screens:pleaseAddService')}`, ToastAndroid.SHORT);
+                                        }
+                                    }}
 
                                 >
-                                    <BottomSheetScrollView
-                                        contentContainerStyle={styles.contentContainer}
-                                    >
-                                        <Text style={styles.title}>{t('screens:Services')}</Text>
+                                    <Text style={globalStyles.floatingBtnText}>{`(${selectedSubservice.length}) ${t('screens:request')}`}</Text>
+                                </TouchableOpacity>
+
+                            </BottomSheetModal>
+
+                        </View>
+
+                    </BottomSheetModalProvider>
 
 
-                                        <View style={globalStyles.subCategory}>
-                                            <ContentServiceList
-                                                data={providerSubServices}
-                                                toggleSubService={toggleSubService} 
-                                                selectedSubServices={selectedSubservice}
-                                                screen="new"
-                                            />
-                                        </View>
-                                        <View style={{ flexDirection: 'row', }}>
-                                            {selectedSubservice.length > 1 && (
-                                                <TouchableOpacity
-                                                    style={[globalStyles.floatingButton, { backgroundColor: colors.dangerRed, right: '70%', }]}
-                                                    onPress={handleClearAll}
-                                                >
-                                                    <Text style={globalStyles.floatingBtnText}>{t('screens:clearAll')}</Text>
-                                                </TouchableOpacity>
-                                            )}
-                                            <TouchableOpacity
-                                                style={[globalStyles.floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
-                                            >
-                                                <Text style={globalStyles.floatingBtnText}>{`(${selectedSubservice.length}) ${t('screens:request')}`}</Text>
-                                            </TouchableOpacity>
-                                        </View>
 
-                                    </BottomSheetScrollView>
-                                </BottomSheetModal>
-                            </View>
-                        </BottomSheetModalProvider>
-                    </GestureHandlerRootView>
-                </SafeAreaView>
+                </GestureHandlerRootView>
             </SafeAreaView>
 
 
@@ -206,6 +309,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         // height:300,
         // margin: 10
     },

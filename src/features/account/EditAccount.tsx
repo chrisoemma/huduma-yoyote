@@ -23,8 +23,11 @@ import { useAppDispatch } from '../../app/store';
 import Button from '../../components/Button';
 import { ButtonText } from '../../components/ButtonText';
 import { useTranslation } from 'react-i18next';
-import { userRegiter } from '../auth/userSlice';
+import { updateUserInfo, userRegiter } from '../auth/userSlice';
 import GooglePlacesInput from '../../components/GooglePlacesInput';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { validateTanzanianPhoneNumber } from '../../utils/utilts';
+import { PLACES_API_KEY } from '../../utils/config';
 
 const EditAccount = ({ route, navigation }: any) => {
 
@@ -33,6 +36,7 @@ const EditAccount = ({ route, navigation }: any) => {
   const { user, loading, status } = useSelector(
     (state: RootStateOrAny) => state.user,
   );
+
 
   const phoneInput = useRef<PhoneInput>(null);
 
@@ -65,15 +69,24 @@ const EditAccount = ({ route, navigation }: any) => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
       phone: '',
       email: '',
-      name: '',
+      name:'',
     },
   });
 
+  useEffect(() => {
+    const cleanedPhone = user?.phone?.replace(/\+/g, '');
+    setValue('name', user?.client.name);
+    setValue('phone', cleanedPhone);
+    setValue('email', user?.email);
+ 
+   
+}, [route.params]);
 
   const selectLocation = (locationSelected: any) => {
     console.log('Location selected ::');
@@ -90,28 +103,31 @@ const EditAccount = ({ route, navigation }: any) => {
     }, 5000);
   };
 
-  const onSubmit = async (data: any) => {
-      data.user_type='client';
-     data.email=`${data.phone}@gmail.com`
-    dispatch(userRegiter(data))
-    .unwrap()
-    .then(result => {
-      console.log('resultsss', result);
-      if (result.status) {
-        console.log('excuted this true block')
-        ToastAndroid.show("User created successfuly!", ToastAndroid.SHORT);
-        navigation.navigate('Login', {
-          screen: 'Login',
-          message: message
-        });
-      } 
+  
 
-   
-    })
+  const onSubmit = async (data: any) => {
+
+    data.latitude = location.lat
+    data.longitude = location.lng
+    data.phone = validateTanzanianPhoneNumber(data.phone);
+
+    dispatch(updateUserInfo({ data: data, userType: 'client', userId: user?.id }))
+      .unwrap()
+      .then(result => {
+        console.log('resultsss', result);
+        if (result.status) {
+          console.log('excuted this true block')
+          ToastAndroid.show("User updated successfuly!", ToastAndroid.SHORT);
+          navigation.navigate('Account', {
+            screen: 'Account',
+            message: message
+          });
+        }
+      })
 
   }
 
-  console.log('user phone',user.phone);
+  console.log('user phone', user.phone);
 
   return (
 
@@ -129,22 +145,38 @@ const EditAccount = ({ route, navigation }: any) => {
                   globalStyles.inputFieldTitle,
                   globalStyles.marginTop20,
                 ]}>
-                  {t('auth:phone')}
+                {t('auth:phone')}
               </Text>
 
               <Controller
                 control={control}
                 rules={{
-                  maxLength: 12,
+                  minLength: 10,
                   required: true,
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInputField
-                   // placeholder= {t('auth:enterName')}
+                    placeholder={t('screens:enterPhone')}
                     onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value || user?.phone}
-                    keyboardType='numeric'
+                    onChangeText={(text) => {
+                      // Remove any non-numeric characters
+                      const cleanedText = text.replace(/\D/g, '');
+
+                      // Check if it starts with '0' or '+255'/'255'
+                      if (cleanedText.startsWith('0') && cleanedText.length <= 10) {
+                        onChange(cleanedText);
+                      } else if (
+                        (cleanedText.startsWith('255') ||
+                          cleanedText.startsWith('+255')) &&
+                        cleanedText.length <= 12
+                      ) {
+                        onChange(cleanedText);
+                      }
+                    }}
+                    value={value}
+                    keyboardType="phone-pad"
+                    maxLength={12}
+
                   />
                 )}
                 name="phone"
@@ -176,11 +208,12 @@ const EditAccount = ({ route, navigation }: any) => {
                     placeholder= {t('auth:enterName')}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    value={value || user?.client.name}
+                    value={value}
                   />
                 )}
                 name="name"
               />
+
               {errors.name && (
                 <Text style={globalStyles.errorMessage}>
                   {t('auth:nameRequired')}
@@ -188,33 +221,36 @@ const EditAccount = ({ route, navigation }: any) => {
               )}
             </BasicView>
 
-            
             <BasicView>
               <Text
                 style={[
                   globalStyles.inputFieldTitle,
                   globalStyles.marginTop20,
                 ]}>
-               {t('auth:email')}
+                {t('auth:email')}
               </Text>
 
               <Controller
                 control={control}
                 rules={{
-                  maxLength: 12,
-                  required: true,
+                
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, // Regular expression for email validation
+                    message: 'Invalid email address',
+                  },
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInputField
-                    placeholder= {t('auth:enterEmail')}
+                    placeholder={t('auth:enterEmail')}
                     onBlur={onBlur}
+                    keyboardType='email-address'
                     onChangeText={onChange}
-                    value={value || user?.email}
+                    value={value}
                   />
                 )}
                 name="email"
               />
-              {errors.name && (
+              {errors.email && (
                 <Text style={globalStyles.errorMessage}>
                   {t('auth:emailRequired')}
                 </Text>
@@ -222,11 +258,12 @@ const EditAccount = ({ route, navigation }: any) => {
             </BasicView>
 
             <BasicView style={globalStyles.marginTop20}>
-            <GooglePlacesInput
-              setLocation={selectLocation}
-              placeholder="What's your location?"
-            />
-          </BasicView>
+              <Text>{t('screens:officeLocation')}:</Text>
+              <GooglePlacesInput
+                setLocation={selectLocation}
+                placeholder="What's your location?"
+              />
+            </BasicView>
 
             <BasicView>
               <Button loading={loading} onPress={handleSubmit(onSubmit)}>

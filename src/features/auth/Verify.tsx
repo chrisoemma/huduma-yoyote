@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {SafeAreaView, ScrollView, Text, TouchableOpacity} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 
 import {useForm, Controller} from 'react-hook-form';
 import {RootStateOrAny, useSelector} from 'react-redux';
@@ -16,90 +16,106 @@ import {userVerify} from './userSlice';
 import { useTranslation } from 'react-i18next';
 
 const VerifyScreen = ({route, navigation}: any) => {
-  const {nextPage} = route.params;
+  const {nextPage} = route?.params;
   const { t } = useTranslation();
 
   const {user, loading, status} = useSelector(
     (state: RootStateOrAny) => state.user,
   );
 
+    useEffect(() => {
+    if (status !== null) {
+      setMessage(status);
+    }
+  }, [status]);
+
   const dispatch = useAppDispatch();
   const [message, setMessage] = useState('');
+  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
+
+  console.log('verification code',verificationCode);
 
   useEffect(() => {
     console.log('user dataaaa',user);
   }, [user]);
 
-  useEffect(() => {
-    if (status !== '') {
-      setMessage(status);
+
+  const inputs = Array(6).fill(0).map((_, i) => React.createRef());
+
+  const handleVerificationCodeChange = (index, value) => {
+   
+    const newVerificationCode = [...verificationCode];
+    newVerificationCode[index] = value;
+    setVerificationCode(newVerificationCode);
+  
+    // Move focus to the next input if there is a value and the next input exists
+    if (value !== '' && index < 5 && inputs[index + 1]) {
+      inputs[index + 1].current.focus();
     }
-  }, [status]);
+  };
 
-  const {
-    control,
-    handleSubmit,
-    formState: {errors},
-  } = useForm({
-    defaultValues: {
-      code: '',
-    },
-  });
-  const onSubmit = (data: any) => {
-    console.log(user.id);
-    console.log(data);
+  const numericCode = parseInt(verificationCode.join(''), 10);
 
+  const setDisappearMessage = (message: any) => {
+    setMessage(message);
+
+    setTimeout(() => {
+      setMessage('');
+    }, 5000);
+  };
+
+
+  const onSubmit =async () => {
+
+    if (numericCode.toString().length === 6) {
     if (nextPage === 'PasswordReset') {
-      navigation.navigate('PasswordReset', {verificationCode: data.code});
+      
+       const  {phone}=route?.params;
+     const result= await dispatch(userVerify({phone:phone, code:numericCode,app_type:'client'})).unwrap();
+        if(result.status){
+          navigation.navigate('PasswordReset', {verificationCode: numericCode});
+        }else{
+          setDisappearMessage(result.message); 
+        }
     } else {
-      dispatch(userVerify({user_id: user.id, code: data.code}));
+      dispatch(userVerify({user_id: user.id, code:numericCode,app_type:'client'}));
     }
+  }else{
+    
+    setDisappearMessage('Please enter correct code'); 
+  }
   };
 
   return (
     <SafeAreaView>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <Container>
-          <BasicView style={globalStyles.marginTop60}>
-            <Text style={globalStyles.mediumHeading}>{t('auth:verify')}</Text>
+          <BasicView style={{marginVertical:50}}>
+            <Text style={globalStyles.smallHeading}>{t('auth:enterVerificationCode')}</Text>
           </BasicView>
 
           <BasicView>
             <Text style={globalStyles.errorMessage}>{message}</Text>
           </BasicView>
 
-          <BasicView>
-            <Text
-              style={[globalStyles.inputFieldTitle, globalStyles.marginTop20]}>
-              {t('auth:code')}
-            </Text>
-
-            <Controller
-              control={control}
-              rules={{
-                maxLength: 12,
-                required: true,
-              }}
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInputField
-                  placeholder="Enter Verification Code"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                />
-              )}
-              name="code"
-            />
-
-            {errors.code && (
-              <Text style={globalStyles.errorMessage}>
-                {t('auth:verifyCode')}
-              </Text>
-            )}
-          </BasicView>
+      <BasicView style={{marginVertical:50}}>
+          <View style={styles.inputContainer}>
+        {verificationCode.map((digit, index) => (
+          <TextInput
+            key={index}
+            style={styles.input}
+            value={digit}
+            onChangeText={(value) => handleVerificationCodeChange(index, value)}
+            maxLength={1}
+            keyboardType="numeric"
+            ref={inputs[index]}
+          />
+        ))}
+      </View>
+      </BasicView>
 
           <BasicView style={globalStyles.marginTop30}>
-            <Button loading={loading} onPress={handleSubmit(onSubmit)}>
+            <Button loading={loading} onPress={()=>onSubmit()}>
               <ButtonText>{t('auth:verify')}</ButtonText>
             </Button>
           </BasicView>
@@ -111,7 +127,7 @@ const VerifyScreen = ({route, navigation}: any) => {
               }}
               style={[globalStyles.marginTop20, globalStyles.centerView]}>
               <Text style={globalStyles.touchablePlainTextSecondary}>
-                {t('auth:alredyHaveAccount')}
+                {t('auth:alreadyHaveAccount')}
               </Text>
             </TouchableOpacity>
           </BasicView>
@@ -120,5 +136,31 @@ const VerifyScreen = ({route, navigation}: any) => {
     </SafeAreaView>
   );
 };
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 20,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    justifyContent:'center'
+  },
+  input: {
+    width: 40,
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 5,
+    marginHorizontal: 5,
+    textAlign: 'center',
+    fontSize: 18,
+  },
+});
 
 export default VerifyScreen;

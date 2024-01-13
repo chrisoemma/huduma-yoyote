@@ -2,6 +2,12 @@ export default{
     name:'Name',
     nameRequired:'Name is required',
     enterName:'Enter Name',
+    firstName:'First Name',
+    firstNameRequired:'First Name is required',
+    enterFirstName:'Enter First Name', 
+    lastName:'Last Name',
+    lastNameRequired:'Last Name is required',
+    enterLastName:'Enter Last Name',
     email:'Email',
     password:'Password',
     enterPassword:'Enter Password',
@@ -20,6 +26,18 @@ export default{
     resetPassword:'Reset Password',
     code:'Code',
     verifyCode:'Verification code is required',
+    oldPassword:'Old Password',
+    oldPasswordRequired:'Old Password Required',
+    enterOldPassword:'Enter Old Password',
+    newPassword:'New Password',
+    newPasswordRequired:'New Password Required',
+    enterNewPassword:'Enter new password',
+    comfirmNewPassword:'Confirm New Password',
+    enterComfirmPassword:'Enter Comfirm Password',
+    comfirmedPasswordRequired:'Comfirmed Password Required',
+    passwordMatch:'Passwords do not match',
+    emailRequired:'Right email required',
+    enterVerificationCode:'Enter verification code'
     
 
    

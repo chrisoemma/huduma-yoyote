@@ -43,11 +43,11 @@ const PasswordResetScreen = ({route, navigation}: any) => {
     console.log(user);
   }, [user]);
 
-  useEffect(() => {
-    if (status !== '') {
-      setMessage(status);
-    }
-  }, [status]);
+  // useEffect(() => {
+  //   if (status !== '') {
+  //     setMessage(status);
+  //   }
+  // }, [status]);
 
   const {
     control,
@@ -59,7 +59,8 @@ const PasswordResetScreen = ({route, navigation}: any) => {
     },
   });
   const onSubmit = (data: any) => {
-    console.log(data);
+    
+   
     dispatch(
       resetPassword({
         phone: user.phone,
@@ -112,7 +113,7 @@ const PasswordResetScreen = ({route, navigation}: any) => {
                 <Controller
                   control={control}
                   rules={{
-                    maxLength: 12,
+                  
                     required: true,
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (

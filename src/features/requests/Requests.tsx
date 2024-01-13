@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, FlatList,TouchableOpacity,StyleSheet } from 'react-native'
+import { View, Text, SafeAreaView, FlatList,TouchableOpacity,StyleSheet, RefreshControl, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { globalStyles } from '../../styles/global'
 import { colors } from '../../utils/colors';
@@ -18,12 +18,36 @@ const { loading, activeRequests,pastRequests } = useSelector(
   (state: RootStateOrAny) => state.requests,
 );
 
+const [refreshMessage,setRefreshMessage] =useState('');
 const dispatch = useAppDispatch();
+const [refreshing, setRefreshing] = useState(false);
 
 useEffect(() => {
    dispatch(getActiveRequests(user?.client?.id));
    dispatch(getPastRequests(user?.client?.id));
 }, [dispatch])
+
+const callGetRequests = React.useCallback(() => {
+  setRefreshing(true);
+  dispatch(getActiveRequests(user?.client?.id));
+  dispatch(getPastRequests(user?.client?.id))
+    .unwrap()
+    .then(result => {
+      setRefreshing(false);
+      setRefreshMessage('Data refreshed successfully.');
+      setTimeout(() => {
+        setRefreshMessage(''); // Clear the message after a few seconds
+      }, 3000); // Adjust the time as needed
+    })
+    .catch(error => {
+      // Handle errors if necessary
+    });
+}, []);
+
+
+
+
+//console.log('refreshing',refreshing)
 
   const { t } = useTranslation();
 
@@ -40,10 +64,14 @@ useEffect(() => {
     );
 
   return (
-    <SafeAreaView
+    <ScrollView
     style={globalStyles.scrollBg}
+    refreshControl={
+      <RefreshControl refreshing={refreshing} onRefresh={callGetRequests} />
+  }
     >
-    <View style={{}}>
+    <View 
+    >
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.toggleButton}
@@ -57,15 +85,19 @@ useEffect(() => {
         </Text>
       </TouchableOpacity>
     </View>
+    {refreshMessage && (
+  <Text style={styles.refreshMessage}>{refreshMessage}</Text>
+)}
     <View style={styles.listContainer}>
         <FlatList
           data={activeTab === 'current'?activeRequests:pastRequests}
           renderItem={renderRequestItem}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item?.id?.toString()}
+       
         />
       </View>
     </View>
-    </SafeAreaView>
+    </ScrollView>
   )
 }
 
@@ -100,7 +132,16 @@ const styles = StyleSheet.create({
     },
     itemlistContainer:{ 
         marginTop:20,  
-    }
+    },
+  
+    
+      refreshMessage: {
+        color: 'green', // or your preferred color
+        fontSize: 16,
+        textAlign: 'center',
+        marginTop: 10,
+      },
+  
   });
 
 export default Requests

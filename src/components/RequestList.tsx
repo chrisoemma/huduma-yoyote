@@ -12,17 +12,17 @@ const RequestList = ({item,navigation}:any) => {
      })}}
     >
       <View>
-        <Text style={{color:colors.primary}}>{item.service.name}</Text>
-        <Text style={{paddingVertical:10,color:colors.black}}>{item.provider.name}</Text>
-        {item.requested_sub_services.map((subService):any=>(
-             <Text>-{subService.name}</Text>
+        <Text style={{color:colors.primary}}>{item?.service?.name}</Text>
+        <Text style={{paddingVertical:10,color:colors.black}}>{item?.provider?.name}</Text>
+        {item?.requested_sub_services?.map((subService):any=>(
+             <Text>-{subService?.name}</Text>
            ))
            }
       </View>
       <View style={styles.bottomView}>
-         <View style={{marginRight:'35%'}}><Text >{item.request_time}</Text></View>
+         <View style={{marginRight:'35%'}}><Text >{item?.request_time}</Text></View>
          <TouchableOpacity style={styles.status}>
-            <Text style={{color:colors.white}}>{item.statuses[item.statuses.length-1].status}</Text>
+            <Text style={{color:colors.white}}>{item?.statuses[item?.statuses?.length-1]?.status}</Text>
          </TouchableOpacity>
       </View>
     </TouchableOpacity>
