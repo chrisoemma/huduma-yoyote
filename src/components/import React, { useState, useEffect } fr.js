@@ -10,11 +10,9 @@ import {
   PusherChannel,
   PusherEvent,
 } from '@pusher/pusher-websocket-react-native';
-import { postClientLocation } from '../features/LocationUpdates/LocationSlice';
 import { useSelector } from 'react-redux';
 import { useAppDispatch,RootStateOrAny } from '../app/store';
-import { extractEventName } from '../utils/utilts';
-import { API_URL } from '../utils/config';
+import { postClientLocation } from '../features/LocationUpdates/LocationSlice';
 
 
 const MapDisplay = ({ onLocationUpdate }: any) => {
@@ -23,122 +21,138 @@ const MapDisplay = ({ onLocationUpdate }: any) => {
   const [providerLocation, setServiceProvidersLocation] = useState(
     { id: 1, name: 'Provider 1', latitude: -6.7980, longitude: 39.2219 }
   );
-
   const pusher = Pusher.getInstance();
 
-  
+
   const { user } = useSelector(
     (state: RootStateOrAny) => state.user,
 );
 
 const dispatch = useAppDispatch();
 
-  let data={
-    client_latitude:userLocation?.latitude,
-    client_longitude:userLocation?.longitude
-  }
-  
-  
-  useEffect(() => {
-    let watchId;
-  
-    const requestLocationPermission = async () => {
-      try {
-        // ... (your existing code)
-  
-        watchId = Geolocation.watchPosition(
-          position => {
-            setUserLocation({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
-  
-            data={
-              client_latitude:position.coords.latitude,
-              client_longitude:position.coords.longitude
+let data={
+  client_latitude:userLocation?.latitude,
+  client_longitude:userLocation?.longitude
+}
+
+
+useEffect(() => {
+  let watchId;
+
+  const requestLocationPermission = async () => {
+    try {
+      // ... (your existing code)
+
+      watchId = Geolocation.watchPosition(
+        position => {
+          setUserLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+
+          data={
+            client_latitude:position.coords.latitude,
+            client_longitude:position.coords.longitude
+           }
+             console.log('running this for firt time');
+             console.log('dataaaa',data)
+             if(position.coords){
+           dispatch(postClientLocation({clientId:user?.client.id,data}));
              }
-               if(position.coords){
-             dispatch(postClientLocation({clientId:user?.client.id,data}));
-               }
-          },
-          error => console.error(error),
-          {
-            enableHighAccuracy: true,
-            distanceFilter: 100,
-            interval: 10000,
-            fastestInterval: 5000,
-          }
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    };
-  
-    requestLocationPermission();
-  
-    // Clean up watcher when component unmounts
-    return () => {
-      Geolocation.clearWatch(watchId);
-    };
-  }, []);
+        },
+        error => console.error(error),
+        {
+          enableHighAccuracy: true,
+          distanceFilter: 100,
+          interval: 10000,
+          fastestInterval: 5000,
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  requestLocationPermission();
+
+  // Clean up watcher when component unmounts
+  return () => {
+    Geolocation.clearWatch(watchId);
+  };
+}, []);
+
 
   useEffect(() => {
     const setupPusher = async () => {
-     
-      const headers = {
-        'Authorization': `Bearer ${user.token}`
-      };
-
-      try {
+      const pusher = Pusher.getInstance();
       await pusher.init({
-        apiKey:"70f571d3d3621db1c3d0",
+        apiKey: "70f571d3d3621db1c3d0",
         cluster: "ap2",
-        authEndpoint:`${API_URL}/api/v1/pusher/auth`,
-        auth:headers
-
-      });
-
-    
-
-      console.log('heddddd',headers);
-
-      const myChannel = await pusher.subscribe({
-        channelName: `private-location-updates.${user.id}`, 
-        headers:  headers,
-        onSubscriptionSucceeded: (channelName,data) => {
-          
-          console.log('Subscription succeeded:', channelName, data);
-        },
-          onEvent: (event: PusherEvent) => {
-          if (extractEventName(event.eventName) === "ClientLocationUpdated") {
-                 if(event.data){
-            const parsedData = JSON.parse(event.data);
-            const latitude = parseFloat(parsedData.client_location.latitude);
-            const longitude = parseFloat(parsedData.client_location.longitude);
-           console.log('Received ClientLocationUpdated event:', longitude);
-            setUserLocation( {latitude,longitude} );
-                 
-          }
-          }
-        },
       });
 
       await pusher.connect();
 
-    } catch (e) {
-      console.log(`ERROR: ${e}`);
-    }
-    }
-    setupPusher() 
-    return () => {
-     
-     pusher.unsubscribe({channelName:"location-updates"});
+      const channelName = "location-updates";
+
+      if (channelName) {
+        const channel = pusher.subscribe({
+          channelName,
+          onEvent: (event: PusherEvent) => {
+             console.log('evenntss',event)
+            if (event.eventName === "ClientLocationUpdated") {
+              const { client_latitude, client_longitude } = event.data;
+              setUserLocation({ client_latitude, client_longitude });
+            } else if (event.eventName === "ProviderLocationUpdated") {
+              const { id, name, latitude, longitude } = event.data;
+              setServiceProvidersLocation({ id, name, latitude, longitude });
+            }
+          },
+        });
+      } else {
+        console.error("Channel name is null");
+      }
     };
-  },[]);
+
+    //   const channel = pusher.subscribe({
+    //     channelName: "location-updates",
+    //     onEvent: (event: PusherEvent) => {
+    //       if (event.eventName === "ClientLocationUpdated") {
+    //         const { client_latitude, client_longitude } = event.data;
+    //         setUserLocation({ client_latitude, client_longitude });
+    //       } else if (event.eventName === "ProviderLocationUpdated") {
+    //         const { id, name, latitude, longitude } = event.data;
+    //         setServiceProvidersLocation({ id, name, latitude, longitude });
+    //       }
+    //     },
+    //   });
+    // };
+
+    setupPusher();
+
+    return () => {
+      const pusher = Pusher.getInstance();
+      pusher.unsubscribe('location-updates');
+    };
+  }, []);
+
 
   useEffect(() => {
     onLocationUpdate(userLocation, providerLocation);
   }, [userLocation, providerLocation]);
+
+
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //      console.log('running this')
+  //     if (userLocation) {
+  //       dispatch(postClientLocation({clientId:user?.client.id,data}));
+  //     }
+  //   }, 30000);
+
+    // Clean up interval when component unmounts
+  //   return () => clearInterval(intervalId);
+  // }, [userLocation]);
 
 
   const centerLat = (userLocation?.latitude + providerLocation.latitude) / 2;
@@ -185,8 +199,8 @@ const dispatch = useAppDispatch();
               providerLocation.latitude,
               providerLocation.longitude
             )} km`
-          }
-          pinColor="darkblue"
+            }
+            pinColor="darkblue"
           />
 
           {/* Draw Polyline for the route */}

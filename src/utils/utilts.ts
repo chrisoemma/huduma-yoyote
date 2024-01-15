@@ -177,3 +177,13 @@ export function breakTextIntoLines(text, maxLength) {
 
   return chunks.join('\n');
 }
+
+export function extractEventName(fullEventName) {
+  // Split the full event name by backslashes
+  const segments = fullEventName.split('\\');
+
+  // Get the last segment
+  const lastSegment = segments.pop();
+
+  return lastSegment;
+}
