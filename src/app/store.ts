@@ -19,6 +19,7 @@ import RequestSlice from '../features/requests/RequestSlice';
 import ClientSlice from '../features/account/ClientSlice';
 import ServiceProviderSlice from '../features/serviceproviders/ServiceProviderSlice';
 import LocationSlice from '../features/LocationUpdates/LocationSlice';
+import SearchSlice from '../features/home/SearchSlice';
 
 
 const reducers = combineReducers({
@@ -28,7 +29,8 @@ const reducers = combineReducers({
   requests:RequestSlice,
   client:ClientSlice,
   providers:ServiceProviderSlice,
-  locations:LocationSlice
+  locations:LocationSlice,
+  searches:SearchSlice
 });
 
 const persistConfig = {

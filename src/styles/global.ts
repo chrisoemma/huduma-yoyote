@@ -12,6 +12,34 @@ export const globalStyles = StyleSheet.create({
   backgroundColor:colors.whiteBackground
 },
 
+searchInput: {
+ marginLeft:15,
+  padding: 10,
+  fontSize: 16,
+},
+autocompleteContainer: {
+  position: 'absolute',
+  top: 50,
+  left: 0,
+  padding:15,
+  right: 0,
+  zIndex: 1000,
+  backgroundColor: 'white',
+  borderWidth: 1,
+  borderColor: 'gray',
+  borderRadius: 20,
+
+  maxHeight: 150,
+  overflow: 'scroll',
+  elevation: 2,
+  shadowColor: '#000',
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+},
   appView:{
    margin:10
   },
@@ -35,6 +63,7 @@ export const globalStyles = StyleSheet.create({
    marginBottom:8
   },
   homepageHeader:{
+  zIndex:1000,
    height:100,
    width:'100%',
    backgroundColor:colors.primary,
@@ -71,6 +100,7 @@ export const globalStyles = StyleSheet.create({
   },
  
     banner: {
+      zIndex:1,
       marginHorizontal:10,
       marginVertical:15,
       borderRadius:10

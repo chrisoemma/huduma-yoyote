@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, PermissionsAndroid } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Dimensions, PermissionsAndroid, Image, Animated } from 'react-native';
+import MapView, { Marker, Polygon } from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import MapViewDirections from 'react-native-maps-directions';
 import { colors } from '../utils/colors';
@@ -20,9 +20,13 @@ import { API_URL } from '../utils/config';
 const MapDisplay = ({ onLocationUpdate }: any) => {
 
   const [userLocation, setUserLocation] = useState(null);
-  const [providerLocation, setServiceProvidersLocation] = useState(
+  const [providerLocation, setServiceProviderLocation] = useState(
     { id: 1, name: 'Provider 1', latitude: -6.7980, longitude: 39.2219 }
+    
   );
+
+  const [isBlueDotVisible, setIsBlueDotVisible] = useState(true);
+  const [blueDotMarkerKey, setBlueDotMarkerKey] = useState(0); 
 
   const pusher = Pusher.getInstance();
 
@@ -94,7 +98,7 @@ const dispatch = useAppDispatch();
         apiKey:"70f571d3d3621db1c3d0",
         cluster: "ap2",
         authEndpoint:`${API_URL}/api/v1/pusher/auth`,
-        auth:headers
+        // auth:headers
 
       });
 
@@ -108,6 +112,9 @@ const dispatch = useAppDispatch();
         onSubscriptionSucceeded: (channelName,data) => {
           
           console.log('Subscription succeeded:', channelName, data);
+        },
+       onSubscriptionError: (channelName: string, message:string, e:any) =>{
+          console.log(`onSubscriptionError: ${message} channelName: ${channelName} Exception: ${e}`);
         },
           onEvent: (event: PusherEvent) => {
           if (extractEventName(event.eventName) === "ClientLocationUpdated") {
@@ -132,9 +139,47 @@ const dispatch = useAppDispatch();
     setupPusher() 
     return () => {
      
-     pusher.unsubscribe({channelName:"location-updates"});
+     pusher.unsubscribe({channelName:`private-location-updates.${user.id}`});
     };
   },[]);
+
+  useEffect(() => {
+   
+    const interval = setInterval(() => {
+      setIsBlueDotVisible((prevVisible) => !prevVisible);
+      setBlueDotMarkerKey((prevKey) => prevKey + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const animatedProviderLocation = useRef(new Animated.Value(0)).current;
+
+  const animateProviderLocation = (newLocation) => {
+    Animated.timing(animatedProviderLocation, {
+      toValue: 1,
+      duration: 1000, // Adjust the duration as needed
+      useNativeDriver: false, // Set to true if possible for performance
+    }).start(() => {
+      setServiceProviderLocation(newLocation);
+      animatedProviderLocation.setValue(0); // Reset the animated value for the next animation
+    });
+  };
+
+
+  // useEffect(() => {
+  //   // Simulate the animation with a new location every 5 seconds
+  //   const intervalId = setInterval(() => {
+  //     const newLatitude = providerLocation.latitude + 0.01; 
+  //     const newLongitude = providerLocation.longitude + 0.01;
+  //     animateProviderLocation({ latitude: newLatitude, longitude: newLongitude });
+  //   }, 5000);
+
+  //   // Clear the interval when the component unmounts
+  //   return () => clearInterval(intervalId);
+  // }, [providerLocation]);
+
+
 
   useEffect(() => {
     onLocationUpdate(userLocation, providerLocation);
@@ -173,11 +218,29 @@ const dispatch = useAppDispatch();
             longitudeDelta: zoomLevel * (Dimensions.get('window').width / Dimensions.get('window').height),
           }}
         >
-          <Marker
-            coordinate={{
-              latitude: providerLocation.latitude,
-              longitude: providerLocation.longitude,
-            }}
+  {isBlueDotVisible && (
+  <Marker
+    key={`blueDotMarker_${blueDotMarkerKey}`}
+    coordinate={{
+      latitude: userLocation.latitude,
+      longitude: userLocation.longitude,
+    }}
+    anchor={{ x: 0.5, y: 0.5 }} 
+    style={styles.blueDotMarker} 
+  >
+    <Image
+      source={require('../../assets/images/dot.jpg')}
+      style={styles.blueDotImage} 
+    />
+  </Marker>
+)}
+     
+
+   <Marker
+              coordinate={{
+                latitude: providerLocation.latitude,
+                longitude: providerLocation.longitude,
+              }}
             title={providerLocation.name}
             description={`Distance: ${calculateDistance(
               userLocation.latitude,
@@ -185,12 +248,12 @@ const dispatch = useAppDispatch();
               providerLocation.latitude,
               providerLocation.longitude
             )} km`
-          }
-          pinColor="darkblue"
+            }
+            pinColor="darkblue"
           />
 
-          {/* Draw Polyline for the route */}
-          <Polyline
+          
+          <Polygon
             coordinates={[
               { latitude: userLocation.latitude, longitude: userLocation.longitude },
               { latitude: providerLocation.latitude, longitude: providerLocation.longitude },
@@ -212,6 +275,16 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+  },
+
+  blueDotMarker: {
+    width: 40, // Set the desired width
+    height: 40, 
+  },
+
+  blueDotImage: {
+    width: '100%', 
+    height: '100%', 
   },
 });
 

@@ -78,7 +78,9 @@ useEffect(() => {
         <Container>
          <View style={globalStyles.homepageHeader}>
            <View style={globalStyles.searchContainer}>
-               <TouchableOpacity style={globalStyles.search}>
+               <TouchableOpacity style={globalStyles.search}
+                onPress={()=>navigation.navigate('Search')}
+               >
                  <View style={globalStyles.searchContent}>
                  <Icon    
                   name="search"

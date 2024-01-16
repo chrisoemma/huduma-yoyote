@@ -11,6 +11,7 @@ import Settings from "../features/settings/Settings";
 import { useTranslation } from "react-i18next";
 import EditAccount from "../features/account/EditAccount";
 import ChangePassword from "../features/auth/ChangePassword";
+import SearchScreen from "../features/home/SearchScreen";
 
   
   const AppStack = () => {
@@ -27,6 +28,13 @@ import ChangePassword from "../features/auth/ChangePassword";
         <Stack.Screen name="Home" component={DrawerNavigator} 
          options={{ headerShown: false }}
         />
+
+        <Stack.Screen name="Search" 
+
+        component={SearchScreen}
+        options={{ title: t('navigate:search'),headerShown: false }}
+         />
+
         <Stack.Screen name="Categories" 
         component={CategoryScreen}
         options={{ title: t('navigate:categories') }}
@@ -39,6 +47,7 @@ import ChangePassword from "../features/auth/ChangePassword";
          component={ServiceScreen}
          options={{ title: t('navigate:service') }}
           />
+        
 
        <Stack.Screen name="Change Password"
          component={ChangePassword}

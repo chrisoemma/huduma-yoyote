@@ -34,8 +34,6 @@ export const getServices = createAsyncThunk(
         state.loading = true;
       });
       builder.addCase(getServices.fulfilled, (state, action) => {
-       // console.log('Fulfilled case');
-      //  console.log(action.payload);
   
         if (action.payload.status) {
           state.services = action.payload.data.services;
