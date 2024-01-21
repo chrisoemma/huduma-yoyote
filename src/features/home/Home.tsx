@@ -7,10 +7,11 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  FlatList,
 } from 'react-native';
 import Selector from '../../components/LanguageSelector';
 import { Container } from '../../components/Container';
-import { globalStyles } from '../../styles/global';
+import {globalStyles} from '../../styles/global';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { colors } from '../../utils/colors';
 import { useTranslation } from 'react-i18next';
@@ -21,37 +22,30 @@ import { useSelector,RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store'
 import { getCategories } from '../category/CategorySlice';
 import { getServices } from '../Service/ServiceSlice';
-
+import { getBanners } from './BannerSlice';
 
 const Home = ({ route, navigation }: any) => {
 
   const { loading, categories, } = useSelector(
+    
     (state: RootStateOrAny) => state.categories,
 );
+
 const {services} = useSelector(
   (state: RootStateOrAny) => state.services,
 );
+const { banners } = useSelector((state: RootStateOrAny) => state.banners);
 
 const dispatch = useAppDispatch();
 
 useEffect(() => {
   dispatch(getCategories());
   dispatch(getServices());
+  dispatch(getBanners());
 }, [])
 
-  let bannerImages = [
-    {
-      id:1,
-      img_url:'banner.jpg'
-    },
-    { id:2,
-      img_url:'banner-1.jpg'
-    },
-   
-  ]
+const stylesGlobal = globalStyles();
 
-
-  //console.log('services',services);
 
   const handleCategoryPress = (category)=>{
    // console.log('category',category);
@@ -62,81 +56,87 @@ useEffect(() => {
 
   
   const handleServicePress = (service)=>{
-   // console.log('service',service);
         navigation.navigate('Service providers',{
           service:service,
         })
   }
 
+  const renderCategoryItem = ({ item }) => (
+    <Category category={item} onPress={() => handleCategoryPress(item)} />
+  );
+
+  const renderServiceItem = ({ item }) => (
+    <TopService key={item.id} service={item} onPress={() => handleServicePress(item)} />
+  );
+
   const { t } = useTranslation();
   return (
     <SafeAreaView>
-      <ScrollView 
-      contentInsetAdjustmentBehavior="automatic"
-      showsVerticalScrollIndicator={false}
-      >
-        <Container>
-         <View style={globalStyles.homepageHeader}>
-           <View style={globalStyles.searchContainer}>
-               <TouchableOpacity style={globalStyles.search}
+      <View style={{height:'100%'}}>
+      
+         <View style={stylesGlobal.homepageHeader}>
+           <View style={stylesGlobal.searchContainer}>
+               <TouchableOpacity style={stylesGlobal.search}
                 onPress={()=>navigation.navigate('Search')}
                >
-                 <View style={globalStyles.searchContent}>
+                 <View style={stylesGlobal.searchContent}>
                  <Icon    
                   name="search"
                   color={colors.white}
                   size={30}
                   />
-                  <Text style={globalStyles.searchText}>{t('screens:searchText')}</Text>
+                  <Text style={stylesGlobal.searchText}>{t('screens:searchText')}</Text>
                  </View>
                </TouchableOpacity>
            </View>
          </View>
-         <View style={globalStyles.banner}>
-            {bannerImages?.length > 0 ? (
-              <Banner BannerHeight={180} BannerImgs={bannerImages} />
+         <View style={stylesGlobal.banner}>
+            {banners?.length > 0 ? (
+              <Banner BannerHeight={180} BannerImgs={banners} />
             ) : (
-              <Text>Hello</Text>
+              <View />
             )}
           </View>
-          
-         <View style={globalStyles.appView}>
-          <View style={globalStyles.categoryWrapper}>
-           {categories.map(category=>(
-             <Category  
-             category={category} 
-             onPress={() => handleCategoryPress(category)} 
-             />
-           ))
+           
+           
+          <View >
+          <FlatList
+              data={categories}
+              keyExtractor={(item) => item.id.toString()}
+              horizontal
+              renderItem={renderCategoryItem}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ flexDirection: 'row' }}
+            />
+          </View>
+          <TouchableOpacity
+            style={{ alignItems: "flex-end" }}
+            onPress={() => navigation.navigate('Categories')}
+          >
+            <Text style={stylesGlobal.seeAll}>{t('screens:viewAll')}</Text>
+          </TouchableOpacity>
 
-           }
+
+          <View style={{flex:1,marginBottom:10}}>
+          <Text style={stylesGlobal.serviceText}>{t('screens:topService')}</Text>
+            <FlatList
+              data={services}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderServiceItem}
+              showsVerticalScrollIndicator={false}
+              numColumns={2}
+             
+            />
+            <TouchableOpacity
+              style={{ alignItems: 'flex-end' }}
+              onPress={() => navigation.navigate('Categories')}
+            >
+              <Text style={stylesGlobal.seeAll}>{t('screens:viewAll')}</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={{ alignItems: "flex-end" }}
-            onPress={() => navigation.navigate('Categories')}
-          >
-            <Text style={globalStyles.seeAll}>{t('screens:viewAll')}</Text>
-          </TouchableOpacity>
-          <Text style={globalStyles.serviceText}>{t('screens:topService')}</Text>
-          <View style={globalStyles.topServices}>
-            {services?.map(service=>(
-               <TopService 
-               service={service}
-               onPress={() => handleServicePress(service)} 
-                />
-            ))
-            }
-          </View>
-          <TouchableOpacity
-            style={{ alignItems: "flex-end" }}
-            onPress={() => navigation.navigate('Categories')}
-          >
-            <Text style={globalStyles.seeAll}>{t('screens:viewAll')}</Text>
-          </TouchableOpacity>
-         </View>
-        
-        </Container>
-      </ScrollView>
+       
+      </View>
+    
     </SafeAreaView>
   )
 };

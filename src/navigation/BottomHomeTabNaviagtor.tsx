@@ -29,6 +29,19 @@ const HomeStack = () => {
 };
 
 
+
+
+export default function BottomHomeTabNavigator() {
+
+  const { loading, user } = useSelector(
+    (state: RootStateOrAny) => state.user,
+  );
+
+  const { isDarkMode } = useSelector(
+    (state: RootStateOrAny) => state.theme,
+);
+  
+
 const tabNavScreenOptions = ({ route }: any) => ({
   
   headerShown: false,
@@ -47,15 +60,8 @@ const tabNavScreenOptions = ({ route }: any) => ({
     return <FontAwesome5 name={iconName as string} size={size} color={color} />;
   },
   tabBarActiveTintColor: colors.secondary,
-  tabBarInactiveTintColor: 'gray',
+  tabBarInactiveTintColor:isDarkMode?colors.white:colors.black,
 });
-
-export default function BottomHomeTabNavigator() {
-
-  const { loading, user } = useSelector(
-    (state: RootStateOrAny) => state.user,
-  );
-  
   const { t } = useTranslation();
 
 

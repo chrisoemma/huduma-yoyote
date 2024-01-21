@@ -1,6 +1,6 @@
 import { View, Text, SafeAreaView, Image,StyleSheet, Alert,TouchableOpacity, ActivityIndicator, PermissionsAndroid, ToastAndroid } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { globalStyles } from '../../styles/global'
+import {globalStyles} from '../../styles/global'
 import { colors } from '../../utils/colors'
 import Icon from 'react-native-vector-icons/AntDesign';
 import Divider from '../../components/Divider';
@@ -19,6 +19,10 @@ const Account = ({navigation}:any) => {
 
   const { loading, user } = useSelector(
     (state: RootStateOrAny) => state.user,
+  );
+
+  const {  isDarkMode } = useSelector(
+    (state: RootStateOrAny) => state.theme,
   );
 
 
@@ -156,12 +160,12 @@ const selectProfile = async () => {
   }
 };
 
-  const phoneNumber = `${user.phone}`;
+  const phoneNumber = `${user?.phone}`;
   return (
     <SafeAreaView
-      style={globalStyles.scrollBg}
+      style={globalStyles().scrollBg}
     >
-      <View style={globalStyles.appView}>
+      <View style={globalStyles().appView}>
 
       <View style={styles.btnView}>
            {profile ==null ?(<View />):(
@@ -173,16 +177,20 @@ const selectProfile = async () => {
                 {loading || uploadingPic ? (
                   // Render loader when loading or uploadingPic is true
                   <View style={{flexDirection:'row'}}>
-                    <Text style={{marginHorizontal:3,color:colors.white}}>{t('screens:uploding')}</Text>
+                    <Text style={{ marginHorizontal: 3, color: isDarkMode ? colors.black : colors.white }}>
+  {t('screens:uploding')}
+</Text>
                     <ActivityIndicator size="small" color={colors.white} />
                   </View>
                 ) : (
-                  // Render button content when loading and uploadingPic are false
+               
                   <Text style={{
                     paddingVertical: 3,
                     paddingHorizontal: 6,
                     color: colors.white
-                  }}>{t('screens:updatePicture')}</Text>
+                  }}>
+                    {t('screens:updatePicture')}
+                  </Text>
                 )}
               </TouchableOpacity>
            )}
@@ -192,20 +200,19 @@ const selectProfile = async () => {
                    client:user?.client
                  })}}
                 >
-                <Icon    
-                  name="edit"
-                  color={colors.black}
-                  size={25}
-                  />
+               <Icon    
+                name="edit"
+                color={isDarkMode ? colors.white : colors.black}
+                size={25}
+/>
               </TouchableOpacity>
               </View>
 
-        <View style={[globalStyles.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
+        <View style={[globalStyles().circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
       
           
           
           <Image
-          
             source={ !user.profile_img ? (profile ==null ? require('../../../assets/images/profile.png'):{ uri: profile[0]?.uri}):{uri:user.profile_img}}
             style={{
               resizeMode: "cover",
@@ -219,39 +226,40 @@ const selectProfile = async () => {
           <Icon
             name="camera"
             size={23}
-            color={colors.white}
+            color={isDarkMode ? colors.white : colors.black}
             style={styles.camera}
           />
         </TouchableOpacity>
         </View>
-        <Text style={{ color: colors.secondary, fontWeight: 'bold', alignSelf: 'center' }}>{user.name}</Text>
+        <Text style={{ color: isDarkMode ? colors.white : colors.secondary, fontWeight: 'bold', alignSelf: 'center' }}>{user.name}</Text>
+
         <View>
           <TouchableOpacity style={{ flexDirection: 'row', margin: 10 }}
             onPress={() => makePhoneCall(phoneNumber)}
           >
             <Icon
               name="phone"
-              color={colors.black}
+              color={isDarkMode ? colors.white : colors.black}
               size={25}
             />
-            <Text style={{ paddingHorizontal: 10 }}>{user.phone}</Text>
+            <Text style={{ paddingHorizontal: 10,color: isDarkMode ? colors.white : colors.secondary }}>{user.phone}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ flexDirection: 'row', marginHorizontal: 10 }}>
             <Icon
               name="mail"
-              color={colors.black}
+              color={isDarkMode ? colors.white : colors.black}
               size={25}
             />
-            <Text style={{ paddingLeft: 10 }}>{user.email}</Text>
+            <Text style={{ paddingLeft: 10,color: isDarkMode ? colors.white : colors.secondary }}>{user.email}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ flexDirection: 'row', marginHorizontal: 10, marginTop: 5 }}>
             <Icon
               name="enviroment"
-              color={colors.black}
+              color={isDarkMode ? colors.white : colors.black}
               size={25}
             />
             {
-              locationName==null?(<View />):(<Text style={{ paddingLeft: 10 }}>{breakTextIntoLines(locationName, 20)}</Text>)
+              locationName==null?(<View />):(<Text style={{ paddingLeft: 10,color:isDarkMode ? colors.white : colors.black }}>{breakTextIntoLines(locationName, 20)}</Text>)
             }
             
           </TouchableOpacity>
@@ -264,10 +272,10 @@ const selectProfile = async () => {
         >
           <Icon
             name="lock1"
-            color={colors.secondary}
+            color={isDarkMode ? colors.white : colors.secondary}
             size={25}
           />
-          <Text style={{ paddingLeft: 10, fontWeight: 'bold' }}>{t('screens:changePassword')}</Text>
+          <Text style={{ paddingLeft: 10, fontWeight: 'bold',color: isDarkMode ? colors.white : colors.secondary }}>{t('screens:changePassword')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={{ flexDirection: 'row', marginHorizontal: 10, marginTop: 10 }}
@@ -280,7 +288,7 @@ const selectProfile = async () => {
             color={colors.dangerRed}
             size={25}
           />
-          <Text style={{ paddingLeft: 10, fontWeight: 'bold' }}>{t('navigate:logout')}</Text>
+          <Text style={{ paddingLeft: 10, fontWeight: 'bold', color: isDarkMode ? colors.white : colors.secondary }}>{t('navigate:logout')}</Text>
         </TouchableOpacity>
 
       </View>

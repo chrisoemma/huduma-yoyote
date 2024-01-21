@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Selector from '../../components/LanguageSelector';
 import { Container } from '../../components/Container';
-import { globalStyles } from '../../styles/global';
+import {globalStyles} from '../../styles/global';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { colors } from '../../utils/colors';
 import { useTranslation } from 'react-i18next';
@@ -111,13 +111,13 @@ const ServiceScreen = ({ route, navigation }: any) => {
   const { t } = useTranslation();
   return (
     <SafeAreaView
-    style={globalStyles.scrollBg}
+    style={globalStyles().scrollBg}
     >
-         <View style={globalStyles.mainContainer}>
-          <View style={globalStyles.side}>
+         <View style={globalStyles().mainContainer}>
+          <View style={globalStyles().side}>
            <VerticalTabs tabs={services} activeTab={activeTab} onTabPress={handleTabPress} />
           </View>
-          <View style={globalStyles.sub}>
+          <View style={globalStyles().sub}>
           <ContentServiceList data={services} />
           </View>
          </View>

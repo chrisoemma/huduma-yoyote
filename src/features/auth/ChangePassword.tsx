@@ -23,6 +23,7 @@ import Button from '../../components/Button';
 import {ButtonText} from '../../components/ButtonText';
 import {changePassword} from './userSlice';
 import { useTranslation } from 'react-i18next';
+import { colors } from '../../utils/colors';
 
 const ChangePassword = ({route, navigation}: any) => {
   const dispatch = useAppDispatch();
@@ -34,12 +35,13 @@ const ChangePassword = ({route, navigation}: any) => {
   );
 
 
+  const styles = globalStyles();
+
   const [message, setMessage] = useState('');
 
   const [passwordsMatch, setPasswordsMatch] = useState(true);
 
   useEffect(() => {
-    console.log(user);
   }, [user]);
 
   useEffect(() => {
@@ -66,9 +68,7 @@ const ChangePassword = ({route, navigation}: any) => {
     dispatch(changePassword({data:data,userId:user.id}))
       .unwrap()
       .then(result => {
-        // handle result here
-        console.log('result');
-        console.log(result);
+
 
         if (result.status) {
             ToastAndroid.show('Password changed successfully', ToastAndroid.SHORT);
@@ -89,23 +89,23 @@ const ChangePassword = ({route, navigation}: any) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.scrollBg}>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <Container>
+    
           <BasicView>
-            <Text style={globalStyles.errorMessage}>{message}</Text>
+            <Text style={styles.errorMessage}>{message}</Text>
           </BasicView>
 
           <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop20,
+                  styles.inputFieldTitle,
+                  styles.marginTop20,
                 ]}>
                 {t('auth:oldPassword')}
               </Text>
 
-              <View style={globalStyles.passwordInputContainer}>
+              <View style={styles.passwordInputContainer}>
                 <Controller
                   control={control}
                   rules={{
@@ -113,8 +113,9 @@ const ChangePassword = ({route, navigation}: any) => {
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={globalStyles.passwordInputField}
-                
+                    style={[styles.passwordInputField,
+                      {backgroundColor:colors.white,color:colors.black}
+                    ]}
                       placeholder={t('auth:enterOldPassword')}
                       onBlur={onBlur}
                       onChangeText={onChange}
@@ -126,7 +127,7 @@ const ChangePassword = ({route, navigation}: any) => {
 
               </View>
               {errors.old_password && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={styles.errorMessage}>
                   {t('auth:oldPasswordRequired')}
                 </Text>
               )}
@@ -135,13 +136,13 @@ const ChangePassword = ({route, navigation}: any) => {
             <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop20,
+                  styles.inputFieldTitle,
+                  styles.marginTop20,
                 ]}>
                 {t('auth:newPassword')}
               </Text>
 
-              <View style={globalStyles.passwordInputContainer}>
+              <View style={styles.passwordInputContainer}>
                 <Controller
                   control={control}
                   rules={{
@@ -150,7 +151,9 @@ const ChangePassword = ({route, navigation}: any) => {
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={globalStyles.passwordInputField}
+                    style={[styles.passwordInputField,
+                      {backgroundColor:colors.white,color:colors.black}
+                    ]}
                   
                       placeholder={t('auth:enterNewPassword')}
                       onBlur={onBlur}
@@ -163,7 +166,7 @@ const ChangePassword = ({route, navigation}: any) => {
 
               </View>
               {errors.new_password && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={styles.errorMessage}>
                   {t('auth:newPasswordRequired')}
                 </Text>
               )}
@@ -173,13 +176,13 @@ const ChangePassword = ({route, navigation}: any) => {
             <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop20,
+                  styles.inputFieldTitle,
+                  styles.marginTop20,
                 ]}>
                 {t('auth:comfirmNewPassword')}
               </Text>
 
-              <View style={globalStyles.passwordInputContainer}>
+              <View style={styles.passwordInputContainer}>
                 <Controller
                   control={control}
                   rules={{
@@ -187,7 +190,9 @@ const ChangePassword = ({route, navigation}: any) => {
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={globalStyles.passwordInputField}
+                    style={[styles.passwordInputField,
+                      {backgroundColor:colors.white,color:colors.black}
+                    ]}
                       placeholder={t('auth:enterComfirmPassword')}
                       onBlur={onBlur}
                       onChangeText={onChange}
@@ -199,23 +204,23 @@ const ChangePassword = ({route, navigation}: any) => {
 
               </View>
               {errors.comfirm_password && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={styles.errorMessage}>
                   {t('auth:oldPasswordRequired')}
                 </Text>
               )}
               {!passwordsMatch && (
-    <Text style={globalStyles.errorMessage}>
+    <Text style={styles.errorMessage}>
          {t('auth:passwordMatch')}
     </Text>
   )}
             </BasicView>
 
-          <BasicView style={globalStyles.marginTop30}>
+          <BasicView style={styles.marginTop30}>
             <Button loading={loading} onPress={handleSubmit(onSubmit)}>
               <ButtonText>{t('screens:changePassword')}</ButtonText>
             </Button>
           </BasicView>
-        </Container>
+   
       </ScrollView>
     </SafeAreaView>
   );

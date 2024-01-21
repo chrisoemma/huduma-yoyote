@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { View, Text, SafeAreaView, Image, TouchableOpacity, StyleSheet, Button, ToastAndroid } from 'react-native'
-import { globalStyles } from '../../styles/global'
+import {globalStyles} from '../../styles/global'
 import { colors } from '../../utils/colors'
 import RatingStars from '../../components/RatinsStars';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -165,14 +165,14 @@ const ServiceRequest = ({ navigation, route }: any) => {
     return (
         <>
             <SafeAreaView
-                style={globalStyles.scrollBg}
+                style={globalStyles().scrollBg}
             >
                 <GestureHandlerRootView style={{ flex: 1, margin: 10 }}>
                     <View>
-                        <BasicView style={globalStyles.centerView}>
-                            <Text style={globalStyles.errorMessage}>{message}</Text>
+                        <BasicView style={globalStyles().centerView}>
+                            <Text style={globalStyles().errorMessage}>{message}</Text>
                         </BasicView>
-                        <View style={[globalStyles.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
+                        <View style={[globalStyles().circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
 
 
                             <Image
@@ -216,13 +216,13 @@ const ServiceRequest = ({ navigation, route }: any) => {
                         </View>
                         <View>
                             <Text>{service?.description}</Text>
-                            <View style={globalStyles.chooseServiceBtn}>
-                                <TouchableOpacity style={globalStyles.chooseBtn}
+                            <View style={globalStyles().chooseServiceBtn}>
+                                <TouchableOpacity style={globalStyles().chooseBtn}
                                     onPress={() => handlePresentModalPress('Near providers')}
                                 >
                                     <Text style={{ color: colors.white }}>{t('screens:chooseService')}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={globalStyles.otherBtn}>
+                                <TouchableOpacity style={globalStyles().otherBtn}>
                                     <Text style={{ color: colors.white }}>{t('screens:otherService')}</Text>
                                 </TouchableOpacity>
                             </View>
@@ -254,7 +254,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     <Text style={styles.title}>{t('screens:Services')}</Text>
 
 
-                                    <View style={globalStyles.subCategory}>
+                                    <View style={globalStyles().subCategory}>
                                         <ContentServiceList
                                             data={providerSubServices}
                                             toggleSubService={toggleSubService}
@@ -267,17 +267,17 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                 <View style={{ flexDirection: 'row', }}>
                                     {selectedSubservice.length > 1 && (
                                         <TouchableOpacity
-                                            style={[globalStyles.floatingButton, { backgroundColor: colors.dangerRed, right: '70%', }]}
+                                            style={[globalStyles().floatingButton, { backgroundColor: colors.dangerRed, right: '70%', }]}
                                             onPress={handleClearAll}
                                         >
-                                            <Text style={globalStyles.floatingBtnText}>{t('screens:clearAll')}</Text>
+                                            <Text style={globalStyles().floatingBtnText}>{t('screens:clearAll')}</Text>
                                         </TouchableOpacity>
                                     )}
 
                                 </View>
 
                                 <TouchableOpacity
-                                    style={[globalStyles.floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
+                                    style={[globalStyles().floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
                                     loading={loading}
                                     onPress={() => {
                                         if (selectedSubservice.length > 0) {
@@ -288,7 +288,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     }}
 
                                 >
-                                    <Text style={globalStyles.floatingBtnText}>{`(${selectedSubservice.length}) ${t('screens:request')}`}</Text>
+                                    <Text style={globalStyles().floatingBtnText}>{`(${selectedSubservice.length}) ${t('screens:request')}`}</Text>
                                 </TouchableOpacity>
 
                             </BottomSheetModal>
@@ -296,8 +296,6 @@ const ServiceRequest = ({ navigation, route }: any) => {
                         </View>
 
                     </BottomSheetModalProvider>
-
-
 
                 </GestureHandlerRootView>
             </SafeAreaView>

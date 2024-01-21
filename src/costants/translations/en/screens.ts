@@ -25,10 +25,16 @@
     cancel:'Cancel',
     pleaseAddService:'Please Add Service',
     requestSentSuccessfully:'Requests Sent Sucessfully',
-    comfirm:'Confirm service request',
+    comfirm:'Comfirm',
     action:'Action',
     cancelService:'Cancel Request',
     requestUpdatedSuccessfully:'Request Updated Successfully',
     updatePicture:'Update picture',
-    uploading:'uploading'
+    uploading:'uploading',
+    recentSearch:'Recent Search',
+    dark:'Dark',
+    light:'Light',
+    onbordingWelcome:'Welcome! Ready to make service requests effortlessly? We\'re here to simplify the process for you. Let\'s get started!',
+    chooseLanguage:'Choose your preferred language',
+    getStarted:'Hello! Lets get started'
   };

@@ -220,6 +220,7 @@ const userSlice = createSlice({
   initialState: {
     user: {} as UserData,
     config: {},
+    isFirstTimeUser:true,
     loading: false,
     status: '',
   },
@@ -229,6 +230,10 @@ const userSlice = createSlice({
     },
     clearMessage(state: any) {
       state.status = null;
+    },
+
+    setFirstTime: (state, action) => {
+      state.isFirstTimeUser = action.payload;
     },
   },
   extraReducers: builder => {
@@ -461,6 +466,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { userLogout, clearMessage } = userSlice.actions;
+export const { userLogout, clearMessage,setFirstTime } = userSlice.actions;
 
 export default userSlice.reducer;

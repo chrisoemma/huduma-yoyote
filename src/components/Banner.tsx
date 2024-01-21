@@ -1,21 +1,32 @@
-import React from "react";
-import { View, Animated, Image,StyleSheet, Dimensions } from "react-native";
+import React, { useRef, useEffect } from "react";
+import { View, Animated, Image, StyleSheet, Dimensions } from "react-native";
 import { colors } from "../utils/colors";
 
-
-const Banner = ({
-  BannerHeight,
-  BannerImgs,
-  dotSize,
-  dotColor,
-}) => {
-  const scrollX = React.useRef(new Animated.Value(0)).current;
+const Banner = ({ BannerHeight, BannerImgs, dotSize, dotColor }) => {
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const flatListRef = useRef(null);
   const { width } = Dimensions.get("screen");
+  const BannerWidth = width;
 
-  const BannerWidth=width
+  useEffect(() => {
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      if (flatListRef.current) {
+        currentIndex = (currentIndex + 1) % BannerImgs.length;
+        flatListRef.current.scrollToIndex({
+          animated: true,
+          index: currentIndex,
+        });
+      }
+    }, 8000);
+  
+    return () => clearInterval(interval);
+  }, [BannerImgs]);
+
   return (
     <View style={{ height: BannerHeight, overflow: "hidden" }}>
       <Animated.FlatList
+        ref={flatListRef}
         data={BannerImgs}
         keyExtractor={(_, index) => index.toString()}
         snapToInterval={BannerWidth}
@@ -31,12 +42,12 @@ const Banner = ({
           return (
             <View>
               <Image
-                source={require('./../../assets/images/banner.jpg')}
+                source={{ uri: item?.item?.url }}
                 style={{
                   resizeMode: "cover",
                   width: BannerWidth,
                   height: BannerHeight,
-               
+                  borderRadius: 20,
                 }}
               />
             </View>
@@ -89,7 +100,7 @@ const styles = StyleSheet.create({
   },
   dotIndicator: {
     width: 20,
-    height:20,
+    height: 20,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.secondary,
@@ -98,4 +109,5 @@ const styles = StyleSheet.create({
     left: -5,
   },
 });
+
 export default Banner;

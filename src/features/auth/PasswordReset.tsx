@@ -49,6 +49,9 @@ const PasswordResetScreen = ({route, navigation}: any) => {
   //   }
   // }, [status]);
 
+
+  const stylesGlobal = globalStyles();
+
   const {
     control,
     handleSubmit,
@@ -92,24 +95,24 @@ const PasswordResetScreen = ({route, navigation}: any) => {
     <SafeAreaView>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <Container>
-          <BasicView style={globalStyles.marginTop60}>
-            <Text style={globalStyles.mediumHeading}>{t('auth:resetPassword')}</Text>
+          <BasicView style={stylesGlobal.marginTop60}>
+            <Text style={stylesGlobal.mediumHeading}>{t('auth:resetPassword')}</Text>
           </BasicView>
 
           <BasicView>
-            <Text style={globalStyles.errorMessage}>{message}</Text>
+            <Text style={stylesGlobal.errorMessage}>{message}</Text>
           </BasicView>
 
           <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop20,
+                  stylesGlobal.inputFieldTitle,
+                  stylesGlobal.marginTop20,
                 ]}>
                 {t('auth:password')}
               </Text>
 
-              <View style={globalStyles.passwordInputContainer}>
+              <View style={stylesGlobal.passwordInputContainer}>
                 <Controller
                   control={control}
                   rules={{
@@ -118,7 +121,7 @@ const PasswordResetScreen = ({route, navigation}: any) => {
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={globalStyles.passwordInputField}
+                      style={stylesGlobal.passwordInputField}
                       secureTextEntry={passwordVisibility}
                       placeholder={t('auth:enterPassword')}
                       onBlur={onBlur}
@@ -134,13 +137,13 @@ const PasswordResetScreen = ({route, navigation}: any) => {
                 </TouchableOpacity>
               </View>
               {errors.password && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={stylesGlobal.errorMessage}>
                   {t('auth:passwordRequired')}
                 </Text>
               )}
             </BasicView>
 
-          <BasicView style={globalStyles.marginTop30}>
+          <BasicView style={stylesGlobal.marginTop30}>
             <Button loading={loading} onPress={handleSubmit(onSubmit)}>
               <ButtonText>{t('auth:requestResetPassword')}</ButtonText>
             </Button>
@@ -151,8 +154,8 @@ const PasswordResetScreen = ({route, navigation}: any) => {
               onPress={() => {
                 navigation.navigate('Register');
               }}
-              style={[globalStyles.marginTop20, globalStyles.centerView]}>
-              <Text style={globalStyles.touchablePlainTextSecondary}>
+              style={[stylesGlobal.marginTop20, stylesGlobal.centerView]}>
+              <Text style={stylesGlobal.touchablePlainTextSecondary}>
                 {t('auth:alreadyHaveAccount')}
               </Text>
             </TouchableOpacity>

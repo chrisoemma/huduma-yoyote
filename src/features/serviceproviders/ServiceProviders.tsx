@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet,SafeAreaView } from 'react-native';
 import { colors } from '../../utils/colors';
-import { globalStyles } from '../../styles/global';
+import {globalStyles} from '../../styles/global';
 import ProviderList from '../../components/ProviderList';
 import { useTranslation } from 'react-i18next';
 import { useSelector,RootStateOrAny } from 'react-redux';
@@ -22,6 +22,11 @@ const ServiceProviders = ({navigation,route}:any) => {
     (state: RootStateOrAny) => state.providers,
 );
 
+const { isDarkMode } = useSelector(
+  (state: RootStateOrAny) => state.theme,
+);
+
+
 const dispatch = useAppDispatch();
 
 useEffect(() => {
@@ -36,13 +41,17 @@ useEffect(() => {
   const renderProviderItem = ({ item }:any) => (
     
     <View style={styles.itemlistContainer}>
-      <ProviderList  navigation={navigation}  provider={item} service={params?.service}/>
+      <ProviderList  
+      navigation={navigation} 
+       provider={item} service={params?.service}
+       isDarkMode={isDarkMode}
+       />
     </View>
   );
 
   return (
     <SafeAreaView
-    style={globalStyles.scrollBg}
+    style={globalStyles().scrollBg}
     >
     <View style={styles.container}>
       <TouchableOpacity

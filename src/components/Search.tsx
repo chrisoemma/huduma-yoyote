@@ -2,28 +2,54 @@ import React, { useContext } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Keyboard, ScrollView, StyleSheet, TextInput } from 'react-native'
 import { colors } from '../utils/colors';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { addRecentSearch, removeRecentSearch } from '../features/home/SearchSlice';
+import { useAppDispatch } from '../app/store';
+import isEqual from 'lodash/isEqual';
+import { useTranslation } from 'react-i18next';
 
 const Search = ({
-
     onChange,
     searches,
     recentSearches,
-
-    //   searchesLoading,
-       inputRef,
-    //   form,
-    navigation
+       form,
+    navigation,
+    isDarkMode
 }: any) => {
+   
 
 
+    const dispatch = useAppDispatch();
 
+    const removeRecent =(item)=>{
+        dispatch(removeRecentSearch(item.id));
+    }
 
-    const Item = ({ title }: any) => (
+    const recentSearchNavigation = (item)=>{
+            
 
-        <TouchableOpacity>
-            <View style={styles.item}>
-                <Text style={styles.innerTitle}>{title}</Text>
-                <TouchableOpacity>
+       // console.log('iteemmeme',item)
+        if(item.category=='service'){
+            navigation.navigate('Service providers',{
+                service:item.data,
+              })
+        }else if(item.category=='category'){
+            navigation.navigate('Single category',{
+                category:item.data,
+              })
+        }else if(item.category=='sub services'){
+              //screen for sub services
+        }else{
+           ///screen for providerss
+        }
+    }
+    const Item = ({item }: any) => (
+
+        <TouchableOpacity key={item.id}
+           onPress={()=>recentSearchNavigation(item)}
+        >
+            <View style={[styles.item,{borderRadius:10}]}>
+                <Text style={[styles.innerTitle,{color:colors.black}]}>{item.data.name}</Text>
+                <TouchableOpacity onPress={()=>removeRecent(item)}>
                     <Text style={styles.deleteButton}>X</Text>
                 </TouchableOpacity>
 
@@ -32,30 +58,73 @@ const Search = ({
     );
 
     const renderItem = ({ item }) => (
-        <Item title={item.title} />
+        <Item item={item} />
     );
 
     const getSearchedData = (searchedCategory, item) => {
+       
 
-    }
+        console.log('searched category',searchedCategory)
+        console.log('item',item);
+
+        const isDuplicate = recentSearches.some(
+          (search) => search.category === searchedCategory && isEqual(search.data, item)
+        );
+           
+        if (!isDuplicate) {
+          const formattedObject = {
+            id: recentSearches.length + 1,
+            category: searchedCategory,
+            data: item
+          };
+      
+          dispatch(addRecentSearch(formattedObject));
+        }
+         
+        if(searchedCategory=='service'){
+            navigation.navigate('Service providers',{
+                service:item,
+              })
+        }else if(searchedCategory=='category'){
+            navigation.navigate('Single category',{
+                category:item,
+              })
+        }else if(searchedCategory=='sub services'){
+              //screen for sub services
+        }else{
+           ///screen for providerss
+        }
+        
+
+
+      };
+      
+      const { t } = useTranslation();
 
     return (
-        <View style={styles.wrapper}>
-            <View style={styles.searchHeader}>
+        <View style={[styles.wrapper,{backgroundColor:isDarkMode?colors.black:colors.white}]}>
+            <View style={[styles.searchHeader,{marginTop:15}]}>
                 <TouchableOpacity onPress={() => {
                     Keyboard.dismiss();
                     navigation.goBack();
 
                 }}>
                     <View style={styles.searchIcon}>
-                        <Icon name="arrow-back-outline" type="ionicons" size={30} />
+                        <Icon name="arrow-back-outline"
+                         type="ionicons" size={30}
+                          style={{color:isDarkMode?colors.white:colors.black}}
+                         />
                     </View>
                 </TouchableOpacity>
-                <View style={styles.inputContainer}>
+                <View style={[styles.inputContainer]}>
                     <TextInput placeholder="Search..."
-                        style={styles.input}
+                        style={[styles.input,{
+                            color:colors.black,
+                            backgroundColor:colors.white,
+                            borderRadius:20
+                        }]}
                         autoFocus={true}
-                        // value={form.search || ""}
+                        value={form.search || ""}
                         onChangeText={(value) => {
                             onChange({ name: "search", value });
                         }}
@@ -63,9 +132,11 @@ const Search = ({
                 </View>
             </View>
             <View style={styles.recentSearch}>
-                <Text
-                    style={{ fontSize: 18, fontFamily: 'Poppins-Medium' }}
-                >Recent Search</Text>
+               {recentSearches.length>0 ? <Text
+                    style={{ fontSize: 17, fontFamily: 'Poppins-Medium',
+                     color:isDarkMode?colors.white:colors.black
+                }}
+                >{t('screens:recentSearch')}</Text>:<View />} 
                 <FlatList
                     data={recentSearches}
                     renderItem={renderItem}
@@ -78,12 +149,12 @@ const Search = ({
                 <View style={styles.searches}>
                     {searches.length > 0 ? searches.map((search) => (
                         <View style={styles.divSettings}>
-                            {search.data.length > 0 ? (<Text style={styles.title}>{search.title}</Text>) : <></>}
+                            {search.data.length > 0 ? (<Text style={[styles.title,{color:isDarkMode?colors.white:colors.black}]}>{search.title}</Text>) : <></>}
                             {
                                 search.data.map(innersearch => (
                                     <TouchableOpacity onPress={() => getSearchedData(search.title, innersearch)}>
                                         <View style={styles.singleSearch} key={innersearch.name}>
-                                            <Text style={styles.innerTitle}>{innersearch.name}</Text>
+                                            <Text style={[styles.innerTitle,{color:isDarkMode?colors.white:colors.black}]}>{innersearch.name}</Text>
                                         </View>
                                     </TouchableOpacity>
                                 ))
@@ -101,7 +172,6 @@ export default Search
 
 const styles = StyleSheet.create({
     wrapper: {
-        backgroundColor: colors.white,
         height: "100%",
     },
     search: {
@@ -112,7 +182,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
     recentSearch: {
-        marginLeft: 10,
+        marginHorizontal:7,
     },
     item: {
         backgroundColor: "#fafafa",
@@ -124,7 +194,7 @@ const styles = StyleSheet.create({
     deleteButton: {
         color: "red",
         marginLeft: 14,
-        fontSize: 16,
+        fontSize: 21,
     },
     searchHeader: {
         height: 60,
@@ -153,8 +223,7 @@ const styles = StyleSheet.create({
         color: '#b0aeae'
     },
     innerTitle: {
-        fontSize: 14,
-        marginLeft: 10
+        fontSize: 13,
     },
     singleSearch: {
         marginVertical: 6,

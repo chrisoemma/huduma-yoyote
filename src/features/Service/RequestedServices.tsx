@@ -17,12 +17,6 @@ import { makePhoneCall } from '../../utils/utilts';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { getProviderSubServices } from '../serviceproviders/ServiceProviderSlice';
-import {
-    Menu,
-    MenuOptions,
-    MenuOption,
-    MenuTrigger,
-} from 'react-native-popup-menu';
 import { updateRequestStatus } from '../requests/RequestSlice';
 import { BasicView } from '../../components/BasicView';
 
@@ -34,6 +28,10 @@ const RequestedServices = ({ navigation, route }: any) => {
 
     const { user } = useSelector(
         (state: RootStateOrAny) => state.user,
+    );
+
+    const { isDarkMode } = useSelector(
+        (state: RootStateOrAny) => state.theme,
     );
 
     const { loading, providerSubServices } = useSelector(
@@ -74,9 +72,9 @@ const RequestedServices = ({ navigation, route }: any) => {
     const [selectedSubservice, setSelectedSubservice] = useState([]);
 
     const PhoneNumber = `${request?.provider?.phone}`;
-      
 
-       console.log('provider request',request?.provider)
+
+    console.log('provider request', request?.provider)
 
 
     React.useLayoutEffect(() => {
@@ -136,15 +134,15 @@ const RequestedServices = ({ navigation, route }: any) => {
     return (
         <>
             <SafeAreaView
-                style={globalStyles.scrollBg}
+                style={globalStyles().scrollBg}
             >
 
                 <GestureHandlerRootView style={{ flex: 1, margin: 10 }}>
-                    <BasicView style={globalStyles.centerView}>
-                        <Text style={globalStyles.errorMessage}>{message}</Text>
+                    <BasicView style={globalStyles().centerView}>
+                        <Text style={globalStyles().errorMessage}>{message}</Text>
                     </BasicView>
                     <View>
-                        <View style={[globalStyles.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
+                        <View style={[globalStyles().circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
 
 
                             <Image
@@ -188,45 +186,14 @@ const RequestedServices = ({ navigation, route }: any) => {
                         </View>
                         <Text>{request?.service?.description}</Text>
 
-                        <View style={[globalStyles.chooseServiceBtn, { justifyContent: 'space-between' }]}>
-                            <TouchableOpacity style={globalStyles.chooseBtn}
+                        <View style={[globalStyles().chooseServiceBtn, { justifyContent: 'space-between' }]}>
+                            <TouchableOpacity style={globalStyles().chooseBtn}
                                 onPress={() => handlePresentModalPress('Near providers')}
                             >
                                 <Text style={{ color: colors.white }}>{t('navigate:requestedServices')}</Text>
                             </TouchableOpacity>
 
-                            {request_status == 'Requested' || request_status == 'Accepted' ? (
-                                <TouchableOpacity>
-                                    <Menu>
-                                        <MenuTrigger style={{ backgroundColor: colors.alsoLightGrey }}>
-                                            <Text style={{ padding: 5, fontWeight: 'bold' }} >{t('screens:action')}</Text>
-                                        </MenuTrigger>
-                                        <MenuOptions>
-                                            <MenuOption onSelect={() => updateRequest(request?.id, 'Cancelled')} >
-                                                <Text style={{ color: colors.dangerRed }}>{t('screens:cancelService')}</Text>
-                                            </MenuOption>
-                                        </MenuOptions>
-                                    </Menu>
-                                </TouchableOpacity>
-                            ) : <></>}
-
-                            {request_status == 'Accepted' ? (
-                                <TouchableOpacity style={{}}>
-                                    <Menu>
-                                        <MenuTrigger style={{ backgroundColor: colors.alsoLightGrey }}>
-                                            <Text style={{ padding: 5, fontWeight: 'bold' }} >{t('screens:action')}</Text>
-                                        </MenuTrigger>
-                                        <MenuOptions>
-                                            <MenuOption onSelect={() => updateRequest(request?.id, 'Comfirmed')} >
-                                                <Text style={{ color: colors.dangerRed }}>{t('screens:comfirm')}</Text>
-                                            </MenuOption>
-                                        </MenuOptions>
-                                    </Menu>
-                                </TouchableOpacity>
-                            ) : <></>}
-
-
-                            <TouchableOpacity style={globalStyles.otherBtn}>
+                            <TouchableOpacity style={globalStyles().otherBtn}>
                                 <Text style={{ color: colors.white }}>{request_status}</Text>
                             </TouchableOpacity>
                         </View>
@@ -254,7 +221,7 @@ const RequestedServices = ({ navigation, route }: any) => {
                                     <Text style={styles.title}>{t('screens:Services')}</Text>
 
 
-                                    <View style={globalStyles.subCategory}>
+                                    <View style={globalStyles().subCategory}>
                                         <ContentServiceList
                                             data={providerSubServices}
                                             toggleSubService={{}}
@@ -268,6 +235,39 @@ const RequestedServices = ({ navigation, route }: any) => {
                             </BottomSheetModal>
                         </View>
                     </BottomSheetModalProvider>
+                    <View style={{
+                        backgroundColor: isDarkMode ? colors.black : colors.white, height: 100,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        padding: 20
+
+                    }}>
+
+                        {request_status == 'Accepted' ? (
+                            <TouchableOpacity
+                                onPress={() => updateRequest(request?.id, 'Comfirmed')}
+                                style={{
+                                    backgroundColor: colors.successGreen, borderRadius: 20,
+                                    justifyContent: 'center',
+                                    padding: 20
+                                }}>
+                                <Text style={{ color: colors.white }}>{t('screens:comfirm')}</Text>
+                            </TouchableOpacity>
+
+                        ) : <></>}
+
+                        {request_status == 'Requested' || request_status == 'Accepted' ? (
+                            <TouchableOpacity
+                                onPress={() => updateRequest(request?.id, 'Cancelled')}
+                                style={{
+                                    backgroundColor: colors.dangerRed, borderRadius: 20,
+                                    justifyContent: 'center',
+                                    padding: 20
+                                }}>
+                                <Text style={{ color: colors.white }}>{t('screens:cancel')}</Text>
+                            </TouchableOpacity>
+                        ) : <></>}
+                    </View>
                 </GestureHandlerRootView>
             </SafeAreaView>
 

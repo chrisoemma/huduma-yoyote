@@ -88,57 +88,73 @@ const dispatch = useAppDispatch();
 
   useEffect(() => {
     const setupPusher = async () => {
-     
       const headers = {
         'Authorization': `Bearer ${user.token}`
       };
 
-      try {
-      await pusher.init({
-        apiKey:"70f571d3d3621db1c3d0",
-        cluster: "ap2",
-        authEndpoint:`${API_URL}/api/v1/pusher/auth`,
-        // auth:headers
-
-      });
-
+  
     
-
-      console.log('heddddd',headers);
-
-      const myChannel = await pusher.subscribe({
-        channelName: `private-location-updates.${user.id}`, 
-        headers:  headers,
-        onSubscriptionSucceeded: (channelName,data) => {
-          
-          console.log('Subscription succeeded:', channelName, data);
-        },
-       onSubscriptionError: (channelName: string, message:string, e:any) =>{
-          console.log(`onSubscriptionError: ${message} channelName: ${channelName} Exception: ${e}`);
-        },
+      try {
+        await pusher.init({
+          apiKey: "70f571d3d3621db1c3d0",
+          cluster: "ap2",
+          authEndpoint: `${API_URL}/pusher/auth`,
+          onAuthorizer: (channelName, socketId) => {
+            return fetch(`${API_URL}/pusher/auth`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...headers,
+              },
+              body: JSON.stringify({
+                socket_id: socketId,
+                channel_name: channelName,
+              }),
+            })
+            .then(response => response.json())
+            .then(authData => {
+              console.log('Auth data:', authData);
+              return authData;
+            })
+            .catch(error => {
+              console.error('Error during Pusher authentication:', error);
+              throw error;
+            });
+          },
+          // other pusher configuration options...
+        });
+    
+        const myChannel = await pusher.subscribe({
+          channelName: `private-location-updates.${user.id}`,
+          headers: headers,
+          onSubscriptionSucceeded: (channelName, data) => {
+            console.log('Subscription succeeded:', channelName, data);
+          },
+          onSubscriptionError: (channelName, message, e) => {
+            console.log(`onSubscriptionError: ${message} channelName: ${channelName} Exception: ${e}`);
+          },
           onEvent: (event: PusherEvent) => {
-          if (extractEventName(event.eventName) === "ClientLocationUpdated") {
-                 if(event.data){
-            const parsedData = JSON.parse(event.data);
-            const latitude = parseFloat(parsedData.client_location.latitude);
-            const longitude = parseFloat(parsedData.client_location.longitude);
-           console.log('Received ClientLocationUpdated event:', longitude);
-            setUserLocation( {latitude,longitude} );
-                 
-          }
-          }
-        },
-      });
-
-      await pusher.connect();
-
-    } catch (e) {
-      console.log(`ERROR: ${e}`);
-    }
-    }
+            if (extractEventName(event.eventName) === "ClientLocationUpdated") {
+              if (event.data) {
+                const parsedData = JSON.parse(event.data);
+                const latitude = parseFloat(parsedData.client_location.latitude);
+                const longitude = parseFloat(parsedData.client_location.longitude);
+                console.log('Received ClientLocationUpdated event:', longitude);
+                setUserLocation({ latitude, longitude });
+              }
+            }
+          },
+        });
+    
+        await pusher.connect();
+      } catch (e) {
+        console.log(`ERROR: ${e}`);
+      }
+    };
+    
     setupPusher() 
     return () => {
-     
+    //  await pusher.reset();
      pusher.unsubscribe({channelName:`private-location-updates.${user.id}`});
     };
   },[]);

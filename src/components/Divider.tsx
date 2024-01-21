@@ -1,12 +1,12 @@
 import React from 'react'
 import { View } from 'react-native'
-import { globalStyles } from '../styles/global'
+import {globalStyles} from '../styles/global'
 
 
 const Divider = () => {
     return (
       <>
-      <View  style={globalStyles.separator}/>
+      <View  style={globalStyles().separator}/>
       </>
     )
 }

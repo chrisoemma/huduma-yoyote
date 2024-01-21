@@ -14,8 +14,8 @@ import Icon from 'react-native-vector-icons/Feather';
 
 import { useForm, Controller } from 'react-hook-form';
 import { RootStateOrAny, useSelector } from 'react-redux';
-import { userRegiter } from './userSlice';
-import { globalStyles } from '../../styles/global';
+import { setFirstTime, userRegiter } from './userSlice';
+import {globalStyles} from '../../styles/global';
 import { useTogglePasswordVisibility } from '../../hooks/useTogglePasswordVisibility';
 import PhoneInput from 'react-native-phone-number-input';
 import { colors } from '../../utils/colors';
@@ -31,8 +31,12 @@ const RegisterScreen = ({ route, navigation }: any) => {
 
 
   const dispatch = useAppDispatch();
-  const { user, loading, status } = useSelector(
+  const { user, loading, status,isFirstTimeUser} = useSelector(
     (state: RootStateOrAny) => state.user,
+  );
+
+  const { isDarkMode } = useSelector(
+    (state: RootStateOrAny) => state.theme,
   );
 
   const { passwordVisibility, rightIcon, handlePasswordVisibility } =
@@ -44,7 +48,7 @@ const RegisterScreen = ({ route, navigation }: any) => {
 
   const { t } = useTranslation();
 
-
+  const styles = globalStyles();
   const {
     control,
     handleSubmit,
@@ -56,6 +60,13 @@ const RegisterScreen = ({ route, navigation }: any) => {
       name: '',
     },
   });
+
+
+  useEffect(() => {
+    if(isFirstTimeUser){
+        dispatch(setFirstTime(false))
+    }
+  }, []);
 
 
   const setDisappearMessage = (message: any) => {
@@ -89,28 +100,26 @@ const RegisterScreen = ({ route, navigation }: any) => {
 
   return (
 
-    <SafeAreaView>
+    <SafeAreaView style={styles.scrollBg}>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <Container>
-          <View style={globalStyles.centerView}>
+       
+          <View style={styles.centerView}>
             <Image
-              source={require('./../../../assets/images/logo.jpg')}
-              style={[globalStyles.verticalLogo,{height:100,marginTop:20}]}
+              source={isDarkMode? require('./../../../assets/images/logo-white.png'): require('./../../../assets/images/logo.png')}
+              style={[styles.verticalLogo,{height:100,marginTop:20}]}
             />
           </View>
+         
           <View>
-            <Text style={globalStyles.largeHeading}>{t('auth:register')}</Text>
-          </View>
-          <View>
-            <BasicView style={globalStyles.centerView}>
-              <Text style={globalStyles.errorMessage}>{message}</Text>
+            <BasicView style={styles.centerView}>
+              <Text style={styles.errorMessage}>{message}</Text>
             </BasicView>
 
             <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop10,
+                  styles.inputFieldTitle,
+                  styles.marginTop10,
                 ]}>
                 {t('auth:phone')}
               </Text>
@@ -136,9 +145,9 @@ const RegisterScreen = ({ route, navigation }: any) => {
                     withDarkTheme
                     withShadow
                     autoFocus
-                    containerStyle={globalStyles.phoneInputContainer}
-                    textContainerStyle={globalStyles.phoneInputTextContainer}
-                    textInputStyle={globalStyles.phoneInputField}
+                    containerStyle={styles.phoneInputContainer}
+                    textContainerStyle={styles.phoneInputTextContainer}
+                    textInputStyle={styles.phoneInputField}
                     textInputProps={{
                       maxLength: 9,
                     }}
@@ -147,7 +156,7 @@ const RegisterScreen = ({ route, navigation }: any) => {
                 name="phone"
               />
               {errors.phone && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={styles.errorMessage}>
                   {t('auth:phoneRequired')}
                 </Text>
               )}
@@ -156,8 +165,8 @@ const RegisterScreen = ({ route, navigation }: any) => {
             <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop20,
+                  styles.inputFieldTitle,
+                  styles.marginTop20,
                 ]}>
                {t('auth:name')}
               </Text>
@@ -180,7 +189,7 @@ const RegisterScreen = ({ route, navigation }: any) => {
               />
 
               {errors.name && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={styles.errorMessage}>
                   {t('auth:nameRequired')}
                 </Text>
               )}
@@ -189,13 +198,13 @@ const RegisterScreen = ({ route, navigation }: any) => {
             <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop20,
+                  styles.inputFieldTitle,
+                  styles.marginTop20,
                 ]}>
                 {t('auth:password')}
               </Text>
 
-              <View style={globalStyles.passwordInputContainer}>
+              <View style={styles.passwordInputContainer}>
                 <Controller
                   control={control}
                   rules={{
@@ -204,7 +213,9 @@ const RegisterScreen = ({ route, navigation }: any) => {
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={globalStyles.passwordInputField}
+                      style={[styles.passwordInputField,
+                        {backgroundColor:colors.white,color:colors.black}
+                      ]}
                       secureTextEntry={passwordVisibility}
                       placeholder={t('auth:enterPassword')}
                       onBlur={onBlur}
@@ -220,7 +231,7 @@ const RegisterScreen = ({ route, navigation }: any) => {
                 </TouchableOpacity>
               </View>
               {errors.password && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={styles.errorMessage}>
                   {t('auth:passwordRequired')}
                 </Text>
               )}
@@ -237,13 +248,13 @@ const RegisterScreen = ({ route, navigation }: any) => {
               onPress={() => {
                 navigation.navigate('Login');
               }}
-              style={[globalStyles.marginTop20, globalStyles.centerView]}>
-              <Text style={globalStyles.touchablePlainTextSecondary}>
+              style={[styles.marginTop20, styles.centerView]}>
+              <Text style={styles.touchablePlainTextSecondary}>
                 {t('auth:alreadyHaveAccount')}
               </Text>
             </TouchableOpacity>
           </View>
-        </Container>
+        
       </ScrollView>
     </SafeAreaView>
   );

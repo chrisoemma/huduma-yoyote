@@ -11,23 +11,26 @@ import { useTranslation } from 'react-i18next';
 import { colors } from '../utils/colors';
 import { userLogout } from '../features/auth/userSlice';
 import { useDispatch, useSelector,RootStateOrAny } from 'react-redux';
+import { makePhoneCall } from '../utils/utilts';
+
+
 
 const DrawerHeader = styled.View`
   height: 150px;
   align-items: flex-start;
   justify-content: center;
   padding-left: 5px;
-  margin-bottom:40px;
-  background-color:#82D0D4;
+  margin-bottom: 40px;
+  background-color: ${colors.primary};
   border-bottom-left-radius: 10px;
-  border-bottom-right-radius:10px;
-
+  border-bottom-right-radius: 10px;
 `;
 
 const DrawerRow = styled.TouchableOpacity`
   flex-direction: row;
   padding-vertical: 2px;
   align-items: center;
+  background-color: ${props => props.isDarkMode ? colors.black :colors.whiteBackground};
 `;
 
 const DrawerIconContainer = styled.View`
@@ -38,9 +41,7 @@ const DrawerIconContainer = styled.View`
 
 const DrawerRowsContainer = styled.View`
   margin-top: 10px;
- 
 `;
-
 
 
 const CustomDrawerContent = (props: any) => {
@@ -49,9 +50,11 @@ const CustomDrawerContent = (props: any) => {
 
   const { user, loading } = useSelector((state: RootStateOrAny) => state.user);
 
-
+  const { isDarkMode } = props;
   React.useEffect(() => {
   }, [user]);
+
+  const phoneNumber = `${user?.phone}`;
 
   let  drawerItems=[];
   
@@ -75,22 +78,7 @@ const CustomDrawerContent = (props: any) => {
           screen: 'Settings',
         },
       },
-      {
-        name: 'Whatsapp',
-        icon: 'whatsapp',
-        language:'whatsapp',
-       
-      },
-      {
-        name: 'Support',
-        icon: 'phone',
-        language:'support',
-        screen: 'Support',
-        options: {
-          screen: 'Suport',
-        },
-      },
-      
+     
     ]
   }
 //}
@@ -112,11 +100,15 @@ const CustomDrawerContent = (props: any) => {
    },
  ]);
 
+ const WhatsappChatBot =()=>{
+
+ }
+
   return (
     <DrawerContentScrollView {...props}>
-      <DrawerHeader>
+      <DrawerHeader isDarkMode={isDarkMode}>
         <Image
-          source={require('./../../assets/images/logo.jpg')}
+          source={isDarkMode? require('./../../assets/images/logo-white.png'): require('./../../assets/images/logo.png')}
           style={{
             width: '60%',
             height: 60,
@@ -124,11 +116,11 @@ const CustomDrawerContent = (props: any) => {
         />
         <View>
           <Text style={{
-            marginTop:10,
+            marginTop: 10,
             color:colors.white,
-            fontWeight:'bold'
+            fontWeight: 'bold'
           }}>
-            Huduma popote
+            Espe services
           </Text>
         </View>
       </DrawerHeader>
@@ -137,43 +129,92 @@ const CustomDrawerContent = (props: any) => {
         {drawerItems.map(item => {
           return (
             <DrawerRow
+              key={item.name}
               onPress={() => {
                 props.navigation.navigate(item.screen, item.options);
-              }}>
+              }}
+              isDarkMode={isDarkMode}
+            >
               <DrawerIconContainer>
                 <FontAwesome5
                   name={item.icon}
-                  color={colors.alsoGrey}
+                  color={isDarkMode ? colors.white : colors.alsoGrey}
                   size={25}
                 />
               </DrawerIconContainer>
-              <Text
-              >
-                
-                {t(`navigate:${item.language}`)}
-              </Text>
+              <Text style={{ color: isDarkMode ? colors.white : colors.black }}>
+              {t(`navigate:${item.language}`)}
+            </Text>
             </DrawerRow>
           );
         })}
 
-        <DrawerRow
+<DrawerRow
           onPress={() => {
-            confirmLogout();
-          }}>
+      
+            WhatsappChatBot();
+          }}
+          isDarkMode={isDarkMode}
+        >
           <DrawerIconContainer>
             <FontAwesome5
-              name="sign-out-alt"
-              color={colors.alsoGrey}
+              name="whatsapp"
+              color={isDarkMode ? colors.white : colors.alsoGrey}
               size={25}
             />
           </DrawerIconContainer>
           <Text
+            style={{
+              color: isDarkMode ? colors.white : colors.black,
+            }}>
+            {t('navigate:whatsapp')}
+          </Text>
+        </DrawerRow>
+
+          <DrawerRow
+          onPress={() => {
+              makePhoneCall(phoneNumber)
+          }}
+          isDarkMode={isDarkMode}
         >
+          <DrawerIconContainer>
+            <FontAwesome5
+              name="phone"
+              color={isDarkMode ? colors.white : colors.alsoGrey}
+              size={25}
+            />
+          </DrawerIconContainer>
+          <Text
+            style={{
+              color: isDarkMode ? colors.white : colors.black,
+            }}>
+            {t('navigate:support')}
+          </Text>
+        </DrawerRow>
+
+        <DrawerRow
+          onPress={() => {
+            confirmLogout();
+          }}
+          isDarkMode={isDarkMode}
+        >
+          <DrawerIconContainer>
+            <FontAwesome5
+              name="sign-out-alt"
+              color={isDarkMode ? colors.white : colors.alsoGrey}
+              size={25}
+            />
+          </DrawerIconContainer>
+          <Text
+            style={{
+              color: isDarkMode ? colors.white :colors.black, 
+            }}>
             {t('navigate:logout')}
           </Text>
         </DrawerRow>
       </DrawerRowsContainer>
     </DrawerContentScrollView>
+
   );
 };
 

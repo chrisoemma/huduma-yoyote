@@ -20,6 +20,10 @@ import ClientSlice from '../features/account/ClientSlice';
 import ServiceProviderSlice from '../features/serviceproviders/ServiceProviderSlice';
 import LocationSlice from '../features/LocationUpdates/LocationSlice';
 import SearchSlice from '../features/home/SearchSlice';
+import ThemeSlice from '../features/settings/ThemeSlice';
+import BannerSlice from '../features/home/BannerSlice';
+import OnboardingSlice from '../features/onboarding/OnboardingSlice';
+import languageSlice from '../costants/languageSlice';
 
 
 const reducers = combineReducers({
@@ -30,7 +34,11 @@ const reducers = combineReducers({
   client:ClientSlice,
   providers:ServiceProviderSlice,
   locations:LocationSlice,
-  searches:SearchSlice
+  searches:SearchSlice,
+  theme:ThemeSlice,
+  banners:BannerSlice,
+  onboarding:OnboardingSlice,
+  language:languageSlice
 });
 
 const persistConfig = {

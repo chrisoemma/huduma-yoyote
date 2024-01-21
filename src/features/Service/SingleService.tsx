@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import { globalStyles } from '../../styles/global';
+import {globalStyles} from '../../styles/global';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { colors } from '../../utils/colors';
 import { useTranslation } from 'react-i18next';
@@ -119,9 +119,9 @@ const SingleService = ({ route, navigation }: any) => {
   ]
   return (
     <SafeAreaView
-      style={globalStyles.scrollBg}
+      style={globalStyles().scrollBg}
     >
-      <View style={globalStyles.subCategory}>
+      <View style={globalStyles().subCategory}>
         <ContentServiceList 
         data={subServices}  
         toggleSubService={toggleSubService} selectedSubServices={selectedSubservice}
@@ -131,16 +131,16 @@ const SingleService = ({ route, navigation }: any) => {
       <View style={{flexDirection:'row',}}>
       {selectedSubservice.length > 1 && (
         <TouchableOpacity
-          style={[globalStyles.floatingButton, { backgroundColor: colors.dangerRed,  right:'70%', }]}
+          style={[globalStyles().floatingButton, { backgroundColor: colors.dangerRed,  right:'70%', }]}
           onPress={handleClearAll}
         >
-          <Text style={globalStyles.floatingBtnText}>Clear All</Text>
+          <Text style={globalStyles().floatingBtnText}>Clear All</Text>
         </TouchableOpacity>
       )}
       <TouchableOpacity
-        style={[globalStyles.floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
+        style={[globalStyles().floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
       >
-        <Text style={globalStyles.floatingBtnText}>{`${selectedSubservice.length} Find Providers`}</Text>
+        <Text style={globalStyles().floatingBtnText}>{`${selectedSubservice.length} Find Providers`}</Text>
       </TouchableOpacity>
       </View>
     </SafeAreaView>

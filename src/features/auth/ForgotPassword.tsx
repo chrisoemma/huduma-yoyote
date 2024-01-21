@@ -13,7 +13,7 @@ import {Container} from '../../components/Container';
 import {BasicView} from '../../components/BasicView';
 import {ButtonText} from '../../components/ButtonText';
 import Button from '../../components/Button';
-import { globalStyles } from '../../styles/global';
+import {globalStyles} from '../../styles/global';
 import { useTranslation } from 'react-i18next';
 
 const ForgotPasswordScreen = ({route, navigation}: any) => {
@@ -23,6 +23,8 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
   const {user, loading, status} = useSelector(
     (state: RootStateOrAny) => state.user,
   );
+
+  const styles = globalStyles();
 
   const phoneInput = useRef<PhoneInput>(null);
 
@@ -70,24 +72,25 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.scrollBg}>
+      
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <Container>
-          <BasicView style={globalStyles.marginTop60}>
-            <Text style={globalStyles.mediumHeading}>
+    
+          <BasicView style={styles.marginTop60}>
+            <Text style={styles.mediumHeading}>
              {t('auth:forgotPassword')}
             </Text>
           </BasicView>
 
           <BasicView>
-            <Text style={globalStyles.errorMessage}>{message}</Text>
+            <Text style={styles.errorMessage}>{message}</Text>
           </BasicView>
 
           <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop10,
+                  styles.inputFieldTitle,
+                  styles.marginTop10,
                 ]}>
                  {t('auth:phone')}
               </Text>
@@ -113,9 +116,9 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
                     withDarkTheme
                     withShadow
                     autoFocus
-                    containerStyle={globalStyles.phoneInputContainer}
-                    textContainerStyle={globalStyles.phoneInputTextContainer}
-                    textInputStyle={globalStyles.phoneInputField}
+                    containerStyle={styles.phoneInputContainer}
+                    textContainerStyle={styles.phoneInputTextContainer}
+                    textInputStyle={styles.phoneInputField}
                     textInputProps={{
                       maxLength: 9,
                     }}
@@ -124,14 +127,14 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
                 name="phone"
               />
               {errors.phone && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={styles.errorMessage}>
                   {t('auth:phoneRequired')}
                 </Text>
               )}
             </BasicView>
 
 
-          <BasicView style={globalStyles.marginTop30}>
+          <BasicView style={styles.marginTop30}>
             <Button loading={loading} onPress={handleSubmit(onSubmit)}>
               <ButtonText>{t('auth:requestResetPassword')}</ButtonText>
             </Button>
@@ -142,13 +145,13 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
               onPress={() => {
                 navigation.navigate('Login');
               }}
-              style={[globalStyles.marginTop20, globalStyles.centerView]}>
-              <Text style={globalStyles.touchablePlainTextSecondary}>
+              style={[styles.marginTop20, styles.centerView]}>
+              <Text style={styles.touchablePlainTextSecondary}>
                {t('auth:alreadyHaveAccount')}
               </Text>
             </TouchableOpacity>
           </BasicView>
-        </Container>
+     
       </ScrollView>
     </SafeAreaView>
   );

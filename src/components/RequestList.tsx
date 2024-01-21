@@ -1,10 +1,16 @@
 import { View, Text,TouchableOpacity,StyleSheet,Dimensions } from 'react-native'
 import React from 'react'
 import { colors } from '../utils/colors'
+import { useSelector,RootStateOrAny } from 'react-redux';
 
 const width = Dimensions.get('window').width;
 
 const RequestList = ({item,navigation}:any) => {
+
+  const { isDarkMode } = useSelector(
+    (state: RootStateOrAny) => state.theme,
+  );
+
   return (
     <TouchableOpacity style={styles.touchableOpacityStyles}
      onPress={()=>{navigation.navigate('Requested services',{
@@ -12,15 +18,15 @@ const RequestList = ({item,navigation}:any) => {
      })}}
     >
       <View>
-        <Text style={{color:colors.primary}}>{item?.service?.name}</Text>
+        <Text style={{color:colors.primary,fontWeight:'bold'}}>{item?.service?.name}</Text>
         <Text style={{paddingVertical:10,color:colors.black}}>{item?.provider?.name}</Text>
         {item?.requested_sub_services?.map((subService):any=>(
-             <Text>-{subService?.name}</Text>
+             <Text style={{color:colors.black}}>-{subService?.name}</Text>
            ))
            }
       </View>
       <View style={styles.bottomView}>
-         <View style={{marginRight:'35%'}}><Text >{item?.request_time}</Text></View>
+         <View style={{marginRight:'35%'}}><Text style={{color:colors.black}} >{item?.request_time}</Text></View>
          <TouchableOpacity style={styles.status}>
             <Text style={{color:colors.white}}>{item?.statuses[item?.statuses?.length-1]?.status}</Text>
          </TouchableOpacity>

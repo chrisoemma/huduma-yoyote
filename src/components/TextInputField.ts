@@ -8,4 +8,5 @@ export const TextInputField = styled.TextInput`
   border-radius: 8px;
   font-size: 14px;
   padding-horizontal: 10px;
+  color:${colors.black}
 `;

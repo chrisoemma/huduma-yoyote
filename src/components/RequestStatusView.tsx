@@ -68,7 +68,7 @@ const RequestStatusView = ({request}: any) => {
         </View>
       </RowView>
 
-      <RowView style={globalStyles.marginTop20}>
+      <RowView style={globalStyles().marginTop20}>
         <View>
           <TextView
             type="semiBold"

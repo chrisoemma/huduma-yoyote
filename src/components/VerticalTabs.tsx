@@ -1,7 +1,8 @@
 import React from 'react';
 import { ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { colors } from '../utils/colors';
 
-const VerticalTabs = ({ tabs, activeTab, onTabPress }:any) => {
+const VerticalTabs = ({ tabs, activeTab, onTabPress,isDarkMode}:any) => {
   return (
     <ScrollView style={styles.tabsContainer}>
       {tabs?.map((tab:any, index:any) => (
@@ -14,7 +15,7 @@ const VerticalTabs = ({ tabs, activeTab, onTabPress }:any) => {
           ]}
           onPress={() => onTabPress(tab.id)}
         >
-          <Text style={styles.tabText}>{tab.name}</Text>
+          <Text style={{fontSize:16,color:colors.black}}>{tab.name}</Text>
         </TouchableOpacity>
       ))}
     </ScrollView>
@@ -35,9 +36,7 @@ const styles = StyleSheet.create({
   activeTabItem: {
     backgroundColor: '#fff',
   },
-  tabText: {
-    fontSize: 16,
-  },
+
 });
 
 export default VerticalTabs;

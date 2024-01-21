@@ -1,6 +1,6 @@
 import { View, Text, SafeAreaView, FlatList,TouchableOpacity,StyleSheet, RefreshControl, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { globalStyles } from '../../styles/global'
+import {globalStyles} from '../../styles/global'
 import { colors } from '../../utils/colors';
 import RequestList from '../../components/RequestList';
 import { useTranslation } from 'react-i18next';
@@ -14,9 +14,15 @@ const Requests = ({navigation}:any) => {
     (state: RootStateOrAny) => state.user,
 );
 
+const { isDarkMode } = useSelector(
+  (state: RootStateOrAny) => state.theme,
+);
+
 const { loading, activeRequests,pastRequests } = useSelector(
   (state: RootStateOrAny) => state.requests,
 );
+
+
 
 const [refreshMessage,setRefreshMessage] =useState('');
 const dispatch = useAppDispatch();
@@ -65,7 +71,7 @@ const callGetRequests = React.useCallback(() => {
 
   return (
     <ScrollView
-    style={globalStyles.scrollBg}
+    style={globalStyles().scrollBg}
     refreshControl={
       <RefreshControl refreshing={refreshing} onRefresh={callGetRequests} />
   }
@@ -86,7 +92,12 @@ const callGetRequests = React.useCallback(() => {
       </TouchableOpacity>
     </View>
     {refreshMessage && (
-  <Text style={styles.refreshMessage}>{refreshMessage}</Text>
+  <Text style={{
+    color: isDarkMode ? colors.white : colors.black,
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 10,
+  }}>{refreshMessage}</Text>
 )}
     <View style={styles.listContainer}>
         <FlatList
@@ -102,6 +113,8 @@ const callGetRequests = React.useCallback(() => {
 }
 
 const styles = StyleSheet.create({
+
+  
     container: {
   
      // flex: 1,
@@ -135,12 +148,7 @@ const styles = StyleSheet.create({
     },
   
     
-      refreshMessage: {
-        color: 'green', // or your preferred color
-        fontSize: 16,
-        textAlign: 'center',
-        marginTop: 10,
-      },
+   
   
   });
 

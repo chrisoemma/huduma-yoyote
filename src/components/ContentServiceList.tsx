@@ -30,7 +30,7 @@ const ContentServiceList = ({  data, toggleSubService, selectedSubServices,navig
       <View style={styles.textContainer}>
       <Text style={styles.categoryService}>{item?.name}</Text>
       <Text style={styles.subservice}>{item?.service?.category?.name}</Text>
-      <Text style={styles.desc}>{item?.description}</Text>
+      <Text style={{color:colors.black}}>{item?.description}</Text>
       </View>
       </View>
       {screen=="new"?
@@ -60,11 +60,7 @@ const ContentServiceList = ({  data, toggleSubService, selectedSubServices,navig
       />
      ))
      }
-         {/* <FlatList
-          data={data}
-          renderItem={RenderItem}
-          keyExtractor={(item) => item?.id?.toString()}
-        /> */}
+   
     </View>
   );
 };

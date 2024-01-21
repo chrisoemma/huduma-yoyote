@@ -6,6 +6,7 @@ import VerifyScreen from '../features/auth/Verify';
 import PasswordResetScreen from '../features/auth/PasswordReset';
 import LoginScreen from '../features/auth/Login';
 import ForgotPasswordScreen from '../features/auth/ForgotPassword';
+import { useSelector,RootStateOrAny } from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,8 +15,11 @@ const screenOptions = {
 };
 
 const AuthStack = () => {
+
+  const { isFirstTimeUser } = useSelector((state: RootStateOrAny) => state.user);
+     console.log('firsttime user',isFirstTimeUser);
   return (
-    <Stack.Navigator initialRouteName="Login" screenOptions={screenOptions}>
+    <Stack.Navigator initialRouteName={isFirstTimeUser?"Register":"Login"} screenOptions={screenOptions}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Verify" component={VerifyScreen} />

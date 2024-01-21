@@ -1,7 +1,8 @@
 import React from 'react';
 import { FlatList, View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { colors } from '../utils/colors';
 
-const ContentList = ({ data,navigation,onPress }: any) => {
+const ContentList = ({ data,navigation,onPress,isDarkMode }: any) => {
   const itemsPerRow = 3;
   const screenWidth = Dimensions.get('window').width;
 
@@ -29,7 +30,7 @@ const ContentList = ({ data,navigation,onPress }: any) => {
         
       />
       
-      <Text>{item.name}</Text>
+      <Text style={{color:isDarkMode?colors.white:colors.black}}>{item.name}</Text>
     </TouchableOpacity>
   );
 
@@ -49,21 +50,16 @@ const ContentList = ({ data,navigation,onPress }: any) => {
 
 const styles = StyleSheet.create({
     container: {
-      // flex: 1,
         paddingTop: 20,
         paddingHorizontal: 10,
         paddingVertical: 20,
       },
       contentContainer: {
-        
-        // flexDirection: 'row',
-        // flexWrap: 'wrap', // Allow items to wrap within a row
            justifyContent: 'space-between',
         
       },
       contentItem: {
          flex:1,
-       alignItems: 'center',
        padding: 10,
        margin:2
       },

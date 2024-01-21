@@ -16,7 +16,7 @@ const LANG_CODES = Object.keys(LANGUAGES);
 const LANGUAGE_DETECTOR = {
   type: 'languageDetector',
   async: true,
-  detect:(callback: any) => {
+  detect: (callback: any) => {
     AsyncStorage.getItem('user-language', (err, language) => {
       // if error fetching stored data or no language was stored
       // display errors when in DEV mode as console statements
@@ -26,40 +26,38 @@ const LANGUAGE_DETECTOR = {
         } else {
           console.log('No language is set, choosing English as fallback');
         }
-        
+
         const findBestAvailableLanguage = RNLocalize.findBestLanguageTag(LANG_CODES);
         const fallbackLanguage = findBestAvailableLanguage ? findBestAvailableLanguage.languageTag : 'en';
-    
+
         callback(err, fallbackLanguage);
       } else {
-        callback(null,language);
+        callback(null, language);
       }
     });
-    
   },
 
   init: () => {},
-  cacheUserLanguage:(language:any) => {
+  cacheUserLanguage: (language: any) => {
     AsyncStorage.setItem('user-language', language);
-  }
+  },
 } as const;
 
 i18n
-  // detect language
   .use(LANGUAGE_DETECTOR)
-  // pass the i18n instance to react-i18next.
   .use(initReactI18next)
-  // set options
   .init({
-  compatibilityJSON: 'v3', 
-  lng:'en',
-  fallbackLng: 'en',
+    compatibilityJSON: 'v3',
+    lng: 'en',
+    fallbackLng: 'en',
     resources: LANGUAGES,
     react: {
-      useSuspense: false
+      useSuspense: false,
     },
     interpolation: {
-      escapeValue: false
+      escapeValue: false,
     },
-    defaultNS: 'common'
-  })
+    defaultNS: 'common',
+  });
+
+export default i18n;

@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useForm, Controller } from 'react-hook-form';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import { userLogin } from './userSlice';
-import { globalStyles } from '../../styles/global';
+import {globalStyles} from '../../styles/global';
 import { useTogglePasswordVisibility } from '../../hooks/useTogglePasswordVisibility';
 import PhoneInput from 'react-native-phone-number-input';
 import { colors } from '../../utils/colors';
@@ -29,8 +29,14 @@ const LoginScreen = ({ route, navigation }: any) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
+  const styles = globalStyles();
+
   const { user, loading, status } = useSelector(
     (state: RootStateOrAny) => state.user,
+  );
+
+  const { isDarkMode } = useSelector(
+    (state: RootStateOrAny) => state.theme,
   );
   const { passwordVisibility, rightIcon, handlePasswordVisibility } =
     useTogglePasswordVisibility();
@@ -43,11 +49,6 @@ const LoginScreen = ({ route, navigation }: any) => {
     console.log(user);
   }, [user]);
 
-  // useEffect(() => {
-  //   if (status !== null) {
-  //     setMessage(status);
-  //   }
-  // }, [status]);
 
   const setDisappearMessage = (message: any) => {
     setMessage(message);
@@ -86,28 +87,25 @@ const LoginScreen = ({ route, navigation }: any) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.scrollBg}>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <Container>
-          <View style={globalStyles.centerView}>
+        
+          <View style={styles.centerView}>
             <Image
-              source={require('./../../../assets/images/logo.jpg')}
-              style={[globalStyles.verticalLogo,{height:100,marginTop:20}]}
+              source={isDarkMode? require('./../../../assets/images/logo-white.png'): require('./../../../assets/images/logo.png')}
+              style={[styles.verticalLogo,{height:100,marginTop:20}]}
             />
           </View>
           <View>
-            <Text style={globalStyles.largeHeading}>{t('auth:login')}</Text>
-          </View>
-          <View>
-            <BasicView style={globalStyles.centerView}>
-              <Text style={globalStyles.errorMessage}> {message} </Text>
+            <BasicView style={styles.centerView}>
+              <Text style={styles.errorMessage}> {message} </Text>
             </BasicView>
 
             <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop10,
+                  styles.inputFieldTitle,
+                  styles.marginTop10,
                 ]}>
                  {t('auth:phone')}
               </Text>
@@ -133,9 +131,9 @@ const LoginScreen = ({ route, navigation }: any) => {
                     withDarkTheme
                     withShadow
                     autoFocus
-                    containerStyle={globalStyles.phoneInputContainer}
-                    textContainerStyle={globalStyles.phoneInputTextContainer}
-                    textInputStyle={globalStyles.phoneInputField}
+                    containerStyle={styles.phoneInputContainer}
+                    textContainerStyle={styles.phoneInputTextContainer}
+                    textInputStyle={styles.phoneInputField}
                     textInputProps={{
                       maxLength: 9,
                     }}
@@ -144,7 +142,7 @@ const LoginScreen = ({ route, navigation }: any) => {
                 name="phone"
               />
               {errors.phone && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={styles.errorMessage}>
                   {t('auth:phoneRequired')}
                 </Text>
               )}
@@ -152,22 +150,23 @@ const LoginScreen = ({ route, navigation }: any) => {
             <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop20,
+                  styles.inputFieldTitle,
+                  styles.marginTop20,
                 ]}>
               {t('auth:password')}
               </Text>
 
-              <View style={globalStyles.passwordInputContainer}>
+              <View style={styles.passwordInputContainer}>
                 <Controller
                   control={control}
                   rules={{
-                    maxLength: 12,
                     required: true,
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={globalStyles.passwordInputField}
+                      style={[styles.passwordInputField,
+                        {backgroundColor:colors.white,color:colors.black}
+                      ]}
                       secureTextEntry={passwordVisibility}
                       placeholder={t('auth:enterPassword')}
                       onBlur={onBlur}
@@ -182,7 +181,7 @@ const LoginScreen = ({ route, navigation }: any) => {
                 </TouchableOpacity>
               </View>
               {errors.phone && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={styles.errorMessage}>
                   {t('auth:passwordRequired')}
                 </Text>
               )}
@@ -194,10 +193,10 @@ const LoginScreen = ({ route, navigation }: any) => {
                   navigation.navigate('ForgotPassword');
                 }}
                 style={[
-                  globalStyles.touchableOpacityPlain,
-                  globalStyles.marginTop10,
+                  styles.touchableOpacityPlain,
+                  styles.marginTop10,
                 ]}>
-                <Text style={globalStyles.touchablePlainTextSecondary}>
+                <Text style={styles.touchablePlainTextSecondary}>
                  {t('auth:forgotPassword')}
                 </Text>
               </TouchableOpacity>
@@ -211,13 +210,13 @@ const LoginScreen = ({ route, navigation }: any) => {
               onPress={() => {
                 navigation.navigate('Register');
               }}
-              style={[globalStyles.marginTop20, globalStyles.centerView]}>
-              <Text style={globalStyles.touchablePlainTextSecondary}>
+              style={[styles.marginTop20, styles.centerView]}>
+              <Text style={styles.touchablePlainTextSecondary}>
               {t('auth:dontHaveAcount')}
               </Text>
             </TouchableOpacity>
           </View>
-        </Container>
+      
       </ScrollView>
     </SafeAreaView>
   );

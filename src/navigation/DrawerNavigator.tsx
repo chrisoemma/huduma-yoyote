@@ -3,13 +3,14 @@ import { Image, TouchableOpacity } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 //import BottomTabNavigator from './BottomTabNavigator';
-import { globalStyles } from '../styles/global';
+import {globalStyles} from '../styles/global';
 import CustomDrawerContent from './CustomDrawerContent';
 import Home from '../features/home/Home';
 import BottomHomeTabNavigator from './BottomHomeTabNaviagtor';
 import { colors } from '../utils/colors';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { useSelector,RootStateOrAny } from 'react-redux';
 
 
 
@@ -33,24 +34,6 @@ function CustomHeaderToggle() {
 
 
 
-const drawerNavOptions: any = {
-  headerTitle: () => (
-    <Image
-      source={require('./../../assets/images/logo.jpg')}
-      style={globalStyles.horizontalLogo}
-    />
-  ),
-  headerLeft: () => <CustomHeaderToggle />,
-  headerTitleAlign: 'center',
-  headerStyle: {
-    backgroundColor: colors.primary,
-  },
-  drawerStyle: {
-    backgroundColor:colors.whiteBackground,
-    width:'60%',
-  },
-};
-
 const stackNavOptions: any = {
 
   headerShown: false,
@@ -61,18 +44,40 @@ const Drawer = createDrawerNavigator();
 
 
 
-function DrawerNavigator() {
+const DrawerNavigator=()=>{
+
+  const { isDarkMode } = useSelector(
+    (state: RootStateOrAny) => state.theme,
+  );
+
+
+  const drawerNavOptions: any = {
+
+  
+    headerTitle: () => (
+      <Image
+        source={isDarkMode? require('./../../assets/images/logo-white.png'): require('./../../assets/images/logo.png')}
+        style={globalStyles().horizontalLogo}
+      />
+    ),
+    headerLeft: () => <CustomHeaderToggle />,
+    headerTitleAlign: 'center',
+    headerStyle: {
+      backgroundColor: colors.primary,
+    },
+    drawerStyle: {
+      backgroundColor: isDarkMode ? colors.black : colors.whiteBackground,
+      width:'60%',
+    },
+  };
 
   return (
 
     <Drawer.Navigator
       initialRouteName="Dashboard"
       screenOptions={drawerNavOptions}
-      drawerContent={props => <CustomDrawerContent {...props} />}>
+      drawerContent={props => <CustomDrawerContent {...props}  isDarkMode={isDarkMode } />}>
       <Drawer.Screen name="Home" component={BottomHomeTabNavigator} />
-      {/* <Drawer.Screen name="Check-in/Check-out" component={DashboardStack} />
-      <Drawer.Screen name="Live tracking" component={DashboardStack} />
-      <Drawer.Screen name="Tasks" component={DashboardStack} /> */}
     </Drawer.Navigator>
   );
 }

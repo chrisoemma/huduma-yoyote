@@ -13,7 +13,7 @@ import {
 
 import { useForm, Controller } from 'react-hook-form';
 import { RootStateOrAny, useSelector } from 'react-redux';
-import { globalStyles } from '../../styles/global';
+import {globalStyles} from '../../styles/global';
 import PhoneInput from 'react-native-phone-number-input';
 import { colors } from '../../utils/colors';
 import { Container } from '../../components/Container';
@@ -45,6 +45,8 @@ const EditAccount = ({ route, navigation }: any) => {
   const [message, setMessage] = useState('');
 
   const { t } = useTranslation();
+
+  const stylesGlobal = globalStyles();
 
 
   const makeid = (length: any) => {
@@ -127,23 +129,23 @@ const EditAccount = ({ route, navigation }: any) => {
 
   }
 
-  console.log('user phone', user.phone);
+
 
   return (
 
     <SafeAreaView>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <Container>
+      
           <View>
-            <BasicView style={globalStyles.centerView}>
-              <Text style={globalStyles.errorMessage}>{message}</Text>
+            <BasicView style={stylesGlobal.centerView}>
+              <Text style={stylesGlobal.errorMessage}>{message}</Text>
             </BasicView>
 
             <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop20,
+                  stylesGlobal.inputFieldTitle,
+                  stylesGlobal.marginTop20,
                 ]}>
                 {t('auth:phone')}
               </Text>
@@ -182,7 +184,7 @@ const EditAccount = ({ route, navigation }: any) => {
                 name="phone"
               />
               {errors.phone && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={stylesGlobal.errorMessage}>
                   {t('auth:phoneRequired')}
                 </Text>
               )}
@@ -191,8 +193,8 @@ const EditAccount = ({ route, navigation }: any) => {
             <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop20,
+                  stylesGlobal.inputFieldTitle,
+                  stylesGlobal.marginTop20,
                 ]}>
                {t('auth:name')}
               </Text>
@@ -215,7 +217,7 @@ const EditAccount = ({ route, navigation }: any) => {
               />
 
               {errors.name && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={stylesGlobal.errorMessage}>
                   {t('auth:nameRequired')}
                 </Text>
               )}
@@ -224,8 +226,8 @@ const EditAccount = ({ route, navigation }: any) => {
             <BasicView>
               <Text
                 style={[
-                  globalStyles.inputFieldTitle,
-                  globalStyles.marginTop20,
+                  stylesGlobal.inputFieldTitle,
+                  stylesGlobal.marginTop20,
                 ]}>
                 {t('auth:email')}
               </Text>
@@ -251,13 +253,13 @@ const EditAccount = ({ route, navigation }: any) => {
                 name="email"
               />
               {errors.email && (
-                <Text style={globalStyles.errorMessage}>
+                <Text style={stylesGlobal.errorMessage}>
                   {t('auth:emailRequired')}
                 </Text>
               )}
             </BasicView>
 
-            <BasicView style={globalStyles.marginTop20}>
+            <BasicView style={stylesGlobal.marginTop20}>
               <Text>{t('screens:officeLocation')}:</Text>
               <GooglePlacesInput
                 setLocation={selectLocation}
@@ -271,7 +273,6 @@ const EditAccount = ({ route, navigation }: any) => {
               </Button>
             </BasicView>
           </View>
-        </Container>
       </ScrollView>
     </SafeAreaView>
   );

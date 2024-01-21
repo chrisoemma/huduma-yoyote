@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../utils/colors';
-import { setLanguageCode } from '../costants/languageSlice';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../app/rootState';
+import { selectLanguage,setLanguage } from '../costants/languageSlice';
 
 
 const LANGUAGES = [
@@ -15,12 +15,11 @@ const LANGUAGES = [
 
 const Selector = () => {
   const { t, i18n } = useTranslation();
-  const selectedLanguageCode = useSelector((state: RootState) => state.language?.selectedLanguageCode);
- 
+  const selectedLanguage = useSelector(selectLanguage);
  
   const dispatch = useDispatch();
-  const setLanguage = (code) => {
-    dispatch(setLanguageCode(code)); // Dispatch Redux action
+  const changeLanguage = (code) => {
+    dispatch(setLanguage(code)); // Dispatch Redux action
     i18n.changeLanguage(code);
   };
 
@@ -31,17 +30,17 @@ const Selector = () => {
         <Ionicons color='#444' size={28} name='chevron-down' />
       </View>
       {LANGUAGES.map(language => {
-        const selectedLanguage = language.code === selectedLanguageCode;
+        const lang = language.code === selectedLanguage;
 
         return (
           <Pressable
             key={language.code}
             style={styles.buttonContainer}
-            disabled={selectedLanguage}
-            onPress={() => setLanguage(language.code)}
+            disabled={lang}
+            onPress={() => changeLanguage(language.code)}
           >
             <Text
-              style={[selectedLanguage ? styles.selectedText : styles.text]}
+              style={[lang ? styles.selectedText : styles.text]}
             >
               {language.label}
             </Text>

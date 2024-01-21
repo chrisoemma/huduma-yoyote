@@ -4,16 +4,14 @@ import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity,
 import {useForm, Controller} from 'react-hook-form';
 import {RootStateOrAny, useSelector} from 'react-redux';
 import {globalStyles} from '../../styles/global';
-import {useTogglePasswordVisibility} from '../../hooks/useTogglePasswordVisibility';
-import PhoneInput from 'react-native-phone-number-input';
-import {Container} from '../../components/Container';
+
 import {BasicView} from '../../components/BasicView';
 import Button from '../../components/Button';
 import {ButtonText} from '../../components/ButtonText';
-import {TextInputField} from '../../components/TextInputField';
 import {useAppDispatch} from '../../app/store';
 import {userVerify} from './userSlice';
 import { useTranslation } from 'react-i18next';
+import { colors } from '../../utils/colors';
 
 const VerifyScreen = ({route, navigation}: any) => {
   const {nextPage} = route?.params;
@@ -33,10 +31,9 @@ const VerifyScreen = ({route, navigation}: any) => {
   const [message, setMessage] = useState('');
   const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
 
-  console.log('verification code',verificationCode);
 
   useEffect(() => {
-    console.log('user dataaaa',user);
+   
   }, [user]);
 
 
@@ -86,16 +83,19 @@ const VerifyScreen = ({route, navigation}: any) => {
   }
   };
 
+
+  const stylesGlobal = globalStyles();
+  
   return (
-    <SafeAreaView>
+    <SafeAreaView style={stylesGlobal.scrollBg} >
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <Container>
+      
           <BasicView style={{marginVertical:50}}>
-            <Text style={globalStyles.smallHeading}>{t('auth:enterVerificationCode')}</Text>
+            <Text style={stylesGlobal.smallHeading}>{t('auth:enterVerificationCode')}</Text>
           </BasicView>
 
           <BasicView>
-            <Text style={globalStyles.errorMessage}>{message}</Text>
+            <Text style={stylesGlobal.errorMessage}>{message}</Text>
           </BasicView>
 
       <BasicView style={{marginVertical:50}}>
@@ -114,7 +114,7 @@ const VerifyScreen = ({route, navigation}: any) => {
       </View>
       </BasicView>
 
-          <BasicView style={globalStyles.marginTop30}>
+          <BasicView style={stylesGlobal.marginTop30}>
             <Button loading={loading} onPress={()=>onSubmit()}>
               <ButtonText>{t('auth:verify')}</ButtonText>
             </Button>
@@ -123,15 +123,15 @@ const VerifyScreen = ({route, navigation}: any) => {
           <BasicView>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('PasswordReset');
+                navigation.navigate('Login');
               }}
-              style={[globalStyles.marginTop20, globalStyles.centerView]}>
-              <Text style={globalStyles.touchablePlainTextSecondary}>
+              style={[stylesGlobal.marginTop20, stylesGlobal.centerView]}>
+              <Text style={stylesGlobal.touchablePlainTextSecondary}>
                 {t('auth:alreadyHaveAccount')}
               </Text>
             </TouchableOpacity>
           </BasicView>
-        </Container>
+      
       </ScrollView>
     </SafeAreaView>
   );
@@ -160,6 +160,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     textAlign: 'center',
     fontSize: 18,
+    backgroundColor:colors.white,
+    color:colors.black
   },
 });
 

@@ -1,23 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  Text,
   View,
-  TextInput,
-  TouchableOpacity,
-  Image,
+
 } from 'react-native';
-import Selector from '../../components/LanguageSelector';
-import { Container } from '../../components/Container';
-import { globalStyles } from '../../styles/global';
-import Icon from 'react-native-vector-icons/EvilIcons';
-import { colors } from '../../utils/colors';
+import {globalStyles} from '../../styles/global';
 import { useTranslation } from 'react-i18next';
-import Banner from '../../components/Banner';
-import Category from '../../components/Category';
-import TopService from '../../components/TopService';
-import VerticalTabs from '../../components/VerticalTabs';
 import ContentList from '../../components/ContentList';
 import { useAppDispatch } from '../../app/store';
 import { getSingleCategory} from './CategorySlice';
@@ -27,6 +15,9 @@ import { useSelector,RootStateOrAny } from 'react-redux';
 const SingleCategory = ({ route, navigation }: any) => {
 
   const { params } = route;
+  const { isDarkMode } = useSelector(
+    (state: RootStateOrAny) => state.theme,
+  );
 
   const { loading, singleCategory } = useSelector(
     (state: RootStateOrAny) => state.categories,
@@ -43,7 +34,6 @@ const dispatch = useAppDispatch();
 
   useEffect(() => {
      if(params.category.id){
-      console.log('not null',params.category.id);
       dispatch(getSingleCategory(params.category.id));
      }
   }, [dispatch])
@@ -52,10 +42,10 @@ const dispatch = useAppDispatch();
   const { t } = useTranslation();
   return (
     <SafeAreaView
-      style={globalStyles.scrollBg}
+      style={globalStyles().scrollBg}
     >
-      <View style={globalStyles.subCategory}>
-        <ContentList data={singleCategory?.services}  navigation={navigation}/>
+      <View style={globalStyles().subCategory}>
+        <ContentList data={singleCategory?.services} isDarkMode={isDarkMode} navigation={navigation}/>
       </View>
     </SafeAreaView>
   )
