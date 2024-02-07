@@ -17,8 +17,10 @@ import { makePhoneCall } from '../../utils/utilts';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { getProviderSubServices } from '../serviceproviders/ServiceProviderSlice';
-import { updateRequestStatus } from '../requests/RequestSlice';
+import { rateRequest, updateRequestStatus } from '../requests/RequestSlice';
 import { BasicView } from '../../components/BasicView';
+import {  getStatusBackgroundColor } from '../../utils/utilts'
+import RatingModal from '../../components/RatingModal';
 
 
 const RequestedServices = ({ navigation, route }: any) => {
@@ -30,16 +32,18 @@ const RequestedServices = ({ navigation, route }: any) => {
         (state: RootStateOrAny) => state.user,
     );
 
+
     const { isDarkMode } = useSelector(
         (state: RootStateOrAny) => state.theme,
-    );
-
-    const { loading, providerSubServices } = useSelector(
+      );
+ 
+    const { providerSubServices,subServices } = useSelector(
         (state: RootStateOrAny) => state.providers,
     );
 
     const [userLocation, setUserLocation] = useState(null);
     const [providerLocation, setProviderLocation] = useState(null);
+    const [isModalVisible, setModalVisible] = useState(false);
     const handleLocationUpdate = useCallback((userLocation, providerLocation) => {
         setUserLocation(userLocation);
         setProviderLocation(providerLocation);
@@ -54,6 +58,40 @@ const RequestedServices = ({ navigation, route }: any) => {
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [sheetTitle, setSheetTitle] = useState('');
 
+      let requestData = {
+        comment:'',
+        rating:'',
+
+      }
+    const postReview = ({comment, rating}: any) => {
+        requestData.comment=comment
+        requestData.rating=rating
+        requestData.requestId=request?.id
+        toggleModal();
+        dispatch(rateRequest(requestData))
+          .unwrap()
+          .then(result => {
+ 
+            if (result.status) {
+                ToastAndroid.show(`${t('screens:rateSubmitted')}`, ToastAndroid.SHORT);
+                navigation.navigate('Requests', {
+                    screen: 'Requests',
+                });
+            } else {
+              console.log('dont do anything');
+            }
+          })
+          .catch(rejectedValueOrSerializedError => {
+            // handle error here
+            console.log('error');
+            console.log(rejectedValueOrSerializedError);
+          });
+      };
+
+
+    const getStatusTranslation = (status: string) => {
+        return t(`screens:${status}`);
+      };
 
     // variables
     const snapPoints = useMemo(() => ['25%', '100%'], []);
@@ -72,9 +110,6 @@ const RequestedServices = ({ navigation, route }: any) => {
     const [selectedSubservice, setSelectedSubservice] = useState([]);
 
     const PhoneNumber = `${request?.provider?.phone}`;
-
-
-    console.log('provider request', request?.provider)
 
 
     React.useLayoutEffect(() => {
@@ -96,6 +131,10 @@ const RequestedServices = ({ navigation, route }: any) => {
         }, 5000);
     };
 
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+      };
+
     const data = {
         status: '',
         client: '',
@@ -104,8 +143,6 @@ const RequestedServices = ({ navigation, route }: any) => {
     const updateRequest = (id, requestType) => {
         data.client = user.client.id;
         data.status = requestType;
-
-        console.log('data', data);
 
         dispatch(updateRequestStatus({ data: data, requestId: id }))
             .unwrap()
@@ -178,13 +215,17 @@ const RequestedServices = ({ navigation, route }: any) => {
                             >
                                 <Icon
                                     name="phone"
-                                    color={colors.black}
+                                    color={isDarkMode ? colors.white : colors.black}
                                     size={20}
                                 />
-                                <Text style={{ paddingHorizontal: 5, fontWeight: 'bold' }}>{PhoneNumber}</Text>
+                                <Text style={{ paddingHorizontal: 5, fontWeight: 'bold',
+                                   color:isDarkMode ? colors.white : colors.black
+                            }}>{PhoneNumber}</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text>{request?.service?.description}</Text>
+                        <Text style={{
+                            color:isDarkMode ? colors.white : colors.black
+                        }}>{request?.service?.description}</Text>
 
                         <View style={[globalStyles().chooseServiceBtn, { justifyContent: 'space-between' }]}>
                             <TouchableOpacity style={globalStyles().chooseBtn}
@@ -193,8 +234,8 @@ const RequestedServices = ({ navigation, route }: any) => {
                                 <Text style={{ color: colors.white }}>{t('navigate:requestedServices')}</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={globalStyles().otherBtn}>
-                                <Text style={{ color: colors.white }}>{request_status}</Text>
+                            <TouchableOpacity style={[globalStyles().otherBtn,{ backgroundColor: getStatusBackgroundColor(request_status) }]}>
+                                <Text style={{ color: colors.white }}>{getStatusTranslation(request_status)}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -223,7 +264,8 @@ const RequestedServices = ({ navigation, route }: any) => {
 
                                     <View style={globalStyles().subCategory}>
                                         <ContentServiceList
-                                            data={providerSubServices}
+                                              subServices={subServices}
+                                              providerSubServices={providerSubServices}
                                             toggleSubService={{}}
                                             selectedSubServices={selectedSubservice}
                                             screen="requested"
@@ -236,7 +278,7 @@ const RequestedServices = ({ navigation, route }: any) => {
                         </View>
                     </BottomSheetModalProvider>
                     <View style={{
-                        backgroundColor: isDarkMode ? colors.black : colors.white, height: 100,
+                        backgroundColor: isDarkMode ? colors.black : colors.whiteBackground, height: 100,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         padding: 20
@@ -267,9 +309,29 @@ const RequestedServices = ({ navigation, route }: any) => {
                                 <Text style={{ color: colors.white }}>{t('screens:cancel')}</Text>
                             </TouchableOpacity>
                         ) : <></>}
+
+
+{request_status == 'Comfirmed' ? (
+    <TouchableOpacity
+      onPress={() => toggleModal()}
+        style={{
+            backgroundColor: colors.successGreen, borderRadius: 20,
+            justifyContent: 'center',
+            padding: 20
+        }}>
+        <Text style={{ color: colors.white }}>{t('screens:rateService')}</Text>
+    </TouchableOpacity>
+
+) : <></>}
                     </View>
                 </GestureHandlerRootView>
             </SafeAreaView>
+
+            <RatingModal
+        cancel={toggleModal}
+        confirm={postReview}
+        visible={isModalVisible}
+      />
 
 
         </>
@@ -278,12 +340,9 @@ const RequestedServices = ({ navigation, route }: any) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
-        // height:300,
-        // margin: 10
+        flex: 1,
     },
     contentContainer: {
-        // flex:1,
         marginHorizontal: 10
     },
     title: {

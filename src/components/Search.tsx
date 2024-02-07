@@ -117,7 +117,7 @@ const Search = ({
                     </View>
                 </TouchableOpacity>
                 <View style={[styles.inputContainer]}>
-                    <TextInput placeholder="Search..."
+                    <TextInput placeholder={t('screens:search')}
                         style={[styles.input,{
                             color:colors.black,
                             backgroundColor:colors.white,

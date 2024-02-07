@@ -45,119 +45,131 @@ const dispatch = useAppDispatch();
   
   useEffect(() => {
     let watchId;
-  
+
     const requestLocationPermission = async () => {
       try {
-        // ... (your existing code)
-  
-        watchId = Geolocation.watchPosition(
-          position => {
-            setUserLocation({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
-  
-            data={
-              client_latitude:position.coords.latitude,
-              client_longitude:position.coords.longitude
-             }
-               if(position.coords){
-             dispatch(postClientLocation({clientId:user?.client.id,data}));
-               }
-          },
-          error => console.error(error),
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
-            enableHighAccuracy: true,
-            distanceFilter: 100,
-            interval: 10000,
-            fastestInterval: 5000,
+            title: 'Location Permission',
+            message: 'App needs access to your location.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
           }
         );
+
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          watchId = Geolocation.watchPosition(
+            position => {
+              setUserLocation({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+              });
+
+              const data = {
+                client_latitude: position.coords.latitude,
+                client_longitude: position.coords.longitude,
+              };
+
+              if (position.coords) {
+                dispatch(postClientLocation({ clientId: user?.client.id, data }));
+              }
+            },
+            error => console.error(error),
+            {
+              enableHighAccuracy: true,
+              distanceFilter: 100,
+              interval: 10000,
+              fastestInterval: 5000,
+            }
+          );
+        }
       } catch (error) {
         console.error(error);
       }
     };
-  
+
     requestLocationPermission();
-  
+
     // Clean up watcher when component unmounts
     return () => {
       Geolocation.clearWatch(watchId);
     };
   }, []);
 
-  useEffect(() => {
-    const setupPusher = async () => {
-      const headers = {
-        'Authorization': `Bearer ${user.token}`
-      };
+  // useEffect(() => {
+  //   const setupPusher = async () => {
+  //     const headers = {
+  //       'Authorization': `Bearer ${user.token}`
+  //     };
 
   
     
-      try {
-        await pusher.init({
-          apiKey: "70f571d3d3621db1c3d0",
-          cluster: "ap2",
-          authEndpoint: `${API_URL}/pusher/auth`,
-          onAuthorizer: (channelName, socketId) => {
-            return fetch(`${API_URL}/pusher/auth`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                ...headers,
-              },
-              body: JSON.stringify({
-                socket_id: socketId,
-                channel_name: channelName,
-              }),
-            })
-            .then(response => response.json())
-            .then(authData => {
-              console.log('Auth data:', authData);
-              return authData;
-            })
-            .catch(error => {
-              console.error('Error during Pusher authentication:', error);
-              throw error;
-            });
-          },
-          // other pusher configuration options...
-        });
+  //     try {
+  //       await pusher.init({
+  //         apiKey: "70f571d3d3621db1c3d0",
+  //         cluster: "ap2",
+  //         authEndpoint: `${API_URL}/pusher/auth`,
+  //         onAuthorizer: (channelName, socketId) => {
+  //           return fetch(`${API_URL}/pusher/auth`, {
+  //             method: 'POST',
+  //             headers: {
+  //               'Content-Type': 'application/json',
+  //               ...headers,
+  //             },
+  //             body: JSON.stringify({
+  //               socket_id: socketId,
+  //               channel_name: channelName,
+  //             }),
+  //           })
+  //           .then(response => response.json())
+  //           .then(authData => {
+  //             console.log('Auth data:', authData);
+  //             return authData;
+  //           })
+  //           .catch(error => {
+  //             console.error('Error during Pusher authentication:', error);
+  //             throw error;
+  //           });
+  //         },
+  //         // other pusher configuration options...
+  //       });
     
-        const myChannel = await pusher.subscribe({
-          channelName: `private-location-updates.${user.id}`,
-          headers: headers,
-          onSubscriptionSucceeded: (channelName, data) => {
-            console.log('Subscription succeeded:', channelName, data);
-          },
-          onSubscriptionError: (channelName, message, e) => {
-            console.log(`onSubscriptionError: ${message} channelName: ${channelName} Exception: ${e}`);
-          },
-          onEvent: (event: PusherEvent) => {
-            if (extractEventName(event.eventName) === "ClientLocationUpdated") {
-              if (event.data) {
-                const parsedData = JSON.parse(event.data);
-                const latitude = parseFloat(parsedData.client_location.latitude);
-                const longitude = parseFloat(parsedData.client_location.longitude);
-                console.log('Received ClientLocationUpdated event:', longitude);
-                setUserLocation({ latitude, longitude });
-              }
-            }
-          },
-        });
+  //       const myChannel = await pusher.subscribe({
+  //         channelName: `private-location-updates.${user.id}`,
+  //         headers: headers,
+  //         onSubscriptionSucceeded: (channelName, data) => {
+  //           console.log('Subscription succeeded:', channelName, data);
+  //         },
+  //         onSubscriptionError: (channelName, message, e) => {
+  //           console.log(`onSubscriptionError: ${message} channelName: ${channelName} Exception: ${e}`);
+  //         },
+  //         onEvent: (event: PusherEvent) => {
+  //           if (extractEventName(event.eventName) === "ClientLocationUpdated") {
+  //             if (event.data) {
+  //               const parsedData = JSON.parse(event.data);
+  //               const latitude = parseFloat(parsedData.client_location.latitude);
+  //               const longitude = parseFloat(parsedData.client_location.longitude);
+  //               console.log('Received ClientLocationUpdated event:', longitude);
+  //               setUserLocation({ latitude, longitude });
+  //             }
+  //           }
+  //         },
+  //       });
     
-        await pusher.connect();
-      } catch (e) {
-        console.log(`ERROR: ${e}`);
-      }
-    };
+  //       await pusher.connect();
+  //     } catch (e) {
+  //       console.log(`ERROR: ${e}`);
+  //     }
+  //   };
     
-    setupPusher() 
-    return () => {
-    //  await pusher.reset();
-     pusher.unsubscribe({channelName:`private-location-updates.${user.id}`});
-    };
-  },[]);
+  //   setupPusher() 
+  //   return () => {
+  //   //  await pusher.reset();
+  //    pusher.unsubscribe({channelName:`private-location-updates.${user.id}`});
+  //   };
+  // },[]);
 
   useEffect(() => {
    
@@ -169,18 +181,18 @@ const dispatch = useAppDispatch();
     return () => clearInterval(interval);
   }, []);
 
-  const animatedProviderLocation = useRef(new Animated.Value(0)).current;
+ // const animatedProviderLocation = useRef(new Animated.Value(0)).current;
 
-  const animateProviderLocation = (newLocation) => {
-    Animated.timing(animatedProviderLocation, {
-      toValue: 1,
-      duration: 1000, // Adjust the duration as needed
-      useNativeDriver: false, // Set to true if possible for performance
-    }).start(() => {
-      setServiceProviderLocation(newLocation);
-      animatedProviderLocation.setValue(0); // Reset the animated value for the next animation
-    });
-  };
+  // const animateProviderLocation = (newLocation) => {
+  //   Animated.timing(animatedProviderLocation, {
+  //     toValue: 1,
+  //     duration: 1000, // Adjust the duration as needed
+  //     useNativeDriver: false, // Set to true if possible for performance
+  //   }).start(() => {
+  //     setServiceProviderLocation(newLocation);
+  //     animatedProviderLocation.setValue(0); // Reset the animated value for the next animation
+  //   });
+  // };
 
 
   // useEffect(() => {

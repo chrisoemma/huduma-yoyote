@@ -131,7 +131,7 @@ const RegisterScreen = ({ route, navigation }: any) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <PhoneInput
                     ref={phoneInput}
-                    placeholder="672 127 313"
+                    placeholder="714 055 666"
                     defaultValue={value}
                     defaultCode="TZ"
                     countryPickerProps={{
@@ -174,7 +174,6 @@ const RegisterScreen = ({ route, navigation }: any) => {
               <Controller
                 control={control}
                 rules={{
-                  maxLength: 12,
                   required: true,
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -208,7 +207,6 @@ const RegisterScreen = ({ route, navigation }: any) => {
                 <Controller
                   control={control}
                   rules={{
-                    maxLength: 12,
                     required: true,
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (

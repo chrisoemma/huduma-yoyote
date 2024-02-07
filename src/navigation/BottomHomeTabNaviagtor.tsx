@@ -18,6 +18,8 @@ const screenOptions = {
   headerShown: false,
 };
 
+
+
 const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
@@ -32,6 +34,8 @@ const HomeStack = () => {
 
 
 export default function BottomHomeTabNavigator() {
+
+  
 
   const { loading, user } = useSelector(
     (state: RootStateOrAny) => state.user,

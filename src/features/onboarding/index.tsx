@@ -186,15 +186,17 @@ const styles = StyleSheet.create({
     startedBtn: {
         backgroundColor: colors.primary,
         borderRadius: 15,
-        marginVertical: '10%'
+        marginVertical: '10%',
+        width: '100%', 
+        alignSelf: 'center', 
     },
     startedText: {
-        fontSize: 25,
+        fontSize: 19,
         fontFamily: 'Roboto-Bold',
         color: colors.white,
-        paddingHorizontal: '12%',
+        textAlign: 'center',
         paddingVertical: '8%',
-    }
+    },
 });
 
 export default OnBoarding;

@@ -30,12 +30,9 @@ const Settings = () => {
         setModalVisible(!modalVisible);
     };
 
-    
-
     const toggleThemeHandler = () => {
         dispatch(toggleTheme());
       };
-    
 
     return (
 

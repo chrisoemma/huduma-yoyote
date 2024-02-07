@@ -104,8 +104,9 @@ import { colors } from '../utils/colors';
       marginVertical: 15,
     },
     verticalLogo: {
-      width: '60%',
-      height: 200,
+      width: '60%', 
+      resizeMode: 'contain',
+      alignSelf: 'center',
     },
     horizontalLogo: {
       width: 150,

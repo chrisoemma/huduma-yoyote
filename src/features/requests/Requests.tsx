@@ -40,7 +40,7 @@ const callGetRequests = React.useCallback(() => {
     .unwrap()
     .then(result => {
       setRefreshing(false);
-      setRefreshMessage('Data refreshed successfully.');
+      setRefreshMessage(`${t('screens:dataRefreshed')}`);
       setTimeout(() => {
         setRefreshMessage(''); // Clear the message after a few seconds
       }, 3000); // Adjust the time as needed
@@ -50,10 +50,6 @@ const callGetRequests = React.useCallback(() => {
     });
 }, []);
 
-
-
-
-//console.log('refreshing',refreshing)
 
   const { t } = useTranslation();
 
@@ -145,6 +141,7 @@ const styles = StyleSheet.create({
     },
     itemlistContainer:{ 
         marginTop:20,  
+      
     },
   
     

@@ -26,11 +26,11 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     const { service, provider } = route.params;
 
-    const { providerSubServices } = useSelector(
+    const { subServices,providerSubServices } = useSelector(
         (state: RootStateOrAny) => state.providers,
     );
 
-    const { loading, requests } = useSelector(
+    const { loading,} = useSelector(
         (state: RootStateOrAny) => state.requests,
     );
 
@@ -39,6 +39,10 @@ const ServiceRequest = ({ navigation, route }: any) => {
     );
 
     const dispatch = useAppDispatch();
+
+    const { isDarkMode } = useSelector(
+        (state: RootStateOrAny) => state.theme,
+      );
 
 
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -75,31 +79,42 @@ const ServiceRequest = ({ navigation, route }: any) => {
     }, [dispatch])
 
     const [selectedSubservice, setSelectedSubservice] = useState([]);
+    const [selectedProviderSubService, setSelectedProviderSubService] = useState([]);
+ 
     const { t } = useTranslation();
 
-   // console.log('selected sub service', selectedSubservice);
-
-    const toggleSubService = (subService) => {
+    const toggleSubService = (type,subService) => {
         console.log('toungled_subservice', subService);
+          if(type=='subService'){
         if (selectedSubservice.includes(subService)) {
             setSelectedSubservice(selectedSubservice.filter((s) => s !== subService));
         } else {
             setSelectedSubservice([...selectedSubservice, subService]);
         }
+    }else{
+        if (selectedProviderSubService.includes(subService)) {
+            setSelectedProviderSubService(selectedProviderSubService.filter((s) => s !== subService));
+        } else {
+            setSelectedProviderSubService([...selectedProviderSubService, subService]);
+        }  
+    }
     };
+
+ 
 
     const handleClearAll = () => {
         setSelectedSubservice([]);
+        setSelectedProviderSubService([])
     };
 
     const PhoneNumber = `${provider?.phone}`;
 
 
-    //   React.useLayoutEffect(() => {
-    //       if (params && params.service) {
-    //           navigation.setOptions({ title: params.service.name });
-    //       }
-    //   }, [navigation, params]);
+      React.useLayoutEffect(() => {
+          if (route?.params && route?.params.service) {
+              navigation.setOptions({ title: route?.params.service.name });
+          }
+      }, [navigation, route?.params]);
 
     const [message, setMessage] = useState("")
     const setDisappearMessage = (message: any) => {
@@ -128,20 +143,21 @@ const ServiceRequest = ({ navigation, route }: any) => {
         data.client_id = user?.client?.id;
         data.provider_id = provider?.provider_id;
         data.request_time = new Date().toISOString();
-        data.sub_service = selectedSubservice;
+        data.sub_service = selectedSubservice
+        data.provider_sub_service=selectedProviderSubService
         data.client_latitude = userLocation.latitude
         data.client_longitude = userLocation.longitude
         data.provider_latitude = providerLocation.latitude
         data.provider_longitude = providerLocation.longitude
 
-
-        console.log('request data', data)
+       // console.log('request data', data)
 
         dispatch(createRequest({ data: data }))
             .unwrap()
             .then(result => {
                 if (result.status) {
-
+                    setSelectedSubservice([]);
+                    setSelectedProviderSubService([])
                     ToastAndroid.show(`${t('screens:requestSentSuccessfully')}`, ToastAndroid.SHORT);
                     navigation.navigate('Requests', {
                         screen: 'Requests',
@@ -161,18 +177,19 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     }
 
+    const stylesGlobal = globalStyles();
 
     return (
         <>
             <SafeAreaView
-                style={globalStyles().scrollBg}
+                style={stylesGlobal.scrollBg}
             >
                 <GestureHandlerRootView style={{ flex: 1, margin: 10 }}>
                     <View>
-                        <BasicView style={globalStyles().centerView}>
-                            <Text style={globalStyles().errorMessage}>{message}</Text>
+                        <BasicView style={stylesGlobal.centerView}>
+                            <Text style={stylesGlobal.errorMessage}>{message}</Text>
                         </BasicView>
-                        <View style={[globalStyles().circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
+                        <View style={[stylesGlobal.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
 
 
                             <Image
@@ -194,9 +211,9 @@ const ServiceRequest = ({ navigation, route }: any) => {
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <View>
-                                <Text style={{ marginVertical: 5, color: colors.black }}>{provider?.name}</Text>
+                                <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.black }}>{provider?.name}</Text>
                                 <RatingStars rating={provider.average_rating == null ? 0 : provider.average_rating} />
-                                <Text style={{ marginVertical: 5, color: colors.secondary }}>{service?.name}</Text>
+                                <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.secondary,fontWeight:'bold'  }}>{service?.name}</Text>
                             </View>
                             <TouchableOpacity style={{
                                 flexDirection: 'row',
@@ -211,20 +228,20 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     color={colors.successGreen}
                                     size={20}
                                 />
-                                <Text style={{ paddingHorizontal: 5, fontWeight: 'bold' }}>{PhoneNumber}</Text>
+                                <Text style={{ paddingHorizontal: 5, fontWeight: 'bold',color:isDarkMode?colors.white:colors.grey }}>{PhoneNumber}</Text>
                             </TouchableOpacity>
                         </View>
                         <View>
                             <Text>{service?.description}</Text>
-                            <View style={globalStyles().chooseServiceBtn}>
-                                <TouchableOpacity style={globalStyles().chooseBtn}
+                            <View style={stylesGlobal.chooseServiceBtn}>
+                                <TouchableOpacity style={stylesGlobal.chooseBtn}
                                     onPress={() => handlePresentModalPress('Near providers')}
                                 >
                                     <Text style={{ color: colors.white }}>{t('screens:chooseService')}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={globalStyles().otherBtn}>
+                                {/* <TouchableOpacity style={stylesGlobal.otherBtn}>
                                     <Text style={{ color: colors.white }}>{t('screens:otherService')}</Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                         </View>
                     </View>
@@ -254,33 +271,36 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     <Text style={styles.title}>{t('screens:Services')}</Text>
 
 
-                                    <View style={globalStyles().subCategory}>
+                                    <View style={stylesGlobal.subCategory}>
                                         <ContentServiceList
-                                            data={providerSubServices}
+                                            subServices={subServices}
+                                            providerSubServices={providerSubServices}
                                             toggleSubService={toggleSubService}
                                             selectedSubServices={selectedSubservice}
+                                            selectedProviderSubServices={selectedProviderSubService}
                                             screen="new"
                                         />
                                     </View>
 
                                 </BottomSheetScrollView>
                                 <View style={{ flexDirection: 'row', }}>
-                                    {selectedSubservice.length > 1 && (
+                                    {selectedSubservice.length > 1 || selectedProviderSubService >1 && (
                                         <TouchableOpacity
-                                            style={[globalStyles().floatingButton, { backgroundColor: colors.dangerRed, right: '70%', }]}
+                                            style={[stylesGlobal.floatingButton, { backgroundColor: colors.dangerRed, right: '70%', }]}
                                             onPress={handleClearAll}
+                                            disabled={loading}
                                         >
-                                            <Text style={globalStyles().floatingBtnText}>{t('screens:clearAll')}</Text>
+                                            <Text style={stylesGlobal.floatingBtnText}>{t('screens:clearAll')}</Text>
                                         </TouchableOpacity>
                                     )}
 
                                 </View>
 
                                 <TouchableOpacity
-                                    style={[globalStyles().floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
-                                    loading={loading}
+                                    style={[stylesGlobal.floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
+                                    disabled={loading}
                                     onPress={() => {
-                                        if (selectedSubservice.length > 0) {
+                                        if (selectedSubservice.length > 0 && selectedProviderSubService.length > 0) {
                                             sendRequest();
                                         } else {
                                             ToastAndroid.show(`${t('screens:pleaseAddService')}`, ToastAndroid.SHORT);
@@ -288,7 +308,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     }}
 
                                 >
-                                    <Text style={globalStyles().floatingBtnText}>{`(${selectedSubservice.length}) ${t('screens:request')}`}</Text>
+                                    <Text style={stylesGlobal.floatingBtnText}>{`(${selectedSubservice.length + selectedProviderSubService.length}) ${t('screens:request')}`}</Text>
                                 </TouchableOpacity>
 
                             </BottomSheetModal>

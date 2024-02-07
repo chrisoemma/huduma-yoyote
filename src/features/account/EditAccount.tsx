@@ -133,7 +133,9 @@ const EditAccount = ({ route, navigation }: any) => {
 
   return (
 
-    <SafeAreaView>
+    <SafeAreaView
+    style={stylesGlobal.scrollBg}
+    >
       <ScrollView contentInsetAdjustmentBehavior="automatic">
       
           <View>
@@ -202,7 +204,6 @@ const EditAccount = ({ route, navigation }: any) => {
               <Controller
                 control={control}
                 rules={{
-                  maxLength: 12,
                   required: true,
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
@@ -260,7 +261,7 @@ const EditAccount = ({ route, navigation }: any) => {
             </BasicView>
 
             <BasicView style={stylesGlobal.marginTop20}>
-              <Text>{t('screens:officeLocation')}:</Text>
+              <Text>{t('screens:location')}:</Text>
               <GooglePlacesInput
                 setLocation={selectLocation}
                 placeholder="What's your location?"

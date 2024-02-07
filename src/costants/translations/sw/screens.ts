@@ -35,6 +35,19 @@ export default {
   light: 'Mwanga',
   onbordingWelcome: 'Karibu! Uko tayari kuomba huduma kwa urahisi? Tupo hapa kufanya mchakato iwe rahisi kwako. Anza sasa!',
   chooseLanguage: 'Chagua lugha unayopendelea',
-  getStarted: 'Mambo! Anza sasa'
+  getStarted: 'Mambo! Anza sasa',
+  search:'Tafuta...',
+  location:'Eneo',
+  Requested: 'Imeombwa',
+Accepted: 'Imekubaliwa',
+Cancelled: 'Imefutwa',
+Rejected: 'Imekataliwa',
+Comfirmed: 'Imethibitishwa',
+Completed: 'Imekamilishwa',
+dataRefreshed: 'Data imeboreshwa kwa mafanikio',
+rateService:'Kadiria huduma',
+enterComment:'Weka Maoni hapa',
+submitRating:'Wasilisha Ukadiriaji',
+rateSubmitted:'Asante kwa kukadiria'
 
 };

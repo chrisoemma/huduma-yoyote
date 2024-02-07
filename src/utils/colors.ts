@@ -17,6 +17,10 @@ export const colors = {
     lightBlue: '#B6EEF1',
     gold: '#FFD700',
     whiteBackground:'#F7F6FF',
-    lightView:'#DFF3F3'
+    lightView:'#DFF3F3',
+    darkModeBackground:'#949494',
+    orange:'#fcba03',
+    blue:'#22538f',
+    darkYellow:'#747537'
   };
   

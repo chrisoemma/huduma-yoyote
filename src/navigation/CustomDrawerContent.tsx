@@ -54,7 +54,7 @@ const CustomDrawerContent = (props: any) => {
   React.useEffect(() => {
   }, [user]);
 
-  const phoneNumber = `${user?.phone}`;
+  const phoneNumber='+255714055666';
 
   let  drawerItems=[];
   

@@ -36,5 +36,18 @@
     light:'Light',
     onbordingWelcome:'Welcome! Ready to make service requests effortlessly? We\'re here to simplify the process for you. Let\'s get started!',
     chooseLanguage:'Choose your preferred language',
-    getStarted:'Hello! Lets get started'
+    getStarted:'Hello! Lets get started',
+    search:'Search...',
+    location:'Location',
+    Requested:'Requested',
+    Accepted:'Accepted',
+    Cancelled:'Cancelled',
+    Rejected:'Cancelled',
+    Comfirmed:'Confirmed',
+    Completed:'Completed',
+    dataRefreshed:'Data refreshed successfully',
+    rateService:'Rate Service',
+    enterComment:'Enter Comment here',
+    submitRating:'Submit Rating',
+    rateSubmitted:'Thanks for rating'
   };

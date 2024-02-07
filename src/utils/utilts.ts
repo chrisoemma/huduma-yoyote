@@ -1,5 +1,7 @@
 import { Linking } from 'react-native';
 import { GOOGLE_MAPS_API_KEY } from './config';
+import { colors } from './colors';
+
 
 export const currencyFormatter: any = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -103,6 +105,7 @@ export const formatNumber = (number, decPlaces, decSep, thouSep) => {
     i.substr(j).replace(/(\decSep{3})(?=\decSep)/g, '$1' + thouSep) +
     (decPlaces
       ? decSep +
+
       Math.abs(number - i)
         .toFixed(decPlaces)
         .slice(2)
@@ -187,3 +190,40 @@ export function extractEventName(fullEventName) {
 
   return lastSegment;
 }
+
+
+export const combineSubServices = (item) => {
+  return (
+    item?.request_sub_services?.map((subService) => {
+      const providerSubListData = item.provider_sub_list.find(
+        (providerSub) => providerSub.sub_service_id === subService.sub_service_id || providerSub.provider_sub_service_id === subService.provider_sub_service_id
+      );
+
+      return {
+        ...subService,
+        provider_sub_list: providerSubListData,
+      };
+    }) || []
+  );
+};
+
+export const getStatusBackgroundColor = (status: string) => {
+  switch (status) {
+    case 'Requested':
+      return colors.orange;
+    case 'Accepted':
+      return colors.blue;
+    case 'Cancelled':
+      return colors.dangerRed;
+    case 'Rejected':
+      return colors.dangerRed;
+    case 'Comfirmed':
+      return colors.successGreen;
+    case 'Completed':
+      return colors.successGreen;
+    case 'Pending':
+      return colors.darkYellow;
+    default:
+      return colors.secondary;
+  }
+};

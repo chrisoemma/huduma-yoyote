@@ -9,8 +9,6 @@ import {
   Image,
   FlatList,
 } from 'react-native';
-import Selector from '../../components/LanguageSelector';
-import { Container } from '../../components/Container';
 import {globalStyles} from '../../styles/global';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { colors } from '../../utils/colors';

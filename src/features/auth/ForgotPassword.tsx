@@ -102,7 +102,7 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <PhoneInput
                     ref={phoneInput}
-                    placeholder="784 333 333"
+                    placeholder="714 055 666"
                     defaultValue={value}
                     defaultCode="TZ"
                     countryPickerProps={{
