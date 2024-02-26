@@ -51,7 +51,7 @@ const ProviderList = ({ navigation, onPress, iconType, provider, service, isDark
               {provider.latitude == null ? 0 : 3}Km
             </Text>
           </View>
-          <RatingStars rating={provider.average_rating == null ? 0 : provider.average_rating} />
+          <RatingStars rating={provider?.average_rating == null ? 0 : provider?.average_rating} />
         </View>
       </TouchableOpacity>
 

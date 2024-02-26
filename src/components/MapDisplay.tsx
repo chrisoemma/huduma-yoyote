@@ -14,7 +14,7 @@ import { postClientLocation } from '../features/LocationUpdates/LocationSlice';
 import { useSelector } from 'react-redux';
 import { useAppDispatch,RootStateOrAny } from '../app/store';
 import { extractEventName } from '../utils/utilts';
-import { API_URL } from '../utils/config';
+import { API_URL, GOOGLE_MAPS_API_KEY } from '../utils/config';
 
 
 const MapDisplay = ({ onLocationUpdate }: any) => {
@@ -29,6 +29,80 @@ const MapDisplay = ({ onLocationUpdate }: any) => {
   const [blueDotMarkerKey, setBlueDotMarkerKey] = useState(0); 
 
   const pusher = Pusher.getInstance();
+
+  useEffect(() => {
+    const setupPusher = async () => {
+      const pusher = Pusher.getInstance();
+      const headers = {
+        'Authorization': `Bearer ${user.token}`
+      };
+      await pusher.init({
+        apiKey: "70f571d3d3621db1c3d0",
+        cluster: "ap2",
+       authEndpoint: `${API_URL}/pusher/auth`,
+        onAuthorizer: async (channelName, socketId) => {
+          try {
+            const response = await fetch(`${API_URL}/pusher/auth`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...headers,
+              },
+              body: JSON.stringify({
+                socket_id: socketId,
+                channel_name: channelName,
+                userId: user.id
+              }),
+            });
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const authData = await response.json();
+            console.log('Auth data:', authData);
+            return authData.auth;
+          } catch (error) {
+            console.error('Error during Pusher authentication:', error);
+            throw error;
+          }
+        },
+      });
+
+      await pusher.connect();
+
+      const channel = pusher.subscribe({
+        channelName: "location-updates",
+        onSubscriptionSucceeded:(channelName:string, data:any)=> {
+          console.log('Subscription succeeded:', channelName, data);
+        },
+        onSubscriptionError: (channelName, message, e) => {
+          console.log(`onSubscriptionError: ${message} channelName: ${channelName} Exception: ${e}`);
+        },
+        onEvent: (event: PusherEvent) => {
+          if (extractEventName(event.eventName) === "ClientLocationUpdated") {
+
+            if(event.data){
+                 const parsedData = JSON.parse(event.data);
+                  const latitude = parseFloat(parsedData.clientData.latitude);
+                  const longitude = parseFloat(parsedData.clientData.longitude);
+                  console.log('Received ClientLocationUpdated event:', longitude);
+                  setUserLocation({ latitude:latitude, longitude:longitude });
+            }
+                      
+          }
+        },
+      });
+    };
+
+    setupPusher();
+
+    return () => {
+    
+      pusher.unsubscribe({channelName:`location-updates`});
+    };
+  }, []);
+
+
+
 
   
   const { user } = useSelector(
@@ -98,88 +172,26 @@ const dispatch = useAppDispatch();
     };
   }, []);
 
-  // useEffect(() => {
-  //   const setupPusher = async () => {
-  //     const headers = {
-  //       'Authorization': `Bearer ${user.token}`
-  //     };
 
+
+  useEffect(() => {
+     console.log('this runs every 15 seconds')
+    const sendLocationToServer = () => {
+      dispatch(postClientLocation({ clientId: user?.client.id, data }));
+    };
+    const intervalId = setInterval(sendLocationToServer, 15000);
+    return () => clearInterval(intervalId);
+  }, [dispatch, user?.client.id]);
   
-    
-  //     try {
-  //       await pusher.init({
-  //         apiKey: "70f571d3d3621db1c3d0",
-  //         cluster: "ap2",
-  //         authEndpoint: `${API_URL}/pusher/auth`,
-  //         onAuthorizer: (channelName, socketId) => {
-  //           return fetch(`${API_URL}/pusher/auth`, {
-  //             method: 'POST',
-  //             headers: {
-  //               'Content-Type': 'application/json',
-  //               ...headers,
-  //             },
-  //             body: JSON.stringify({
-  //               socket_id: socketId,
-  //               channel_name: channelName,
-  //             }),
-  //           })
-  //           .then(response => response.json())
-  //           .then(authData => {
-  //             console.log('Auth data:', authData);
-  //             return authData;
-  //           })
-  //           .catch(error => {
-  //             console.error('Error during Pusher authentication:', error);
-  //             throw error;
-  //           });
-  //         },
-  //         // other pusher configuration options...
-  //       });
-    
-  //       const myChannel = await pusher.subscribe({
-  //         channelName: `private-location-updates.${user.id}`,
-  //         headers: headers,
-  //         onSubscriptionSucceeded: (channelName, data) => {
-  //           console.log('Subscription succeeded:', channelName, data);
-  //         },
-  //         onSubscriptionError: (channelName, message, e) => {
-  //           console.log(`onSubscriptionError: ${message} channelName: ${channelName} Exception: ${e}`);
-  //         },
-  //         onEvent: (event: PusherEvent) => {
-  //           if (extractEventName(event.eventName) === "ClientLocationUpdated") {
-  //             if (event.data) {
-  //               const parsedData = JSON.parse(event.data);
-  //               const latitude = parseFloat(parsedData.client_location.latitude);
-  //               const longitude = parseFloat(parsedData.client_location.longitude);
-  //               console.log('Received ClientLocationUpdated event:', longitude);
-  //               setUserLocation({ latitude, longitude });
-  //             }
-  //           }
-  //         },
-  //       });
-    
-  //       await pusher.connect();
-  //     } catch (e) {
-  //       console.log(`ERROR: ${e}`);
-  //     }
-  //   };
-    
-  //   setupPusher() 
-  //   return () => {
-  //   //  await pusher.reset();
-  //    pusher.unsubscribe({channelName:`private-location-updates.${user.id}`});
-  //   };
-  // },[]);
 
   useEffect(() => {
    
-    const interval = setInterval(() => {
-      setIsBlueDotVisible((prevVisible) => !prevVisible);
+    //const interval = setInterval(() => {
+     // setIsBlueDotVisible((prevVisible) => !prevVisible);
       setBlueDotMarkerKey((prevKey) => prevKey + 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+ //   }, 1000);
+  //  return () => clearInterval(interval);
+  }, [pusher,user]);
 
  // const animatedProviderLocation = useRef(new Animated.Value(0)).current;
 
@@ -220,13 +232,13 @@ const dispatch = useAppDispatch();
   const zoomLevel = 0.20;
 
 
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const calculateDistance = (lat1, lon1, lat2, lon2) => { 
     const R = 6371; // Earth's radius in kilometers
     const dLat = (lat2 - lat1) * (Math.PI / 180);
     const dLon = (lon2 - lon1) * (Math.PI / 180);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat1 * (Math.PI / 180)) *  
       Math.cos(lat2 * (Math.PI / 180)) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
@@ -236,63 +248,31 @@ const dispatch = useAppDispatch();
 
   return (
     <View style={styles.container}>
-      {userLocation && (
+    {userLocation && (
         <MapView
-          style={styles.map}
-          region={{
-            latitude: centerLat,
-            longitude: centerLng,
-            latitudeDelta: zoomLevel,
-            longitudeDelta: zoomLevel * (Dimensions.get('window').width / Dimensions.get('window').height),
-          }}
+            style={styles.map}
+            region={{
+                latitude: centerLat,
+                longitude: centerLng,
+                latitudeDelta: zoomLevel,
+                longitudeDelta: zoomLevel * (Dimensions.get('window').width / Dimensions.get('window').height),
+            }}
         >
-  {isBlueDotVisible && (
-  <Marker
-    key={`blueDotMarker_${blueDotMarkerKey}`}
-    coordinate={{
-      latitude: userLocation.latitude,
-      longitude: userLocation.longitude,
-    }}
-    anchor={{ x: 0.5, y: 0.5 }} 
-    style={styles.blueDotMarker} 
-  >
-    <Image
-      source={require('../../assets/images/dot.jpg')}
-      style={styles.blueDotImage} 
-    />
-  </Marker>
-)}
-     
-
-   <Marker
-              coordinate={{
-                latitude: providerLocation.latitude,
-                longitude: providerLocation.longitude,
-              }}
-            title={providerLocation.name}
-            description={`Distance: ${calculateDistance(
-              userLocation.latitude,
-              userLocation.longitude,
-              providerLocation.latitude,
-              providerLocation.longitude
-            )} km`
-            }
-            pinColor="darkblue"
-          />
-
-          
-          <Polygon
-            coordinates={[
-              { latitude: userLocation.latitude, longitude: userLocation.longitude },
-              { latitude: providerLocation.latitude, longitude: providerLocation.longitude },
-            ]}
-            strokeColor={colors.secondary}
-            strokeWidth={3}
-          />
+            <Marker
+                coordinate={userLocation}
+                pinColor="darkblue"
+            />
+            <MapViewDirections
+                origin={userLocation}
+                destination={providerLocation}
+                apikey={GOOGLE_MAPS_API_KEY}
+                strokeWidth={3}
+                strokeColor={colors.secondary}
+            />
         </MapView>
-      )}
-      {!userLocation && <Text>Loading...</Text>}
-    </View>
+    )}
+    {!userLocation && <Text>Loading...</Text>}
+</View>
   );
 };
 

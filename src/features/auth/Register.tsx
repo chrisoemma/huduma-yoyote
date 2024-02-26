@@ -86,11 +86,15 @@ const RegisterScreen = ({ route, navigation }: any) => {
       console.log('resultsss', result);
       if (result.status) {
         
-        ToastAndroid.show("User created successfuly!", ToastAndroid.SHORT);
+        ToastAndroid.show(`${t('auth:userCreatedSuccessfully')}`, ToastAndroid.LONG);
         navigation.navigate('Verify',{nextPage:'Verify'});
 
       }else{
-        setDisappearMessage(result.error);
+        if (result.error) {
+          setDisappearMessage(result.error);
+      } else {
+          setDisappearMessage(result.message);
+      }
       }
 
    

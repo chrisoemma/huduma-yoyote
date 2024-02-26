@@ -212,7 +212,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
                         <View style={{ flexDirection: 'row' }}>
                             <View>
                                 <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.black }}>{provider?.name}</Text>
-                                <RatingStars rating={provider.average_rating == null ? 0 : provider.average_rating} />
+                                <RatingStars rating={provider?.average_rating == null ? 0 : provider?.average_rating} />
                                 <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.secondary,fontWeight:'bold'  }}>{service?.name}</Text>
                             </View>
                             <TouchableOpacity style={{

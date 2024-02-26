@@ -9,7 +9,6 @@ const ContentServiceList = ({ selectedProviderSubServices, subServices,providerS
   const { t } = useTranslation();
 
   
-  
   const RenderItem = ({type, item }: any) => (
       
 

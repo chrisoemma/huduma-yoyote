@@ -19,7 +19,7 @@ export default{
     alreadyHaveAccount:'Already have an account? Login',
     login:'Login',
     verify:'Verify',
-    dontHaveAcount:' Don\'t have an account? Register',
+    dontHaveAccount:' Don\'t have an account? Register',
     register:'Register',
     nida:'Nida number',
     enterNida:'Enter Nida Number',
@@ -37,8 +37,6 @@ export default{
     comfirmedPasswordRequired:'Comfirmed Password Required',
     passwordMatch:'Passwords do not match',
     emailRequired:'Right email required',
-    enterVerificationCode:'Enter verification code'
-    
-
-   
+    enterVerificationCode:'Enter verification code',
+    userCreatedSuccessfully:'Initial Registration complete! Verify your phone number with the code sent to you.'
 }

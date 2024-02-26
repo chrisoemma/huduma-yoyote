@@ -36,5 +36,6 @@ export default {
     enterComfirmPassword: 'Ingiza Thibitisha Nenosiri',
     comfirmedPasswordRequired: 'Thibitisha Nenosiri Linahitajika',
     passwordMatch:'Nywila mpya hazifanani',
-    enterVerificationCode:'Ingiza nambari ya uthibitisho'
+    enterVerificationCode:'Ingiza nambari ya uthibitisho',
+    userCreatedSuccessfully:'Usajili wa awali umekamilika! Thibitisha namba yako ya simu na nambari iliyotumwa kwako'
 }

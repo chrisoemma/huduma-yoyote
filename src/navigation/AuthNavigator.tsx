@@ -17,7 +17,7 @@ const screenOptions = {
 const AuthStack = () => {
 
   const { isFirstTimeUser } = useSelector((state: RootStateOrAny) => state.user);
-     console.log('firsttime user',isFirstTimeUser);
+   
   return (
     <Stack.Navigator initialRouteName={isFirstTimeUser?"Register":"Login"} screenOptions={screenOptions}>
       <Stack.Screen name="Login" component={LoginScreen} />
