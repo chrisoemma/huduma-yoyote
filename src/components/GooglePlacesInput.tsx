@@ -3,20 +3,32 @@ import { Alert } from 'react-native';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { useTranslation } from 'react-i18next';
+import { getLocationName } from '../utils/utilts';
+
 
 const PLACES_API_KEY = 'AIzaSyBdEZINT7lRnj8V0Xs840TMX-_3dbGqXMc';
 //sd
 const GooglePlacesInput = ({
   placeholder = 'Enter Location',
   setLocation,
+  defaultValue,
 }: any) => {
   const ref: any = useRef();
 
-  //TODO if we choose to activate current location automatically, then we can set this
-  // useEffect(() => {
-  //   ref.current?.setAddressText('Some Text');
-  // }, []);
+  useEffect(() => {
+    if (defaultValue) {
+      getLocationName(defaultValue.latitude, defaultValue.longitude)
+        .then(locationName => {
+          ref.current?.setAddressText(locationName);
+        })
+        .catch(error => {
+          console.error('Error fetching location name:', error);
+        });
+    }
+  }, [defaultValue, ref]);
 
+  const { t } = useTranslation();
 
   const checkLocationPermission = async () => {
     const result = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
@@ -55,14 +67,12 @@ const GooglePlacesInput = ({
       ref={ref}
       placeholder={placeholder}
       keepResultsAfterBlur={true}
-      enableHighAccuracyLocation={true}
       fetchDetails={true}
+      enablePoweredByContainer={false}
       onPress={(data, details = null) => {
         if (data.description === 'Current location') {
-          // Handle current location press separately
           checkLocationPermission();
         } else {
-          // Handle other locations
           setLocation(details?.geometry.location);
         }
       }}
@@ -72,15 +82,21 @@ const GooglePlacesInput = ({
         components: 'country:tz',
       }}
       currentLocation={true}
-      currentLocationLabel="Current location"
+      currentLocationLabel={t('screens:currentLocation')}
       nearbyPlacesAPI="GoogleReverseGeocoding"
       renderDescription={(row: any) =>
         row.description || row.formatted_address || row.name
       }
+      textInputProps={{
+        placeholderTextColor: 'gray',
+        returnKeyType: 'search',
+      }}
+      
       styles={{
         textInputContainer: {},
         textInput: {
           backgroundColor: 'white',
+          color: 'black',
           width: '100%',
           borderRadius: 6,
           flexDirection: 'row',
@@ -88,6 +104,15 @@ const GooglePlacesInput = ({
           height: 65,
           elevation: 4,
         },
+        listView: {
+          backgroundColor: 'white', 
+          color: 'black', 
+          zIndex: 100000
+        },
+        row:{
+          description: { color: 'gray'},
+        },
+        description: { color: 'gray' },
         predefinedPlacesDescription: {
           color: '#1faadb',
         },

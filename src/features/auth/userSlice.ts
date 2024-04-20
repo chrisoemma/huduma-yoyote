@@ -25,7 +25,7 @@ interface UserRegisterDTO {
   phone: string;
   password: string;
   app_type: string;
-  email:string;
+  email: string;
 }
 
 interface PhoneVerificationDTO {
@@ -58,6 +58,22 @@ export const userLogin = createAsyncThunk(
   },
 );
 
+export const multiRegister = createAsyncThunk(
+  'users/multiRegister',
+  async ({ data, userId }) => {
+
+    const response = await fetch(`${API_URL}/auth/multiaccount_register/${userId}`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    return (await response.json()) as UserData;
+  },
+);
+
 
 export const changePassword = createAsyncThunk(
   'users/changePassword',
@@ -77,7 +93,7 @@ export const changePassword = createAsyncThunk(
 export const updateProfile = createAsyncThunk(
   'users/updateProfile',
   async ({ data, userId }: any) => {
-    
+
     try {
       console.log('user', userId);
       const response = await fetch(`${API_URL}/users/change_profile_picture/${userId}`, {
@@ -105,11 +121,11 @@ export const updateProfile = createAsyncThunk(
 
 export const updateUserInfo = createAsyncThunk(
   'users/updateUserInfo',
-  async ({ data, userType,userId }: any) => {
+  async ({ data, userType, userId }: any) => {
     try {
       console.log('userId', userId);
-      console.log('user info',userType)
-      console.log('dataa',data)
+      console.log('user info', userType)
+      console.log('dataa', data)
       const response = await fetch(`${API_URL}/users/update_account/${userType}/${userId}`, {
         method: 'PUT',
         headers: {
@@ -120,7 +136,7 @@ export const updateUserInfo = createAsyncThunk(
       });
 
       if (!response.ok) {
-        
+
         const errorData = await response.json();
         throw new Error(`Request failed: ${errorData.message}`);
       }
@@ -134,10 +150,13 @@ export const updateUserInfo = createAsyncThunk(
   }
 );
 
+
+
+
 export const userRegiter = createAsyncThunk(
   'users/userRegister',
   async (data: UserRegisterDTO) => {
-    console.log('data from useregister', data)
+   
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: {
@@ -220,7 +239,7 @@ const userSlice = createSlice({
   initialState: {
     user: {} as UserData,
     config: {},
-    isFirstTimeUser:true,
+    isFirstTimeUser: true,
     loading: false,
     status: '',
   },
@@ -294,6 +313,35 @@ const userSlice = createSlice({
       updateStatus(state, '');
     });
 
+
+
+    //Multi account 
+    builder.addCase(multiRegister.pending, state => {
+      console.log('Pending');
+      state.loading = true;
+      updateStatus(state, '');
+    });
+    builder.addCase(multiRegister.fulfilled, (state, action) => {
+
+      state.loading = false;
+      updateStatus(state, '');
+
+      if (action.payload.status) {
+        state.user = action.payload.user as any;
+        state.user.token = action.payload.token;
+        AsyncStorage.setItem('token', action.payload.token);
+        updateStatus(state, '');
+      } else {
+        updateStatus(state, action.payload);
+      }
+    });
+    builder.addCase(multiRegister.rejected, (state, action) => {
+      console.log('Rejected');
+      console.log(action.error);
+      state.loading = false;
+      updateStatus(state, '');
+    });
+
     //VERIFY
     builder.addCase(userVerify.pending, state => {
       console.log('Pending');
@@ -308,9 +356,12 @@ const userSlice = createSlice({
       updateStatus(state, '');
 
       if (action.payload.status && action.payload.token) {
+        console.log('action with token is executed');
+        state.user = action.payload.user;
         state.user.token = action.payload.token as any;
         updateStatus(state, '');
       } else {
+        console.log('action without token is executed')
         updateStatus(state, action.payload);
       }
     });
@@ -386,6 +437,7 @@ const userSlice = createSlice({
       console.log('Update Task Fulfilled');
       console.log('dataaa1234', action.payload.data)
 
+      if (action.payload.status){
       state.user = {
         ...state.user,
         ...action.payload.data.user,
@@ -395,7 +447,8 @@ const userSlice = createSlice({
       if (action.payload.data.token) {
         state.user.token = action.payload.data.token;
       }
-
+      
+    }
       state.loading = false;
       updateStatus(state, '');
     });
@@ -407,7 +460,7 @@ const userSlice = createSlice({
 
 
     builder.addCase(updateUserInfo.pending, (state) => {
-      
+
       state.loading = true;
       updateStatus(state, '');
     });
@@ -436,7 +489,7 @@ const userSlice = createSlice({
 
 
 
-       //Change password
+    //Change password
 
     builder.addCase(changePassword.pending, state => {
       console.log('Pending');
@@ -466,6 +519,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { userLogout, clearMessage,setFirstTime } = userSlice.actions;
+export const { userLogout, clearMessage, setFirstTime } = userSlice.actions;
 
 export default userSlice.reducer;

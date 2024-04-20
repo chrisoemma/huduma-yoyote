@@ -1,10 +1,14 @@
 import React from 'react';
 import { FlatList, View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { colors } from '../utils/colors';
+import { useSelector } from 'react-redux';
+import { selectLanguage } from '../costants/languageSlice';
 
 const ContentList = ({ data,navigation,onPress,isDarkMode }: any) => {
   const itemsPerRow = 3;
   const screenWidth = Dimensions.get('window').width;
+
+  const selectedLanguage = useSelector(selectLanguage);
 
   const handleServicePress = (service)=>{
     
@@ -20,7 +24,7 @@ const ContentList = ({ data,navigation,onPress,isDarkMode }: any) => {
     onPress={()=>handleServicePress(item)}
     >
       <Image
-        source={{uri:item.images[0].img_url}}
+        source={{uri:item?.images[0]?.img_url}}
         style={{
           resizeMode: 'cover',
           width: 55,
@@ -30,7 +34,7 @@ const ContentList = ({ data,navigation,onPress,isDarkMode }: any) => {
         
       />
       
-      <Text style={{color:isDarkMode?colors.white:colors.black}}>{item.name}</Text>
+      <Text style={{color:isDarkMode?colors.white:colors.black}}>{selectedLanguage=='en'?item?.name?.en:item?.name?.sw}</Text>
     </TouchableOpacity>
   );
 
@@ -38,7 +42,7 @@ const ContentList = ({ data,navigation,onPress,isDarkMode }: any) => {
     <View style={styles.container}>
     <FlatList
       data={data}
-      keyExtractor={(item) => item.name.toString()}
+      keyExtractor={(item) => item?.id.toString()}
       renderItem={renderItem}
       numColumns={itemsPerRow}
       contentContainerStyle={styles.contentContainer}

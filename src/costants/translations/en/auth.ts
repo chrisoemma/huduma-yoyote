@@ -38,5 +38,16 @@ export default{
     passwordMatch:'Passwords do not match',
     emailRequired:'Right email required',
     enterVerificationCode:'Enter verification code',
-    userCreatedSuccessfully:'Initial Registration complete! Verify your phone number with the code sent to you.'
+    userCreatedSuccessfully:'Initial Registration complete! Verify your phone number with the code sent to you.',
+    enterBusinessName:'Enter Business Name',
+    confirmPassword:'Confirm Password',
+    confirmpasswordRequired:'Confirm Password is required',
+    passwordMismatch:'Password Mismatch',
+    designationError:'Please, Choose your profession',
+    haveOtp:'Have OTP?',
+    checkPhoneNumber:'Check Phone',
+    checkNumber:'Find Number',
+    createAccountPassword:'Create Account Password',
+    accountPasswordCreated:'Account Password created Successfully',
+   
 }

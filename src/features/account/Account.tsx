@@ -11,6 +11,7 @@ import { firebase } from '@react-native-firebase/storage';
 import RNFS from 'react-native-fs';
 import { updateProfile, userLogout } from '../auth/userSlice';
 import DocumentPicker, { types } from 'react-native-document-picker'
+import { ScrollView } from 'react-native-gesture-handler';
 
 const Account = ({ navigation }: any) => {
 
@@ -69,7 +70,7 @@ const Account = ({ navigation }: any) => {
       .catch((error) => {
         console.error('Error:', error);
       });
-  }, [locationName]);
+  }, [user?.client?.latitude,user?.client?.longitude]);
 
   const confirmLogout = () =>
     Alert.alert(`${t('screens:logout')}`, `${t('screens:areYouSureLogout')}`, [
@@ -165,7 +166,7 @@ const Account = ({ navigation }: any) => {
     <SafeAreaView
       style={globalStyles().scrollBg}
     >
-      <View style={globalStyles().appView}>
+      <ScrollView style={globalStyles().appView}>
 
         <View style={styles.btnView}>
           {profile == null ? (<View />) : (
@@ -225,15 +226,16 @@ const Account = ({ navigation }: any) => {
             <Icon
               name="camera"
               size={23}
-              color={isDarkMode ? colors.white : colors.black}
+              color={colors.white}
               style={styles.camera}
             />
           </TouchableOpacity>
         </View>
         <Text style={{ color: isDarkMode ? colors.white : colors.secondary, fontWeight: 'bold', alignSelf: 'center' }}>{user.name}</Text>
 
-        <View>
-          <TouchableOpacity style={{ flexDirection: 'row', margin: 10 }}
+        <View style={{marginLeft:10}}>
+          <Text style={{color: isDarkMode ? colors.white : colors.black,fontWeight:'bold'}}>{t('auth:phone')}</Text>
+          <TouchableOpacity style={{ flexDirection: 'row', marginBottom: 10 }}
             onPress={() => makePhoneCall(phoneNumber)}
           >
             <Icon
@@ -243,22 +245,26 @@ const Account = ({ navigation }: any) => {
             />
             <Text style={{ paddingHorizontal: 10, color: isDarkMode ? colors.white : colors.secondary }}>{user.phone}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row', marginHorizontal: 10 }}>
+          <Text style={{color: isDarkMode ? colors.white : colors.black,fontWeight:'bold'}}>{t('auth:email')}:</Text>
+          <TouchableOpacity style={{ flexDirection: 'row', marginBottom: 10 }}>
             <Icon
               name="mail"
               color={isDarkMode ? colors.white : colors.black}
               size={25}
             />
-            <Text style={{ paddingLeft: 10, color: isDarkMode ? colors.white : colors.secondary }}>{user.email}</Text>
+            {user?.email==null?(<Text  style={{color: isDarkMode ? colors.white : colors.alsoGrey}}> {t('screens:noEmail')}</Text>):(<Text style={{ paddingLeft: 10, color: isDarkMode ? colors.white : colors.black }}>{user?.email}</Text>)
+            }
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row', marginHorizontal: 10, marginTop: 5 }}>
+          <Text style={{color: isDarkMode ? colors.white : colors.black,fontWeight:'bold'}}>{t('screens:location')}</Text>
+          <TouchableOpacity style={{ flexDirection: 'row', marginBottom:10, marginTop: 5 }}>
+            
             <Icon
               name="enviroment"
               color={isDarkMode ? colors.white : colors.black}
               size={25}
             />
             {
-              locationName == null ? (<View />) : (<Text style={{ paddingLeft: 10, color: isDarkMode ? colors.white : colors.black }}>{breakTextIntoLines(locationName, 20)}</Text>)
+              locationName == '' ? (<Text style={{color: isDarkMode ? colors.white : colors.alsoGrey}}> {t('screens:noresidenceData')}</Text>) : ( <Text style={{ color: isDarkMode ? colors.white : colors.alsoGrey }}>{breakTextIntoLines(locationName, 20)}</Text>)
             }
 
           </TouchableOpacity>
@@ -290,7 +296,7 @@ const Account = ({ navigation }: any) => {
           <Text style={{ paddingLeft: 10, fontWeight: 'bold', color: isDarkMode ? colors.white : colors.secondary }}>{t('navigate:logout')}</Text>
         </TouchableOpacity>
 
-      </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }

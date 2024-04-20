@@ -16,11 +16,12 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { makePhoneCall } from '../../utils/utilts';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
-import { getProviderSubServices } from '../serviceproviders/ServiceProviderSlice';
-import { rateRequest, updateRequestStatus } from '../requests/RequestSlice';
+import { getProviderLastLocation, getProviderSubServices } from '../serviceproviders/ServiceProviderSlice';
+import { getRequestLastLocation, rateRequest, updateRequestStatus } from '../requests/RequestSlice';
 import { BasicView } from '../../components/BasicView';
 import { getStatusBackgroundColor } from '../../utils/utilts'
 import RatingModal from '../../components/RatingModal';
+import { selectLanguage } from '../../costants/languageSlice';
 
 
 const RequestedServices = ({ navigation, route }: any) => {
@@ -33,6 +34,12 @@ const RequestedServices = ({ navigation, route }: any) => {
     );
 
 
+    const selectedLanguage = useSelector(selectLanguage);
+
+    const { requestLastLocation } = useSelector(
+        (state: RootStateOrAny) => state.requests,
+    );
+
     const { isDarkMode } = useSelector(
         (state: RootStateOrAny) => state.theme,
     );
@@ -40,6 +47,10 @@ const RequestedServices = ({ navigation, route }: any) => {
     const { providerSubServices, subServices } = useSelector(
         (state: RootStateOrAny) => state.providers,
     );
+
+    const { providerLastLocation } = useSelector(
+        (state: RootStateOrAny) => state.providers,
+      );
 
     const [userLocation, setUserLocation] = useState(null);
     const [providerLocation, setProviderLocation] = useState(null);
@@ -55,18 +66,36 @@ const RequestedServices = ({ navigation, route }: any) => {
         dispatch(getProviderSubServices({ providerId: request?.provider?.id, serviceId: request?.service?.id }));
     }, [dispatch])
 
+  
+    useEffect(() => {
+        dispatch(getProviderLastLocation(request?.provider?.id));
+     }, [])
+
+     useEffect(() => {
+        dispatch(getRequestLastLocation(request?.id));
+     }, [])
+
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [sheetTitle, setSheetTitle] = useState('');
 
     let requestData = {
         comment: '',
         rating: '',
+        client_latitude:'',
+        client_longitude:'',
+        provider_latitude:'',
+        provider_longitude:'',
+        requestId:''
 
     }
     const postReview = ({ comment, rating }: any) => {
         requestData.comment = comment
         requestData.rating = rating
         requestData.requestId = request?.id
+        requestData.client_latitude=userLocation?.latitude
+        requestData.client_longitude=userLocation?.longitude
+        requestData.provider_latitude=providerLocation?.latitude
+        requestData.provider_longitude=providerLocation?.longitude
         toggleModal();
         dispatch(rateRequest(requestData))
             .unwrap()
@@ -120,7 +149,7 @@ const RequestedServices = ({ navigation, route }: any) => {
 
     const { t } = useTranslation();
 
-    const request_status = request?.statuses[request?.statuses.length - 1].status;
+    const request_status = request?.statuses[request?.statuses?.length - 1].status;
 
     const [message, setMessage] = useState("")
     const setDisappearMessage = (message: any) => {
@@ -138,11 +167,20 @@ const RequestedServices = ({ navigation, route }: any) => {
     const data = {
         status: '',
         client: '',
+        client_latitude:'',
+        client_longitude:'',
+        provider_latitude:'',
+        provider_longitude:''
     }
 
     const updateRequest = (id, requestType) => {
-        data.client = user.client.id;
+        data.client = user?.client?.id;
         data.status = requestType;
+        data.client_latitude=userLocation?.latitude
+        data.client_longitude=userLocation?.longitude
+        data.provider_latitude=providerLocation?.latitude
+        data.provider_longitude=providerLocation?.longitude
+
 
         dispatch(updateRequestStatus({ data: data, requestId: id }))
             .unwrap()
@@ -168,18 +206,20 @@ const RequestedServices = ({ navigation, route }: any) => {
     }
 
 
+    const stylesGlobal = globalStyles();
+
     return (
         <>
             <SafeAreaView
-                style={globalStyles().scrollBg}
+                style={stylesGlobal.scrollBg}
             >
 
                 <GestureHandlerRootView style={{ flex: 1, margin: 10 }}>
-                    <BasicView style={globalStyles().centerView}>
-                        <Text style={globalStyles().errorMessage}>{message}</Text>
+                    <BasicView style={stylesGlobal.centerView}>
+                        <Text style={stylesGlobal.errorMessage}>{message}</Text>
                     </BasicView>
                     <View>
-                        <View style={[globalStyles().circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
+                        <View style={[stylesGlobal.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
 
 
                             <Image
@@ -203,7 +243,7 @@ const RequestedServices = ({ navigation, route }: any) => {
                             <View>
                                 <Text style={{ marginVertical: 5, color: colors.black }}>{request?.provider?.name}</Text>
                                 <RatingStars rating={request?.provider?.average_rating == null ? 0 : request?.provider?.average_rating} />
-                                <Text style={{ marginVertical: 5, color: colors.secondary }}>{request?.service?.name}</Text>
+                                <Text style={{ marginVertical: 5, color: colors.secondary }}>{ selectedLanguage=='en'? request?.service?.name?.en :request?.service?.name?.sw}</Text>
                             </View>
                             <TouchableOpacity style={{
                                 flexDirection: 'row',
@@ -226,17 +266,18 @@ const RequestedServices = ({ navigation, route }: any) => {
                         </View>
                         <Text style={{
                             color: isDarkMode ? colors.white : colors.black
-                        }}>{request?.service?.description}</Text>
+                        }}>{selectedLanguage=='en'? request?.service?.description?.en :request?.service?.description?.sw}</Text>
 
-                        <View style={[globalStyles().chooseServiceBtn, { justifyContent: 'space-between' }]}>
-                            <TouchableOpacity style={globalStyles().chooseBtn}
+                        <View style={[stylesGlobal.chooseServiceBtn, { justifyContent: 'space-between',marginBottom:50 }]}>
+                            
+
+                            <TouchableOpacity style={[stylesGlobal.otherBtn, { backgroundColor: getStatusBackgroundColor(request_status) }]}>
+                                <Text style={{ color: colors.white }}>{getStatusTranslation(request_status)}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={stylesGlobal.chooseBtn}
                                 onPress={() => handlePresentModalPress('Near providers')}
                             >
                                 <Text style={{ color: colors.white }}>{t('navigate:requestedServices')}</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={[globalStyles().otherBtn, { backgroundColor: getStatusBackgroundColor(request_status) }]}>
-                                <Text style={{ color: colors.white }}>{getStatusTranslation(request_status)}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -245,6 +286,10 @@ const RequestedServices = ({ navigation, route }: any) => {
                         <View style={styles.mapContainer}>
                             <MapDisplay
                                 onLocationUpdate={handleLocationUpdate}
+                                providerLastLocation={providerLastLocation}
+                                provider={request?.provider}
+                                requestStatus={request_status}
+                                requestLastLocation={requestLastLocation}
                             />
                         </View>
                     </View>
@@ -263,7 +308,7 @@ const RequestedServices = ({ navigation, route }: any) => {
                                     <Text style={styles.title}>{t('screens:Services')}</Text>
 
 
-                                    <View style={globalStyles().subCategory}>
+                                    <View style={stylesGlobal.subCategory}>
                                         <ContentServiceList
                                             subServices={subServices}
                                             providerSubServices={providerSubServices}

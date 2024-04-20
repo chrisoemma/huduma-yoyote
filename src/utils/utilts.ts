@@ -156,11 +156,11 @@ export const getLocationName = async (latitude, longitude) => {
       // If none of the above, return the first address component
       return result.address_components[0].long_name;
     } else {
-      return 'Location not found';
+      return '';
     }
   } catch (error) {
     console.error('Error fetching location data:', error);
-    return 'Error fetching location data';
+    return '';
   }
 };
 

@@ -79,7 +79,7 @@ import { colors } from '../utils/colors';
       zIndex: 1000,
       height: 100,
       width: '100%',
-      backgroundColor: colors.primary,
+      backgroundColor: colors.secondary,
       borderBottomLeftRadius: 20,
       borderBottomRightRadius: 20,
     },
@@ -89,7 +89,7 @@ import { colors } from '../utils/colors';
     search: {
       height: 50,
       width: '72%',
-      backgroundColor: colors.lightBlue,
+      backgroundColor: colors.primary,
       marginLeft: 10,
       borderRadius: 30,
     },
@@ -111,6 +111,8 @@ import { colors } from '../utils/colors';
     horizontalLogo: {
       width: 150,
       height: 50,
+      resizeMode: 'contain',
+      alignSelf: 'center',
     },
     banner: {
       zIndex: 1,

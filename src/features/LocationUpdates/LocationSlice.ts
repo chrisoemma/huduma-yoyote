@@ -47,6 +47,8 @@ export const postClientLocation = createAsyncThunk(
         console.log(action.error);
         state.loading = false;
       });
+
+      
     },
   });
   

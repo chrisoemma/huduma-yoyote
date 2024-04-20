@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { View, Text, SafeAreaView, Image, TouchableOpacity, StyleSheet, Button, ToastAndroid } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, StyleSheet, Modal, ToastAndroid, TouchableWithoutFeedback } from 'react-native'
 import {globalStyles} from '../../styles/global'
 import { colors } from '../../utils/colors'
 import RatingStars from '../../components/RatinsStars';
@@ -16,9 +16,10 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { makePhoneCall } from '../../utils/utilts';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
-import { getProviderSubServices } from '../serviceproviders/ServiceProviderSlice';
+import { getProviderLastLocation, getProviderSubServices } from '../serviceproviders/ServiceProviderSlice';
 import { BasicView } from '../../components/BasicView';
-import { createRequest } from '../requests/RequestSlice';
+import { createRequest} from '../requests/RequestSlice';
+import { selectLanguage } from '../../costants/languageSlice';
 
 
 const ServiceRequest = ({ navigation, route }: any) => {
@@ -44,14 +45,23 @@ const ServiceRequest = ({ navigation, route }: any) => {
         (state: RootStateOrAny) => state.theme,
       );
 
+      const { providerLastLocation } = useSelector(
+        (state: RootStateOrAny) => state.providers,
+      );
 
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [sheetTitle, setSheetTitle] = useState('');
 
+    const selectedLanguage = useSelector(selectLanguage);
+
+    useEffect(() => {
+        dispatch(getProviderLastLocation(provider?.provider_id));
+     }, [])
 
     const [userLocation, setUserLocation] = useState(null);
     const [providerLocation, setProviderLocation] = useState(null);
     const handleLocationUpdate = useCallback((userLocation, providerLocation) => {
+
         setUserLocation(userLocation);
         setProviderLocation(providerLocation);
     }, []);
@@ -75,12 +85,17 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     useEffect(() => {
         dispatch(getProviderSubServices({ providerId: provider.provider_id, serviceId: service.id }));
-
     }, [dispatch])
+
 
     const [selectedSubservice, setSelectedSubservice] = useState([]);
     const [selectedProviderSubService, setSelectedProviderSubService] = useState([]);
  
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const toggleModal = () => {
+      setIsModalVisible(!isModalVisible);
+    };
     const { t } = useTranslation();
 
     const toggleSubService = (type,subService) => {
@@ -145,13 +160,14 @@ const ServiceRequest = ({ navigation, route }: any) => {
         data.request_time = new Date().toISOString();
         data.sub_service = selectedSubservice
         data.provider_sub_service=selectedProviderSubService
-        data.client_latitude = userLocation.latitude
-        data.client_longitude = userLocation.longitude
-        data.provider_latitude = providerLocation.latitude
-        data.provider_longitude = providerLocation.longitude
+        data.client_latitude = userLocation?.latitude
+        data.client_longitude = userLocation?.longitude
+        data.provider_latitude = providerLocation?.latitude
+        data.provider_longitude = providerLocation?.longitude
 
-       // console.log('request data', data)
 
+
+       
         dispatch(createRequest({ data: data }))
             .unwrap()
             .then(result => {
@@ -189,9 +205,9 @@ const ServiceRequest = ({ navigation, route }: any) => {
                         <BasicView style={stylesGlobal.centerView}>
                             <Text style={stylesGlobal.errorMessage}>{message}</Text>
                         </BasicView>
-                        <View style={[stylesGlobal.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
+                        <TouchableWithoutFeedback  onPress={toggleModal} style={[stylesGlobal.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
 
-
+                       
                             <Image
                                 source={
                                     provider?.profile_img?.startsWith('https://')
@@ -208,12 +224,12 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     alignSelf: 'center',
                                 }}
                             />
-                        </View>
+                         </TouchableWithoutFeedback >
                         <View style={{ flexDirection: 'row' }}>
                             <View>
                                 <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.black }}>{provider?.name}</Text>
                                 <RatingStars rating={provider?.average_rating == null ? 0 : provider?.average_rating} />
-                                <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.secondary,fontWeight:'bold'  }}>{service?.name}</Text>
+                                <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.secondary,fontWeight:'bold'  }}>{selectedLanguage? service?.name?.en :service?.name?.sw}</Text>
                             </View>
                             <TouchableOpacity style={{
                                 flexDirection: 'row',
@@ -228,13 +244,13 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     color={colors.successGreen}
                                     size={20}
                                 />
-                                <Text style={{ paddingHorizontal: 5, fontWeight: 'bold',color:isDarkMode?colors.white:colors.grey }}>{PhoneNumber}</Text>
+                                <Text style={{ paddingHorizontal: 5, fontWeight: 'bold',color:isDarkMode?colors.white:colors.blue }}>{PhoneNumber}</Text>
                             </TouchableOpacity>
                         </View>
                         <View>
-                            <Text>{service?.description}</Text>
+                            <Text style={{marginBottom:15}}>{selectedLanguage=='en'? service?.description?.en:service?.description?.sw}</Text>
                             <View style={stylesGlobal.chooseServiceBtn}>
-                                <TouchableOpacity style={stylesGlobal.chooseBtn}
+                                <TouchableOpacity style={[stylesGlobal.chooseBtn,{marginBottom:50}]}
                                     onPress={() => handlePresentModalPress('Near providers')}
                                 >
                                     <Text style={{ color: colors.white }}>{t('screens:chooseService')}</Text>
@@ -250,7 +266,10 @@ const ServiceRequest = ({ navigation, route }: any) => {
                         <View style={styles.mapContainer}>
                             <MapDisplay
                                 onLocationUpdate={handleLocationUpdate}
-
+                                providerLastLocation={providerLastLocation}
+                                provider={provider}
+                                requestStatus="New"
+                                requestLastLocation={{}}
                             />
                         </View>
                     </View>
@@ -300,7 +319,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     style={[stylesGlobal.floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
                                     disabled={loading}
                                     onPress={() => {
-                                        if (selectedSubservice.length > 0 && selectedProviderSubService.length > 0) {
+                                        if (selectedSubservice.length > 0 || selectedProviderSubService.length > 0) {
                                             sendRequest();
                                         } else {
                                             ToastAndroid.show(`${t('screens:pleaseAddService')}`, ToastAndroid.SHORT);
@@ -320,6 +339,29 @@ const ServiceRequest = ({ navigation, route }: any) => {
                 </GestureHandlerRootView>
             </SafeAreaView>
 
+
+            <Modal visible={isModalVisible} transparent={true} onRequestClose={toggleModal}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableWithoutFeedback onPress={toggleModal}>
+            <Image
+                 source={
+                    provider?.profile_img?.startsWith('https://')
+                        ? { uri: provider.profile_img }
+                        : provider?.user_img?.startsWith('https://')
+                            ? { uri: provider.user_img }
+                            : require('../../../assets/images/profile.png') // Default static image
+                }
+              style={{
+                resizeMode: 'contain',
+                width: '80%',
+                height: '80%',
+              //  borderRadius:200,
+                overflow: 'hidden', // Ensure that the borderRadius is applied correctly
+              }}
+            />
+          </TouchableWithoutFeedback>
+        </View>
+      </Modal>
 
         </>
     )

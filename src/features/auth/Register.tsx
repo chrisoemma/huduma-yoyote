@@ -26,6 +26,7 @@ import { useAppDispatch } from '../../app/store';
 import Button from '../../components/Button';
 import { ButtonText } from '../../components/ButtonText';
 import { useTranslation } from 'react-i18next';
+import ToastMessage from '../../components/ToastMessage';
 
 const RegisterScreen = ({ route, navigation }: any) => {
 
@@ -45,6 +46,8 @@ const RegisterScreen = ({ route, navigation }: any) => {
   const phoneInput = useRef<PhoneInput>(null);
 
   const [message, setMessage] = useState('');
+  const [confirmError, setConfirmError] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const { t } = useTranslation();
 
@@ -57,9 +60,31 @@ const RegisterScreen = ({ route, navigation }: any) => {
     defaultValues: {
       phone: '',
       password: '',
+      confirmPassword: '',
       name: '',
     },
   });
+
+
+
+  const [toastMessage, setToastMessage] = useState(''); // State for toast message content
+  const [showToast, setShowToast] = useState(false); // State to control visibility of toast message
+
+  // Function to toggle visibility of toast message
+  const toggleToast = () => {
+    setShowToast(!showToast);
+  };
+
+
+
+  // Function to show the toast message
+  const showToastMessage = (message) => {
+    setToastMessage(message);
+    toggleToast(); // Show the toast message
+    setTimeout(() => {
+      toggleToast(); // Hide the toast message after a delay
+    }, 5000); // Adjust duration as per your requirement
+  };
 
 
   useEffect(() => {
@@ -74,10 +99,22 @@ const RegisterScreen = ({ route, navigation }: any) => {
 
     setTimeout(() => {
       setMessage('');
-    }, 5000);
+    }, 10000);
   };
 
   const onSubmit = async (data: any) => {
+
+    setShowToast(false)
+
+    if (data.password !== data.confirmPassword) {
+      setConfirmError(t('auth:passwordMismatch'));
+      setShowToast(true)
+      showToastMessage(t('screens:errorOccured'));
+      return;
+    } else {
+      setConfirmError('');
+    }
+
       data.app_type='client';
     
     dispatch(userRegiter(data))
@@ -93,8 +130,14 @@ const RegisterScreen = ({ route, navigation }: any) => {
         if (result.error) {
           setDisappearMessage(result.error);
       } else {
+        if(result.message){
           setDisappearMessage(result.message);
+        }else{
+          setDisappearMessage("Something is not right please contact administartor");
+        }  
       }
+      setShowToast(true)
+      showToastMessage(t('screens:errorOccured'));
       }
 
    
@@ -105,6 +148,8 @@ const RegisterScreen = ({ route, navigation }: any) => {
   return (
 
     <SafeAreaView style={styles.scrollBg}>
+
+{showToast && <ToastMessage message={toastMessage} onClose={toggleToast} />}
       <ScrollView contentInsetAdjustmentBehavior="automatic">
        
           <View style={styles.centerView}>
@@ -239,6 +284,56 @@ const RegisterScreen = ({ route, navigation }: any) => {
               )}
             </BasicView>
 
+            <BasicView>
+            <Text
+              style={[
+                styles.inputFieldTitle,
+                styles.marginTop20,
+              ]}>
+              {t('auth:confirmPassword')}
+            </Text>
+
+            <View style={styles.passwordInputContainer}>
+              <Controller
+                control={control}
+                rules={{
+                  required: true,
+                  validate: (value) => value === confirmPassword,
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    style={[styles.passwordInputField,
+                    { backgroundColor: colors.white, color: colors.black }
+                    ]}
+                    secureTextEntry={passwordVisibility}
+                    placeholderTextColor={colors.alsoGrey}
+                    placeholder={t('auth:confirmPassword')}
+                    onBlur={onBlur}
+                    onChangeText={(text) => {
+                      setConfirmPassword(text);
+                      onChange(text);
+                    }}
+                    value={value}
+                  />
+                )}
+                name="confirmPassword"
+              />
+              <TouchableOpacity onPress={handlePasswordVisibility}>
+                <Icon name={rightIcon} size={20} color={colors.grey} />
+              </TouchableOpacity>
+            </View>
+            {errors.confirmPassword && (
+                <Text style={styles.errorMessage}>
+                  {t('auth:confirmpasswordRequired')}
+                </Text>
+              )}
+            {confirmError && (
+              <Text style={styles.errorMessage}>
+                {t('auth:passwordMismatch')}
+              </Text>
+            )}
+          </BasicView>
+
 
             <BasicView>
               <Button loading={loading} onPress={handleSubmit(onSubmit)}>
@@ -246,6 +341,7 @@ const RegisterScreen = ({ route, navigation }: any) => {
               </Button>
             </BasicView>
 
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 20, marginBottom: 80 }}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Login');
@@ -255,6 +351,16 @@ const RegisterScreen = ({ route, navigation }: any) => {
                 {t('auth:alreadyHaveAccount')}
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('CheckPhoneNumber');
+              }}
+              style={[styles.marginTop20, styles.centerView]}>
+              <Text style={styles.touchablePlainTextSecondary}>
+                {t('auth:haveOtp')}
+              </Text>
+            </TouchableOpacity>
+          </View>
           </View>
         
       </ScrollView>

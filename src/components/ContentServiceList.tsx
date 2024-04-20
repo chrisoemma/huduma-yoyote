@@ -3,10 +3,14 @@ import { FlatList, View, Text, StyleSheet, Image, TouchableOpacity, Dimensions }
 import { colors } from '../utils/colors';
 import { useTranslation } from 'react-i18next';
 import { combineSubServices } from '../utils/utilts';
+import { useSelector } from 'react-redux';
+import { selectLanguage } from '../costants/languageSlice';
 
 const ContentServiceList = ({ selectedProviderSubServices, subServices,providerSubServices, toggleSubService, selectedSubServices,navigation,screen }: any) => {
 
   const { t } = useTranslation();
+
+  const selectedLanguage = useSelector(selectLanguage);
 
   
   const RenderItem = ({type, item }: any) => (
@@ -37,13 +41,13 @@ const ContentServiceList = ({ selectedProviderSubServices, subServices,providerS
       />
       {type=="subService"?(
       <View style={styles.textContainer}>
-      <Text style={styles.categoryService}>{item?.provider_sub_list?.name || item.name}</Text>
-      <Text style={styles.subservice}>{item?.service?.category?.name}</Text>
+      <Text style={styles.categoryService}>{item?.provider_sub_list?.name || item?.name}</Text>
+      <Text style={styles.subservice}>{selectedLanguage=='en'? item?.service?.category?.name?.en:item?.service?.category?.name?.sw}</Text>
       <Text style={{color:colors.black}}>{item?.provider_sub_list?.description || item.description}</Text>
       </View>
       ):( <View style={styles.textContainer}>
         <Text style={styles.categoryService}>{item?.name}</Text>
-        <Text style={styles.subservice}>{item?.service?.category?.name}</Text>
+        <Text style={styles.subservice}>{selectedLanguage=='en'? item?.service?.category?.name?.en:item?.service?.category?.name?.sw}</Text>
         <Text style={{color:colors.black}}>{item?.description}</Text>
         </View>)}
       </View>

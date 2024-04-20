@@ -206,6 +206,7 @@ const LoginScreen = ({ route, navigation }: any) => {
               </Button>
             </BasicView>
 
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 20, marginBottom: 80 }}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('Register');
@@ -213,8 +214,19 @@ const LoginScreen = ({ route, navigation }: any) => {
               style={[styles.marginTop20, styles.centerView]}>
               <Text style={styles.touchablePlainTextSecondary}>
               {t('auth:dontHaveAccount')}
+              
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('CheckPhoneNumber');
+              }}
+              style={[styles.marginTop20, styles.centerView]}>
+              <Text style={styles.touchablePlainTextSecondary}>
+                {t('auth:haveOtp')}
+              </Text>
+            </TouchableOpacity> 
+            </View>
           </View>
       
       </ScrollView>

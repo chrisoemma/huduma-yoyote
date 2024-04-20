@@ -20,7 +20,7 @@ const ProviderList = ({ navigation, onPress, iconType, provider, service, isDark
         style={[styles.touchableOpacityStyles, { backgroundColor: isDarkMode ? '#545352' : colors.white }]}
       >
         <View style={stylesGlobal.circle}>
-          <TouchableWithoutFeedback onPress={toggleModal}>
+          <TouchableWithoutFeedback>
             <Image
               source={
                 provider?.profile_img?.startsWith('https://')
@@ -55,28 +55,7 @@ const ProviderList = ({ navigation, onPress, iconType, provider, service, isDark
         </View>
       </TouchableOpacity>
 
-      <Modal visible={isModalVisible} transparent={true} onRequestClose={toggleModal}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableWithoutFeedback onPress={toggleModal}>
-            <Image
-              source={
-                provider?.profile_img?.startsWith('https://')
-                  ? { uri: provider.profile_img }
-                  : provider?.user_img?.startsWith('https://')
-                  ? { uri: provider.user_img }
-                  : require('./../../assets/images/profile.png') // Default static image
-              }
-              style={{
-                resizeMode: 'contain',
-                width: '80%',
-                height: '80%',
-              //  borderRadius:200,
-                overflow: 'hidden', // Ensure that the borderRadius is applied correctly
-              }}
-            />
-          </TouchableWithoutFeedback>
-        </View>
-      </Modal>
+     
     </>
   );
 };

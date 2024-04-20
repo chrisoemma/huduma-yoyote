@@ -38,6 +38,8 @@ const PasswordResetScreen = ({route, navigation}: any) => {
     useTogglePasswordVisibility();
 
   const [message, setMessage] = useState('');
+  const [confirmError, setConfirmError] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {
     console.log(user);
@@ -59,11 +61,20 @@ const PasswordResetScreen = ({route, navigation}: any) => {
   } = useForm({
     defaultValues: {
       password: '',
+      confirmPassword: '',
     },
   });
   const onSubmit = (data: any) => {
+
+
+    if (data.password !== data.confirmPassword) {
+      setConfirmError(t('auth:passwordMismatch'));
+      return;
+    } else {
+      setConfirmError('');
+    }
+
     
-   
     dispatch(
       resetPassword({
         phone: user.phone,
@@ -92,9 +103,9 @@ const PasswordResetScreen = ({route, navigation}: any) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView  style={stylesGlobal.scrollBg}>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <Container>
+      
           <BasicView style={stylesGlobal.marginTop60}>
             <Text style={stylesGlobal.mediumHeading}>{t('auth:resetPassword')}</Text>
           </BasicView>
@@ -121,7 +132,9 @@ const PasswordResetScreen = ({route, navigation}: any) => {
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
-                      style={stylesGlobal.passwordInputField}
+                      style={[stylesGlobal.passwordInputField,
+                        { backgroundColor: colors.white, color: colors.black }
+                        ]}
                       secureTextEntry={passwordVisibility}
                       placeholder={t('auth:enterPassword')}
                       onBlur={onBlur}
@@ -143,9 +156,60 @@ const PasswordResetScreen = ({route, navigation}: any) => {
               )}
             </BasicView>
 
+            <BasicView>
+            <Text
+              style={[
+                stylesGlobal.inputFieldTitle,
+                stylesGlobal.marginTop20,
+              ]}>
+              {t('auth:confirmPassword')}
+            </Text>
+
+            <View style={stylesGlobal.passwordInputContainer}>
+              <Controller
+                control={control}
+                rules={{
+                  required: true,
+                  validate: (value) => value === confirmPassword,
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    style={[stylesGlobal.passwordInputField,
+                    { backgroundColor: colors.white, color: colors.black }
+                    ]}
+                    secureTextEntry={passwordVisibility}
+                    placeholderTextColor={colors.alsoGrey}
+                    placeholder={t('auth:confirmPassword')}
+                    onBlur={onBlur}
+                    onChangeText={(text) => {
+                      setConfirmPassword(text);
+                      onChange(text);
+                    }}
+                    value={value}
+                  />
+                )}
+                name="confirmPassword"
+              />
+              <TouchableOpacity onPress={handlePasswordVisibility}>
+                <Icon name={rightIcon} size={20} color={colors.grey} />
+              </TouchableOpacity>
+            </View>
+            {errors.confirmPassword && (
+                <Text style={stylesGlobal.errorMessage}>
+                  {t('auth:passwordRequired')}
+                </Text>
+              )}
+
+            {confirmError && (
+              <Text style={stylesGlobal.errorMessage}>
+                {t('auth:passwordMismatch')}
+              </Text>
+            )}
+          </BasicView>
+
           <BasicView style={stylesGlobal.marginTop30}>
             <Button loading={loading} onPress={handleSubmit(onSubmit)}>
-              <ButtonText>{t('auth:requestResetPassword')}</ButtonText>
+              <ButtonText>{t('screens:changePassword')}</ButtonText>
             </Button>
           </BasicView>
 
@@ -160,7 +224,7 @@ const PasswordResetScreen = ({route, navigation}: any) => {
               </Text>
             </TouchableOpacity>
           </BasicView>
-        </Container>
+      
       </ScrollView>
     </SafeAreaView>
   );

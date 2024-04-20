@@ -11,7 +11,7 @@ import { useSelector,RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { setTheme, toggleTheme } from './ThemeSlice';
 
-const Settings = () => {
+const Settings = ({navigation}:any) => {
 
     const dispatch = useAppDispatch();
 
@@ -68,7 +68,11 @@ const Settings = () => {
           <Text style={{ paddingLeft: 10, fontWeight: 'bold',color: getTextColor(isDarkMode)  }}>{isDarkMode?t('screens:dark'):t('screens:light')}</Text>
         </TouchableOpacity>
 
-                <TouchableOpacity style={{ flexDirection: 'row', marginHorizontal: 10, marginTop: 20 }}>
+                <TouchableOpacity style={{ flexDirection: 'row', marginHorizontal: 10, marginTop: 20 }}
+                  onPress={()=>{
+                    navigation.navigate("Change Password")
+                  }}
+                >
                     <Icon
                         name="lock1"
                         color={colors.secondary}

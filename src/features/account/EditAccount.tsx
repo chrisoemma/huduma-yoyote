@@ -48,6 +48,8 @@ const EditAccount = ({ route, navigation }: any) => {
 
   const stylesGlobal = globalStyles();
 
+  const [gLocation,setGLocation]=useState({})
+
 
   const makeid = (length: any) => {
 
@@ -86,8 +88,7 @@ const EditAccount = ({ route, navigation }: any) => {
     setValue('name', user?.client.name);
     setValue('phone', cleanedPhone);
     setValue('email', user?.email);
- 
-   
+    setGLocation({latitude:user?.client?.latitude,longitude:user?.client?.longitude})
 }, [route.params]);
 
   const selectLocation = (locationSelected: any) => {
@@ -109,8 +110,14 @@ const EditAccount = ({ route, navigation }: any) => {
 
   const onSubmit = async (data: any) => {
 
-    data.latitude = location.lat
-    data.longitude = location.lng
+    if (Object.keys(location).length === 0) {
+  
+      data.latitude = user?.client?.latitude;
+      data.longitude = user.client?.longitude;
+    } else {
+      data.latitude = location.lat;
+      data.longitude = location.lng;
+    }
     data.phone = validateTanzanianPhoneNumber(data.phone);
 
     dispatch(updateUserInfo({ data: data, userType: 'client', userId: user?.id }))
@@ -124,11 +131,16 @@ const EditAccount = ({ route, navigation }: any) => {
             screen: 'Account',
             message: message
           });
+        }else{
+          if (result.error) {
+            setDisappearMessage(result.error
+            );
+          } else {
+            setDisappearMessage(result.message);
+          }
         }
       })
-
   }
-
 
 
   return (
@@ -264,7 +276,8 @@ const EditAccount = ({ route, navigation }: any) => {
               <Text>{t('screens:location')}:</Text>
               <GooglePlacesInput
                 setLocation={selectLocation}
-                placeholder="What's your location?"
+                placeholder={t('screens:whatsYourLocation')}
+                defaultValue={gLocation}
               />
             </BasicView>
 

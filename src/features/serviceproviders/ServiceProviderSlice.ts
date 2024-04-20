@@ -29,6 +29,18 @@ export const getBestProviders = createAsyncThunk(
     },
   );
 
+  export const getProviderLastLocation = createAsyncThunk(
+    'services/getProviderLastLocation',
+    async (id) => {
+      let header: any = await authHeader();
+      const response = await fetch(`${API_URL}/providers/provider_last_location/${id}`, {
+        method: 'GET',
+        headers: header,
+      });
+      return (await response.json()) as any;
+    },
+  );
+
 
   export const getProviderSubServices = createAsyncThunk(
     'services/providerServiceInfo',
@@ -48,6 +60,7 @@ export const getBestProviders = createAsyncThunk(
       bestProviders: [],
       nearProviders:[],
       subServices:[],
+      providerLastLocation:{},
       providerSubServices:[],
       loading: false,
     },
@@ -79,19 +92,19 @@ export const getBestProviders = createAsyncThunk(
       });
 
 
-      builder.addCase(getNearProviders.pending, state => {
+      builder.addCase(getProviderLastLocation.pending, state => {
         // console.log('Pending');
          state.loading = true;
        });
-       builder.addCase(getNearProviders.fulfilled, (state, action) => {
+       builder.addCase(getProviderLastLocation.fulfilled, (state, action) => {
        // console.log('Fulfilled case');
         // console.log(action.payload);
          if (action.payload.status) {
-           state.nearProviders = action.payload.data.nearby_providers;
+           state.providerLastLocation = action.payload.data;
          }
          state.loading = false;
        });
-       builder.addCase(getNearProviders.rejected, (state, action) => {
+       builder.addCase(getProviderLastLocation.rejected, (state, action) => {
          console.log('Rejected');
          console.log(action.error);
  

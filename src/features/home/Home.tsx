@@ -98,6 +98,7 @@ const stylesGlobal = globalStyles();
            
            
           <View >
+          <Text style={[stylesGlobal.serviceText,{marginLeft:10}]}>{t('screens:categories')}</Text>
           <FlatList
               data={categories}
               keyExtractor={(item) => item.id.toString()}
@@ -116,7 +117,7 @@ const stylesGlobal = globalStyles();
 
 
           <View style={{flex:1,marginBottom:10}}>
-          <Text style={stylesGlobal.serviceText}>{t('screens:topService')}</Text>
+          <Text style={[stylesGlobal.serviceText,{marginLeft:10}]}>{t('screens:topService')}</Text>
             <FlatList
               data={services}
               keyExtractor={(item) => item.id.toString()}

@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors } from '../utils/colors';
 import { Platform } from 'react-native';
 import { useSelector,RootStateOrAny } from 'react-redux';
+import { selectLanguage } from '../costants/languageSlice';
 
 const TopService = ({ onPress, iconType, service }: any) => {
 
@@ -11,6 +12,8 @@ const TopService = ({ onPress, iconType, service }: any) => {
         (state: RootStateOrAny) => state.theme,
       );
 
+
+      const selectedLanguage = useSelector(selectLanguage);
 
       const shadowStyle = isDarkMode
       ? {
@@ -55,7 +58,7 @@ const TopService = ({ onPress, iconType, service }: any) => {
                 }}
             />
             <View style={styles.serviceTextBackground}>
-                <Text style={styles.serviceText}>{service.name}</Text>
+                <Text style={styles.serviceText}>{selectedLanguage=='en'? service?.name?.en:service?.name?.sw}</Text>
             </View>
         </TouchableOpacity>
     )

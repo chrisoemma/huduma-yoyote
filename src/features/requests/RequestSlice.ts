@@ -49,6 +49,19 @@ export const updateRequestStatus = createAsyncThunk(
   });
 
 
+  export const getRequestLastLocation = createAsyncThunk(
+    'requests/getRequestLastLocation',
+    async (id) => {
+      let header: any = await authHeader();
+      const response = await fetch(`${API_URL}/requests/last_location/${id}`, {
+        method: 'GET',
+        headers: header,
+      });
+      return (await response.json()) as any;
+    },
+  );
+
+
 export const createRequest = createAsyncThunk(
   'requests/createRequest',
   async ({ data }: any) => {
@@ -102,6 +115,7 @@ const RequestSlice = createSlice({
     activeRequests: [],
     activeRequest: {},
     requests: [],
+    requestLastLocation:{},
     rating: {},
     ratings: [],
     request: {},
@@ -182,6 +196,29 @@ const RequestSlice = createSlice({
       state.loading = false;
       updateStatus(state, '');
     });
+
+
+
+
+    ////last locations
+    builder.addCase(getRequestLastLocation.pending, state => {
+      // console.log('Pending');
+       state.loading = true;
+     });
+     builder.addCase(getRequestLastLocation.fulfilled, (state, action) => {
+     // console.log('Fulfilled case');
+      // console.log(action.payload);
+       if (action.payload.status) {
+         state.requestLastLocation = action.payload.data;
+       }
+       state.loading = false;
+     });
+     builder.addCase(getRequestLastLocation.rejected, (state, action) => {
+       console.log('Rejected');
+       console.log(action.error);
+
+       state.loading = false;
+     });
 
 
 

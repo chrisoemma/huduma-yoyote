@@ -56,14 +56,15 @@ const DrawerNavigator=()=>{
   
     headerTitle: () => (
       <Image
-        source={isDarkMode? require('./../../assets/images/logo-white.png'): require('./../../assets/images/logo.png')}
+        source={require('./../../assets/images/logo-white.png')}
         style={globalStyles().horizontalLogo}
       />
     ),
     headerLeft: () => <CustomHeaderToggle />,
     headerTitleAlign: 'center',
     headerStyle: {
-      backgroundColor: colors.primary,
+      backgroundColor: colors.secondary,
+      height:65
     },
     drawerStyle: {
       backgroundColor: isDarkMode ? colors.black : colors.whiteBackground,

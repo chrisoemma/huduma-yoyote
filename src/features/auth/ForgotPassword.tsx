@@ -24,6 +24,8 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
     (state: RootStateOrAny) => state.user,
   );
 
+
+
   const styles = globalStyles();
 
   const phoneInput = useRef<PhoneInput>(null);
@@ -34,11 +36,11 @@ const ForgotPasswordScreen = ({route, navigation}: any) => {
     console.log(user);
   }, [user]);
 
-  useEffect(() => {
-    if (status !== '') {
-      setMessage(status);
-    }
-  }, [status]);
+  // useEffect(() => {
+  //   if (status !== '') {
+  //     setMessage(status);
+  //   }
+  // }, [status]);
 
   const {
     control,

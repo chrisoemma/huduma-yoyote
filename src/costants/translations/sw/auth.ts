@@ -37,5 +37,15 @@ export default {
     comfirmedPasswordRequired: 'Thibitisha Nenosiri Linahitajika',
     passwordMatch:'Nywila mpya hazifanani',
     enterVerificationCode:'Ingiza nambari ya uthibitisho',
-    userCreatedSuccessfully:'Usajili wa awali umekamilika! Thibitisha namba yako ya simu na nambari iliyotumwa kwako'
+    userCreatedSuccessfully:'Usajili wa awali umekamilika! Thibitisha namba yako ya simu na nambari iliyotumwa kwako',
+    enterBusinessName:'Ingiza jina la Biashara',
+    confirmPassword:'Thibitisha Neno siri',
+    confirmpasswordRequired:'Neno siri la uthibitisho linahitajika',
+    passwordMismatch:'Neno siri aliendani',
+    designationError:'Tafadhali, changua Taaluma yako',
+    haveOtp:"Una OTP?",
+    checkPhoneNumber:'Angalia Namba',
+    checkNumber:'Tafuta Namba',
+    createAccountPassword:'Tengeneza Nywila ya Akaunti',
+    accountPasswordCreated:'Nywila ya Akaunti yako imetengenezwa kikamilifu'
 }

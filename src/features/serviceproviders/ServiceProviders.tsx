@@ -42,8 +42,9 @@ useEffect(() => {
     
     <View style={styles.itemlistContainer}>
       <ProviderList  
-      navigation={navigation} 
-       provider={item} service={params?.service}
+       navigation={navigation} 
+       provider={item} 
+       service={params?.service}
        isDarkMode={isDarkMode}
        />
     </View>

@@ -3,14 +3,18 @@ import React from 'react'
 import Icon from 'react-native-vector-icons/AntDesign';
 import { colors } from '../utils/colors';
 import { useSelector,RootStateOrAny } from 'react-redux';
+import { selectLanguage } from '../costants/languageSlice';
 
 const Category = ({ onPress, iconType,category }: any) => {
+
+  
 
   const { isDarkMode } = useSelector(
     (state: RootStateOrAny) => state.theme,
   );
 
 
+  const selectedLanguage = useSelector(selectLanguage);
 
   const generateRandomColorNearBase = (baseColor, deviation = 32) => {
     const parseHex = (color) => parseInt(color, 16);
@@ -64,7 +68,7 @@ const Category = ({ onPress, iconType,category }: any) => {
           }}
         />
       </View>
-      <Text style={{ color: '#525354' }}>{category.name}</Text>
+      <Text style={{ color: '#525354' }}>{ selectedLanguage === 'en'? category?.name?.en:category?.name?.sw}</Text>
     </TouchableOpacity>
   );
 };

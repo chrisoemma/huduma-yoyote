@@ -7,6 +7,8 @@ import PasswordResetScreen from '../features/auth/PasswordReset';
 import LoginScreen from '../features/auth/Login';
 import ForgotPasswordScreen from '../features/auth/ForgotPassword';
 import { useSelector,RootStateOrAny } from 'react-redux';
+import CheckPhoneNumber from '../features/auth/CheckPhoneNumber';
+import CreateNewPassword from '../features/auth/CreateNewPassword';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +27,8 @@ const AuthStack = () => {
       <Stack.Screen name="Verify" component={VerifyScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="PasswordReset" component={PasswordResetScreen} />
+      <Stack.Screen name="CheckPhoneNumber" component={CheckPhoneNumber} />
+      <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />
     </Stack.Navigator>
   );
 };
