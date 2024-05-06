@@ -32,7 +32,7 @@ const SearchScreen = ({ navigation }: any) => {
   const onChange = ({ name, value }: any) => {
 
     setForm({ ...form, [name]: value });
-    if (value !== "") {
+    if (value !== "" && value.length >= 2) {
       debouncedDispatch(getSearches({ data: { search: value } }));
     } else {
        
@@ -53,7 +53,7 @@ const SearchScreen = ({ navigation }: any) => {
         isDarkMode={isDarkMode}
       />
       <View>
-        {/* I want here to render those data returned from search  */}
+      
       </View>
     </View>
   )

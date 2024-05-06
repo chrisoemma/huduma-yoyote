@@ -165,16 +165,14 @@ export const getLocationName = async (latitude, longitude) => {
 };
 
 
-
-
 export function breakTextIntoLines(text, maxLength) {
-  if (text.length <= maxLength) {
-    return text; // No need to break into lines if it's within the maxLength
+  if (text?.length <= maxLength) {
+    return text;
   }
 
   const chunks = [];
-  while (text.length > 0) {
-    chunks.push(text.substring(0, maxLength));
+  while (text?.length > 0) {
+    chunks.push(text?.substring(0, maxLength));
     text = text.substring(maxLength);
   }
 

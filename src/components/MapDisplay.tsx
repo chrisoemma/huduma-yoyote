@@ -27,15 +27,22 @@ const MapDisplay = ({ onLocationUpdate,providerLastLocation,provider,requestStat
   const mapViewRef = useRef(null);
 
   const [userLocation, setUserLocation] = useState(null);
-  const [providerLocation, setServiceProviderLocation] = useState(
-    { latitude: parseFloat(providerLastLocation?.latitude), longitude: parseFloat(providerLastLocation?.longitude) }
-    
-  );
+  const [providerLocation, setServiceProviderLocation] = useState(null);
+
 
   const STATUS_ACTIVE = ['Requested', 'Accepted', 'Comfirmed','New'];
   const STATUS_PAST=['Cancelled', 'Rejected', 'Completed'];
 
   const pusher = Pusher.getInstance();
+
+  useEffect(() => {
+    if (providerLastLocation) {
+      setServiceProviderLocation({
+        latitude: parseFloat(providerLastLocation.latitude),
+        longitude: parseFloat(providerLastLocation.longitude)
+      });
+    }
+  }, [providerLastLocation]);
 
   useEffect(() => {
     if (STATUS_PAST.includes(requestStatus)) {
@@ -64,8 +71,6 @@ const MapDisplay = ({ onLocationUpdate,providerLastLocation,provider,requestStat
 
 
   const animateProviderMovement = (fromLocation, toLocation) => {
-    // Animate the movement from previous location to current location
-    // You can use MapView's animateCamera function to smoothly move the camera
     mapViewRef?.current.animateCamera(
       {
         center: {
@@ -234,7 +239,7 @@ const dispatch = useAppDispatch();
     requestLocationPermission();
 
     return () => {
-      Geolocation.clearWatch(watchId);
+     Geolocation.clearWatch(watchId);
     };
   }
   }, []);
@@ -251,35 +256,6 @@ const dispatch = useAppDispatch();
     return () => clearInterval(intervalId);
   }
   }, [dispatch, user?.client.id,requestStatus]);
-  
-
-
- // const animatedProviderLocation = useRef(new Animated.Value(0)).current;
-
-  // const animateProviderLocation = (newLocation) => {
-  //   Animated.timing(animatedProviderLocation, {
-  //     toValue: 1,
-  //     duration: 1000, // Adjust the duration as needed
-  //     useNativeDriver: false, // Set to true if possible for performance
-  //   }).start(() => {
-  //     setServiceProviderLocation(newLocation);
-  //     animatedProviderLocation.setValue(0); // Reset the animated value for the next animation
-  //   });
-  // };
-
-
-  // useEffect(() => {
-  //   // Simulate the animation with a new location every 5 seconds
-  //   const intervalId = setInterval(() => {
-  //     const newLatitude = providerLocation.latitude + 0.01; 
-  //     const newLongitude = providerLocation.longitude + 0.01;
-  //     animateProviderLocation({ latitude: newLatitude, longitude: newLongitude });
-  //   }, 5000);
-
-  //   // Clear the interval when the component unmounts
-  //   return () => clearInterval(intervalId);
-  // }, [providerLocation]);
-
 
 
   useEffect(() => {
@@ -290,7 +266,7 @@ const dispatch = useAppDispatch();
   const centerLat = (userLocation?.latitude + providerLocation?.latitude) / 2;
   const centerLng = (userLocation?.longitude + providerLocation?.longitude) / 2;
 
-  const zoomLevel = 0.20;
+  const zoomLevel = 0.02;
 
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => { 
@@ -318,11 +294,11 @@ const dispatch = useAppDispatch();
         }
       ]
     },
-    // Add more styling for other map elements as needed
+
   ];
 
   return (
-<View style={styles.container}>
+ <View style={styles.container}>
       {userLocation && providerLocation && (
         <MapView
           ref={mapViewRef}
@@ -330,8 +306,8 @@ const dispatch = useAppDispatch();
           region={{
             latitude:centerLat,
             longitude:centerLng,
-            latitudeDelta: 0.2,
-            longitudeDelta: 0.2 * (Dimensions.get('window').width / Dimensions.get('window').height),
+            latitudeDelta: zoomLevel,
+            longitudeDelta: zoomLevel,
           }}
           customMapStyle={customMapStyle}
         >
@@ -359,9 +335,9 @@ const dispatch = useAppDispatch();
           
         </MapView>
       )}
-      {!userLocation && <Text>{t('screens:loading')}...</Text>}
+      {!userLocation  && !providerLocation && <Text>{t('screens:loading')}...</Text>}
       {distance && <Text style={styles.distanceText}>{t('screens:distance')}: {distance} km</Text>}
-    </View>
+    </View> 
   );
 };
 

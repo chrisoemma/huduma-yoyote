@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
         marginVertical: 5,
     },
     serviceTextBackground: {
-        padding: 8,
-        marginTop: 5,
+        paddingBottom: 8,
+        paddingHorizontal:3,
         borderRadius: 15,
         alignSelf: 'flex-start', 
     },

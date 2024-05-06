@@ -24,6 +24,7 @@ import ThemeSlice from '../features/settings/ThemeSlice';
 import BannerSlice from '../features/home/BannerSlice';
 import OnboardingSlice from '../features/onboarding/OnboardingSlice';
 import languageSlice from '../costants/languageSlice';
+import RealTimeSlice from '../../RealTimeSlice';
 
 
 const reducers = combineReducers({
@@ -38,7 +39,7 @@ const reducers = combineReducers({
   theme:ThemeSlice,
   banners:BannerSlice,
   onboarding:OnboardingSlice,
-  language:languageSlice
+  language:languageSlice,
 });
 
 const persistConfig = {

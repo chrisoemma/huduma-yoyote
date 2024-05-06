@@ -73,7 +73,7 @@ import { colors } from '../utils/colors';
     serviceText: {
       color: isDarkMode ? 'white' : colors.black,
       fontSize: 17,
-      marginBottom: 8,
+      marginBottom: 3,
     },
     homepageHeader: {
       zIndex: 1000,
@@ -110,14 +110,14 @@ import { colors } from '../utils/colors';
     },
     horizontalLogo: {
       width: 150,
-      height: 50,
+      height: '63%',
       resizeMode: 'contain',
       alignSelf: 'center',
     },
     banner: {
       zIndex: 1,
       marginHorizontal: 10,
-      marginVertical: 15,
+      marginVertical: 8,
       elevation: 4,
       shadowColor: shadowColor,
       shadowOffset: {

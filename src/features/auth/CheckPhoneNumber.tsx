@@ -57,7 +57,7 @@ const CheckPhoneNumber = ({ route, navigation }: any) => {
         },
     });
     const onSubmit = (data: any) => {
-        data.app_type = 'client';
+        data.app_type = 'client'; 
         dispatch(findNumber(data))
             .unwrap()
             .then(result => {

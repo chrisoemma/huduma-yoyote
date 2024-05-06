@@ -48,7 +48,7 @@ export default {
   dataRefreshed: 'Data refreshed successfully',
   rateService: 'Rate Service',
   enterComment: 'Enter Comment here',
-  submitRating: 'Submit Rating',
+  submitRating: 'Rate',
   rateSubmitted: 'Thanks for rating',
   categories: 'Categories',
   errorOccured: 'An error occurred. Please check for specific errors and try again.',
@@ -70,5 +70,9 @@ export default {
    distance:'Distance',
    loading:'Loading',
    noresidenceData:'No residence location',
-   noEmail:'No Email'
+   noEmail:'No Email',
+   createPassword:'Create password',
+
+   accountDeactivated:"Account Deactivated: Your account has been deactivated. Please contact support for assistance.",
+   notAllowedAction:'You are not allowed to perform this action',
 };

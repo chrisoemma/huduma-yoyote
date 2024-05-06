@@ -13,7 +13,6 @@ const Category = ({ onPress, iconType,category }: any) => {
     (state: RootStateOrAny) => state.theme,
   );
 
-
   const selectedLanguage = useSelector(selectLanguage);
 
   const generateRandomColorNearBase = (baseColor, deviation = 32) => {
@@ -40,12 +39,11 @@ const Category = ({ onPress, iconType,category }: any) => {
   const touchableOpacityStyle = {
     backgroundColor: generateRandomLightColorNearBase(),
     width: 100,
-    height: 100,
     borderRadius: 18,
     elevation: 4,
-    paddingVertical: 8,
+    paddingVertical: 5,
     marginHorizontal: 5,
-    marginVertical: 5,
+    marginVertical:2,
     justifyContent: 'center',
     alignItems: 'center',
   };

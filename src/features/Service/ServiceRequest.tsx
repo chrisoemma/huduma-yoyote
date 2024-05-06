@@ -20,6 +20,8 @@ import { getProviderLastLocation, getProviderSubServices } from '../serviceprovi
 import { BasicView } from '../../components/BasicView';
 import { createRequest} from '../requests/RequestSlice';
 import { selectLanguage } from '../../costants/languageSlice';
+import IconOnline from 'react-native-vector-icons/Ionicons'; 
+import PusherOnlineListener from '../../components/PusherOnlineListener';
 
 
 const ServiceRequest = ({ navigation, route }: any) => {
@@ -35,7 +37,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
         (state: RootStateOrAny) => state.requests,
     );
 
-    const { user } = useSelector(
+    const { user,isOnline } = useSelector(
         (state: RootStateOrAny) => state.user,
     );
 
@@ -125,11 +127,11 @@ const ServiceRequest = ({ navigation, route }: any) => {
     const PhoneNumber = `${provider?.phone}`;
 
 
-      React.useLayoutEffect(() => {
-          if (route?.params && route?.params.service) {
-              navigation.setOptions({ title: route?.params.service.name });
-          }
-      }, [navigation, route?.params]);
+    //   React.useLayoutEffect(() => {
+    //       if (route?.params && route?.params.service) {
+    //           navigation.setOptions({ title: route?.params.service.name });
+    //       }
+    //   }, [navigation, route?.params]);
 
     const [message, setMessage] = useState("")
     const setDisappearMessage = (message: any) => {
@@ -197,6 +199,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     return (
         <>
+         <PusherOnlineListener remoteUserId={provider.user_id} />
             <SafeAreaView
                 style={stylesGlobal.scrollBg}
             >
@@ -248,7 +251,12 @@ const ServiceRequest = ({ navigation, route }: any) => {
                             </TouchableOpacity>
                         </View>
                         <View>
-                            <Text style={{marginBottom:15}}>{selectedLanguage=='en'? service?.description?.en:service?.description?.sw}</Text>
+                        <View style={styles.divOnline}>
+                        <IconOnline name={isOnline ? 'checkmark-circle' : 'close-circle'} size={24} color={isOnline ? 'green' :colors.darkGrey} />
+                        <Text style={styles.text}>{isOnline ? 'Online' : 'Offline'}</Text>
+                        </View>
+                            {/* <Text style={{marginBottom:15}}>{selectedLanguage=='en'? service?.description?.en:service?.description?.sw}</Text> */}
+                            
                             <View style={stylesGlobal.chooseServiceBtn}>
                                 <TouchableOpacity style={[stylesGlobal.chooseBtn,{marginBottom:50}]}
                                     onPress={() => handlePresentModalPress('Near providers')}
@@ -258,6 +266,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                 {/* <TouchableOpacity style={stylesGlobal.otherBtn}>
                                     <Text style={{ color: colors.white }}>{t('screens:otherService')}</Text>
                                 </TouchableOpacity> */}
+                               
                             </View>
                         </View>
                     </View>
@@ -377,6 +386,14 @@ const styles = StyleSheet.create({
         // flex:1,
         marginHorizontal: 10
     },
+    divOnline: {
+        flexDirection: 'row',
+        alignItems: 'center',
+      },
+    text: {
+        marginLeft: 5,
+        fontSize: 16,
+      },
     title: {
         alignSelf: 'center',
         fontSize: 15,

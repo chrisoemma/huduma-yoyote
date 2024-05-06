@@ -18,7 +18,8 @@ const ProviderList = ({ navigation, onPress, iconType, provider, service, isDark
       <TouchableOpacity
         onPress={() => navigation.navigate('Service request', { provider: provider, service: service })}
         style={[styles.touchableOpacityStyles, { backgroundColor: isDarkMode ? '#545352' : colors.white }]}
-      >
+        key={provider?.id}
+     >
         <View style={stylesGlobal.circle}>
           <TouchableWithoutFeedback>
             <Image
@@ -44,12 +45,6 @@ const ProviderList = ({ navigation, onPress, iconType, provider, service, isDark
           <View style={{ flexDirection: 'row' }}>
             <Ionicons name="location-outline" color={colors.primary} size={17} />
             <Text style={{ color: isDarkMode ? colors.white : colors.black }}>Mwananyamala</Text>
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            <Ionicons name="pin" color={colors.primary} size={20} />
-            <Text style={{ color: isDarkMode ? colors.white : colors.black }}>
-              {provider.latitude == null ? 0 : 3}Km
-            </Text>
           </View>
           <RatingStars rating={provider?.average_rating == null ? 0 : provider?.average_rating} />
         </View>

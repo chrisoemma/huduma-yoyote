@@ -110,7 +110,7 @@ function RatingModal({visible, cancel, confirm}: any) {
                   style={[
                     globalStyles().smallTransparentButton,
                     {
-                      backgroundColor: colors.primary,
+                      backgroundColor: colors.secondary,
                       paddingVertical: 10,
                       paddingHorizontal: 20,
                     },

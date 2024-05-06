@@ -22,14 +22,15 @@ import { BasicView } from '../../components/BasicView';
 import { getStatusBackgroundColor } from '../../utils/utilts'
 import RatingModal from '../../components/RatingModal';
 import { selectLanguage } from '../../costants/languageSlice';
-
+import IconOnline from 'react-native-vector-icons/Ionicons'; 
+import PusherOnlineListener from '../../components/PusherOnlineListener';
 
 const RequestedServices = ({ navigation, route }: any) => {
 
 
     const { request } = route.params;
 
-    const { user } = useSelector(
+    const { user,isOnline } = useSelector(
         (state: RootStateOrAny) => state.user,
     );
 
@@ -141,11 +142,11 @@ const RequestedServices = ({ navigation, route }: any) => {
     const PhoneNumber = `${request?.provider?.phone}`;
 
 
-    React.useLayoutEffect(() => {
-        if (request && request.service) {
-            navigation.setOptions({ title: request.service.name });
-        }
-    }, [navigation, request]);
+    // React.useLayoutEffect(() => {
+    //     if (request && request.service) {
+    //         navigation.setOptions({ title: request.service.name });
+    //     }
+    // }, [navigation, request]);
 
     const { t } = useTranslation();
 
@@ -210,6 +211,7 @@ const RequestedServices = ({ navigation, route }: any) => {
 
     return (
         <>
+         <PusherOnlineListener remoteUserId={request?.provider?.user_id} />
             <SafeAreaView
                 style={stylesGlobal.scrollBg}
             >
@@ -264,10 +266,10 @@ const RequestedServices = ({ navigation, route }: any) => {
                                 }}>{PhoneNumber}</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text style={{
-                            color: isDarkMode ? colors.white : colors.black
-                        }}>{selectedLanguage=='en'? request?.service?.description?.en :request?.service?.description?.sw}</Text>
-
+                        <View style={styles.divOnline}>
+                        <IconOnline name={isOnline ? 'checkmark-circle' : 'close-circle'} size={24} color={isOnline ? 'green' :colors.darkGrey} />
+                        <Text style={styles.text}>{isOnline ? 'Online' : 'Offline'}</Text>
+                        </View>
                         <View style={[stylesGlobal.chooseServiceBtn, { justifyContent: 'space-between',marginBottom:50 }]}>
                             
 
@@ -397,6 +399,14 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: 'bold'
     },
+    divOnline: {
+        flexDirection: 'row',
+        alignItems: 'center',
+      },
+    text: {
+        marginLeft: 5,
+        fontSize: 16,
+      },
     mapContainer: {
         flex: 1,
         marginBottom: '10%',

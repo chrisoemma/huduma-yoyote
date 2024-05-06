@@ -126,6 +126,37 @@ const RequestSlice = createSlice({
     clearMessage(state: any) {
       state.status = null;
     },
+
+    setRequestStatus:(state,action)=>{
+    
+    const updatedRequest = action.payload;
+    const requestIndex = state.activeRequests.findIndex(
+      (request) => request.id === updatedRequest.id
+    );
+
+    if (requestIndex !== -1) {
+      if (['Requested', 'Accepted', 'Confirmed'].includes(status)) {
+        // Update the request in activeRequests
+        state.activeRequests = [
+          ...state.activeRequests.slice(0, requestIndex),
+          updatedRequest,
+          ...state.activeRequests.slice(requestIndex + 1),
+        ];
+      } else if (['Cancelled', 'Rejected', 'Completed'].includes(status)) {
+        // Remove the request from activeRequests
+        state.activeRequests = [
+          ...state.activeRequests.slice(0, requestIndex),
+          ...state.activeRequests.slice(requestIndex + 1),
+        ];
+
+        // Add the request to pastRequests
+        state.pastRequests = [...state.pastRequests, updatedRequest];
+      }
+    }
+
+    },
+
+  
   },
   extraReducers: builder => {
 
@@ -321,6 +352,6 @@ const RequestSlice = createSlice({
   },
 });
 
-export const { clearMessage } = RequestSlice.actions;
+export const { clearMessage,setRequestStatus } = RequestSlice.actions;
 
 export default RequestSlice.reducer;

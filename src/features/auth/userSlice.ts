@@ -75,6 +75,22 @@ export const multiRegister = createAsyncThunk(
 );
 
 
+export const postUserOnlineStatus = createAsyncThunk(
+  'users/postUserOnlineStatus',
+  async ({userId, data}: any) => {
+      const response = await fetch(`${API_URL}/users/update_user_online_status/${userId}`, {
+          method: 'PUT',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+      });
+      return (await response.json());
+  },
+);
+
+
 export const changePassword = createAsyncThunk(
   'users/changePassword',
   async ({ data, userId }: any) => {
@@ -93,7 +109,6 @@ export const changePassword = createAsyncThunk(
 export const updateProfile = createAsyncThunk(
   'users/updateProfile',
   async ({ data, userId }: any) => {
-
     try {
       console.log('user', userId);
       const response = await fetch(`${API_URL}/users/change_profile_picture/${userId}`, {
@@ -184,6 +199,22 @@ export const userVerify = createAsyncThunk(
   },
 );
 
+
+export const resendOTP = createAsyncThunk(
+  'users/resendOTP',
+  async (data: PhoneVerificationDTO) => {
+    const response = await fetch(`${API_URL}/auth/resendOTP`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    return (await response.json()) as UserData;
+  },
+);
+
 export const forgotPassword = createAsyncThunk(
   'users/forgotPassword',
   async (data: ForgotPasswordDTO) => {
@@ -214,6 +245,53 @@ export const resetPassword = createAsyncThunk(
   },
 );
 
+export const createAccountPassword = createAsyncThunk(
+  'users/createAccountPassword',
+  async (data: createAccountPasswordDTO) => {
+    const response = await fetch(`${API_URL}/auth/create-account-password`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    return (await response.json()) as UserData;
+  },
+);
+
+
+export const findNumber = createAsyncThunk(
+  'users/findNumber',
+  async (data: findNumberDTO) => {
+    const response = await fetch(`${API_URL}/auth/find_number`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    return (await response.json()) as any;
+  },
+);
+
+
+export const postUserDeviceToken = createAsyncThunk(
+  'users/postUserDeviceToken',
+  async ({ userId, deviceToken }: { userId: string, deviceToken: string }) => {
+    const response = await fetch(`${API_URL}/users/device_token/${userId}`, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ deviceToken }),
+    });
+    return response.json();
+  },
+);
+
 function logout(state: any) {
   console.log('::: USER LOGOUT CALLED :::');
   state.user = {};
@@ -240,6 +318,8 @@ const userSlice = createSlice({
     user: {} as UserData,
     config: {},
     isFirstTimeUser: true,
+    isOnline: false,
+    deviceToken: '',
     loading: false,
     status: '',
   },
@@ -250,7 +330,12 @@ const userSlice = createSlice({
     clearMessage(state: any) {
       state.status = null;
     },
-
+    setUserOnlineStatus: (state, action) => {
+      state.isOnline = action.payload;
+    },
+    setUserAccountStatus:(state,action)=>{
+      state.user.status=action.payload
+    },
     setFirstTime: (state, action) => {
       state.isFirstTimeUser = action.payload;
     },
@@ -284,6 +369,32 @@ const userSlice = createSlice({
       updateStatus(state, 'Something went wrong, please try again later');
       state.loading = false;
     });
+        //create Account Password
+        builder.addCase(createAccountPassword.pending, state => {
+          console.log('Pending');
+          state.loading = true;
+          updateStatus(state, '');
+        });
+        builder.addCase(createAccountPassword.fulfilled, (state, action) => {
+          console.log('Fulfilled case');
+          console.log(action.payload);
+    
+          state.loading = false;
+          updateStatus(state, '');
+    
+          if (action.payload.status) {
+            state.user = action.payload.user as any;
+            updateStatus(state, '');
+          } else {
+            updateStatus(state, action.payload);
+          }
+        });
+        builder.addCase(createAccountPassword.rejected, (state, action) => {
+          console.log('Rejected');
+          console.log(action.error);
+          state.loading = false;
+          updateStatus(state, '');
+        });
 
     //REGISTER
     builder.addCase(userRegiter.pending, state => {
@@ -314,6 +425,23 @@ const userSlice = createSlice({
     });
 
 
+    //DevicToken
+    builder.addCase(postUserDeviceToken.pending, state => {
+      state.loading = true;
+    });
+    builder.addCase(postUserDeviceToken.fulfilled, (state, action) => {
+      if (action.payload.status) {
+        state.deviceToken = action.payload.data.token;
+      }
+      state.loading = false;
+    });
+    builder.addCase(postUserDeviceToken.rejected, (state, action) => {
+      console.log('Rejected');
+      console.log(action.error);
+      state.loading = false;
+    });
+
+
 
     //Multi account 
     builder.addCase(multiRegister.pending, state => {
@@ -341,6 +469,24 @@ const userSlice = createSlice({
       state.loading = false;
       updateStatus(state, '');
     });
+
+   //Update User status
+   builder.addCase(postUserOnlineStatus.pending, state => {
+    state.loading = true;
+  });
+  builder.addCase(postUserOnlineStatus.fulfilled, (state, action) => {
+
+    if (action.payload.status) {
+      state.isOnline = action.payload.data.isOnline;
+    }
+    state.loading = false;
+  });
+  builder.addCase(postUserOnlineStatus.rejected, (state, action) => {
+    console.log('Rejected');
+    state.loading = false;
+  });
+
+
 
     //VERIFY
     builder.addCase(userVerify.pending, state => {
@@ -398,6 +544,28 @@ const userSlice = createSlice({
       state.loading = false;
       updateStatus(state, '');
     });
+
+
+
+        //RESEND OTP
+        builder.addCase(resendOTP.pending, state => {
+          state.loading = true;
+          updateStatus(state, '');
+        });
+        builder.addCase(resendOTP.fulfilled, (state, action) => {
+           
+          if (action.payload.status) {
+            updateStatus(state, '');
+          } else {
+            updateStatus(state, '');
+          }
+          state.loading = false;
+          
+        });
+        builder.addCase(resendOTP.rejected, (state, action) => {
+          updateStatus(state, '');
+          state.loading = false;
+        });
 
     //RESET PASSWORD
     builder.addCase(resetPassword.pending, state => {
@@ -488,6 +656,35 @@ const userSlice = createSlice({
     });
 
 
+      //findNumber
+
+      builder.addCase(findNumber.pending, state => {
+        console.log('Pending');
+        state.loading = true;
+        updateStatus(state, '');
+      });
+      builder.addCase(findNumber.fulfilled, (state, action) => {
+        console.log('Fulfilled case');
+        console.log(action.payload);
+  
+        state.loading = false;
+        updateStatus(state, '');
+  
+        if (action.payload.status) {
+          state.user = action.payload.user;
+          updateStatus(state, '');
+        } else {
+          updateStatus(state, action.payload);
+        }
+      });
+      builder.addCase(findNumber.rejected, (state, action) => {
+        console.log('Rejected');
+        console.log(action.error);
+        state.loading = false;
+        updateStatus(state, '');
+      });
+
+
 
     //Change password
 
@@ -519,6 +716,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { userLogout, clearMessage, setFirstTime } = userSlice.actions;
+export const { userLogout, clearMessage,setFirstTime,setUserOnlineStatus,setUserAccountStatus } = userSlice.actions;
 
 export default userSlice.reducer;

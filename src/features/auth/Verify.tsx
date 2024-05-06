@@ -1,26 +1,26 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import {RootStateOrAny, useSelector} from 'react-redux';
-import {globalStyles} from '../../styles/global';
+import { RootStateOrAny, useSelector } from 'react-redux';
+import { globalStyles } from '../../styles/global';
 
-import {BasicView} from '../../components/BasicView';
+import { BasicView } from '../../components/BasicView';
 import Button from '../../components/Button';
-import {ButtonText} from '../../components/ButtonText';
-import {useAppDispatch} from '../../app/store';
-import {userVerify} from './userSlice';
+import { ButtonText } from '../../components/ButtonText';
+import { useAppDispatch } from '../../app/store';
+import { resendOTP, userVerify } from './userSlice';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../../utils/colors';
 
-const VerifyScreen = ({route, navigation}: any) => {
-  const {nextPage} = route?.params;
+const VerifyScreen = ({ route, navigation }: any) => {
+  const { nextPage } = route?.params;
   const { t } = useTranslation();
 
-  const {user, loading, status} = useSelector(
+  const { user, loading, status } = useSelector(
     (state: RootStateOrAny) => state.user,
   );
 
-    useEffect(() => {
+  useEffect(() => {
     if (status !== null) {
       setMessage(status);
     }
@@ -32,18 +32,18 @@ const VerifyScreen = ({route, navigation}: any) => {
 
 
   useEffect(() => {
-   
+
   }, [user]);
 
 
   const inputs = Array(4).fill(0).map((_, i) => React.createRef());
 
   const handleVerificationCodeChange = (index, value) => {
-   
+
     const newVerificationCode = [...verificationCode];
     newVerificationCode[index] = value;
     setVerificationCode(newVerificationCode);
-  
+
     // Move focus to the next input if there is a value and the next input exists
     if (value !== '' && index < 3 && inputs[index + 1]) {
       inputs[index + 1].current.focus();
@@ -57,91 +57,113 @@ const VerifyScreen = ({route, navigation}: any) => {
 
     setTimeout(() => {
       setMessage('');
-    }, 5000);
+    }, 10000);
   };
 
 
-  const onSubmit =async () => {
+  const onSubmit = async () => {
 
     if (numericCode.toString().length === 4) {
-    if (nextPage === 'PasswordReset') {
-      
-       const  {phone}=route?.params;
-     const result= await dispatch(userVerify({phone:phone, code:numericCode,app_type:'client'})).unwrap();
-        if(result.status){
-          navigation.navigate('PasswordReset', {verificationCode: numericCode});
-        }else{
-          setDisappearMessage(result.message); 
+      if (nextPage === 'PasswordReset') {
+
+        const { phone } = route?.params;
+        const result = await dispatch(userVerify({ phone: phone, code: numericCode, app_type: 'client' })).unwrap();
+        if (result.status) {
+          navigation.navigate('PasswordReset', { verificationCode: numericCode });
+        } else {
+          setDisappearMessage(result.message);
         }
-    }else if(nextPage === 'CreateNewPassword'){
+      } else if (nextPage === 'CreateNewPassword') {
 
-      const  {phone}=route?.params;
-      const result= await dispatch(userVerify({phone:phone, code:numericCode,app_type:'client'})).unwrap();
-         if(result.status){
-           navigation.navigate('CreateNewPassword', {verificationCode: numericCode,phone:phone});
-         }else{
-           setDisappearMessage(result.message); 
-         }
-      
+        const { phone } = route?.params;
+        const result = await dispatch(userVerify({ phone: phone, code: numericCode, app_type: 'client' })).unwrap();
+        if (result.status) {
+          navigation.navigate('CreateNewPassword', { verificationCode: numericCode, phone: phone });
+        } else {
+          setDisappearMessage(result.message);
+        }
+
+      } else {
+        console.log('user with normal  regitsrtaion token sent');
+        dispatch(userVerify({ user_id: user.id, code: numericCode, app_type: 'client' }));
+      }
     } else {
-      console.log('user with normal  regitsrtaion token sent');
-      dispatch(userVerify({user_id: user.id, code:numericCode,app_type:'client'}));
-    }
-  }else{
 
-    setDisappearMessage('Please enter correct code'); 
-  }
+      setDisappearMessage('Please enter correct code');
+    }
   };
+
+
+  const resendLink = async () => {
+    const { phone } = route?.params;
+    const data = {
+      phone: phone
+    }
+    const result = await dispatch(resendOTP(data)).unwrap();
+    if (result.status) {
+
+      setDisappearMessage(result.message);
+    } else {
+      setDisappearMessage(result.error);
+    }
+
+  }
 
 
   const stylesGlobal = globalStyles();
-  
+
   return (
     <SafeAreaView style={stylesGlobal.scrollBg} >
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-      
-          <BasicView style={{marginVertical:50}}>
-            <Text style={stylesGlobal.smallHeading}>{t('auth:enterVerificationCode')}</Text>
-          </BasicView>
 
-          <BasicView>
-            <Text style={stylesGlobal.errorMessage}>{message}</Text>
-          </BasicView>
+        <BasicView style={{ marginVertical: 50 }}>
+          <Text style={stylesGlobal.smallHeading}>{t('auth:enterVerificationCode')}</Text>
+        </BasicView>
 
-      <BasicView style={{marginVertical:50}}>
+        <BasicView style={{ alignItems: 'center' }}>
+          <Text style={[stylesGlobal.errorMessage, { fontSize: 18 }]}>{message}</Text>
+        </BasicView>
+
+        <BasicView style={{ marginVertical: 50 }}>
           <View style={styles.inputContainer}>
-        {verificationCode.map((digit, index) => (
-          <TextInput
-            key={index}
-            style={styles.input}
-            value={digit}
-            onChangeText={(value) => handleVerificationCodeChange(index, value)}
-            maxLength={1}
-            keyboardType="numeric"
-            ref={inputs[index]}
-          />
-        ))}
-      </View>
-      </BasicView>
+            {verificationCode.map((digit, index) => (
+              <TextInput
+                key={index}
+                style={styles.input}
+                value={digit}
+                onChangeText={(value) => handleVerificationCodeChange(index, value)}
+                maxLength={1}
+                keyboardType="numeric"
+                ref={inputs[index]}
+              />
+            ))}
+          </View>
+        </BasicView>
 
-          <BasicView style={stylesGlobal.marginTop30}>
-            <Button loading={loading} onPress={()=>onSubmit()}>
-              <ButtonText>{t('auth:verify')}</ButtonText>
-            </Button>
-          </BasicView>
+        <BasicView>
+          <TouchableOpacity onPress={resendLink} style={styles.resendTouchable}>
+            <Text style={styles.resendLink}>{t('auth:resendOTP')}</Text>
+          </TouchableOpacity>
+        </BasicView>
 
-          <BasicView>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('Login');
-              }}
-              style={[stylesGlobal.marginTop20, stylesGlobal.centerView]}>
-              <Text style={stylesGlobal.touchablePlainTextSecondary}>
-                {t('auth:alreadyHaveAccount')}
-              </Text>
-            </TouchableOpacity>
-          </BasicView>
-      
+        <BasicView style={stylesGlobal.marginTop30}>
+          <Button loading={loading} onPress={() => onSubmit()}>
+            <ButtonText>{t('auth:verify')}</ButtonText>
+          </Button>
+        </BasicView>
+
+        <BasicView>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Login');
+            }}
+            style={[stylesGlobal.marginTop20, stylesGlobal.centerView]}>
+            <Text style={stylesGlobal.touchablePlainTextSecondary}>
+              {t('auth:alreadyHaveAccount')}
+            </Text>
+          </TouchableOpacity>
+        </BasicView>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -160,7 +182,16 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'row',
-    justifyContent:'center'
+    justifyContent: 'center'
+  },
+  resendLink: {
+    color: 'blue',
+    textDecorationLine: 'underline',
+    fontSize: 19
+  },
+  resendTouchable: {
+    alignSelf: 'center',
+    marginVertical: 20
   },
   input: {
     width: 40,
@@ -170,8 +201,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     textAlign: 'center',
     fontSize: 18,
-    backgroundColor:colors.white,
-    color:colors.black
+    backgroundColor: colors.white,
+    color: colors.black
   },
 });
 

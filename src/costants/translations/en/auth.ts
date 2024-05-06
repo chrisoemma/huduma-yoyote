@@ -49,5 +49,7 @@ export default{
     checkNumber:'Find Number',
     createAccountPassword:'Create Account Password',
     accountPasswordCreated:'Account Password created Successfully',
+    resendOTP:'resend OTP',
+    
    
 }

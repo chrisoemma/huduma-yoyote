@@ -12,6 +12,7 @@ import RNFS from 'react-native-fs';
 import { updateProfile, userLogout } from '../auth/userSlice';
 import DocumentPicker, { types } from 'react-native-document-picker'
 import { ScrollView } from 'react-native-gesture-handler';
+import Notification from '../../components/Notification';
 
 const Account = ({ navigation }: any) => {
 
@@ -168,6 +169,12 @@ const Account = ({ navigation }: any) => {
     >
       <ScrollView style={globalStyles().appView}>
 
+
+      {user.status == 'In Active' ? (<Notification
+          message={`${t('screens:accountDeactivated')}`}
+          type="danger"
+        />) : (<View />)}
+         {user?.client && user?.status !== 'In Active' ? (
         <View style={styles.btnView}>
           {profile == null ? (<View />) : (
             <TouchableOpacity
@@ -210,7 +217,7 @@ const Account = ({ navigation }: any) => {
             />
           </TouchableOpacity>
         </View>
-
+         ):(<></>)}
         <View style={[globalStyles().circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
           <Image
             source={!user.profile_img ? (profile == null ? require('../../../assets/images/profile.png') : { uri: profile[0]?.uri }) : { uri: user.profile_img }}
@@ -272,6 +279,7 @@ const Account = ({ navigation }: any) => {
         <View style={{ marginVertical: 20 }}>
           <Divider />
         </View>
+        {user?.client && user?.status !== 'In Active' ? (
         <TouchableOpacity style={{ flexDirection: 'row', marginHorizontal: 10, marginTop: 5 }}
           onPress={() => { navigation.navigate("Change Password") }}
         >
@@ -282,7 +290,7 @@ const Account = ({ navigation }: any) => {
           />
           <Text style={{ paddingLeft: 10, fontWeight: 'bold', color: isDarkMode ? colors.white : colors.secondary }}>{t('screens:changePassword')}</Text>
         </TouchableOpacity>
-
+        ):(<></>)}
         <TouchableOpacity style={{ flexDirection: 'row', marginHorizontal: 10, marginTop: 10 }}
           onPress={() => {
             confirmLogout();

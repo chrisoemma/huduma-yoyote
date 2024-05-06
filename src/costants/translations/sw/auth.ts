@@ -47,5 +47,6 @@ export default {
     checkPhoneNumber:'Angalia Namba',
     checkNumber:'Tafuta Namba',
     createAccountPassword:'Tengeneza Nywila ya Akaunti',
-    accountPasswordCreated:'Nywila ya Akaunti yako imetengenezwa kikamilifu'
+    accountPasswordCreated:'Nywila ya Akaunti yako imetengenezwa kikamilifu',
+    resendOTP:'Tuma tena kodi'
 }

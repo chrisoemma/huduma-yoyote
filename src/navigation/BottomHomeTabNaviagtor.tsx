@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import Requests from '../features/requests/Requests';
 import Account from '../features/account/Account';
 import { useSelector,RootStateOrAny } from 'react-redux';
+import { StatusBar } from 'react-native';
 
 
 const Tab = createBottomTabNavigator();
@@ -43,7 +44,11 @@ export default function BottomHomeTabNavigator() {
 
   const { isDarkMode } = useSelector(
     (state: RootStateOrAny) => state.theme,
+    
 );
+
+
+
   
 
 const tabNavScreenOptions = ({ route }: any) => ({
@@ -60,7 +65,7 @@ const tabNavScreenOptions = ({ route }: any) => ({
     } else if (route.name === 'Account') {
       iconName = 'account-circle';
     } 
-    // You can return any component that you like here!
+    
     return <FontAwesome5 name={iconName as string} size={size} color={color} />;
   },
   tabBarActiveTintColor: colors.secondary,
@@ -90,7 +95,6 @@ const tabNavScreenOptions = ({ route }: any) => ({
     ];
   
     if (user.client && user.status !== 'Active') {
-      // Remove 'Home' and 'Requests' screens if the user's status is not active
       return screens.filter(screen => screen.name !== 'Home' && screen.name !== 'Requests');
     }
   
@@ -100,6 +104,8 @@ const tabNavScreenOptions = ({ route }: any) => ({
   const screens = getNavigatorScreens(user);
   
   return (
+    <>
+     <StatusBar backgroundColor={colors.secondary} />
     <Tab.Navigator screenOptions={tabNavScreenOptions}>
       {screens.map(screen => (
         <Tab.Screen
@@ -110,6 +116,7 @@ const tabNavScreenOptions = ({ route }: any) => ({
         />
       ))}
     </Tab.Navigator>
+    </>
   );
 
 }

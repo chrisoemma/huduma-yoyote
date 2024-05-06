@@ -31,7 +31,7 @@ const Navigation = () => {
 
 
   useEffect(() => {
-      
+    if(user?.client){
     const requestLocationPermission = async () => {
       try {
         const granted = await PermissionsAndroid.request(
@@ -54,7 +54,7 @@ const Navigation = () => {
               };
 
               // Assuming you have access to dispatch here
-              dispatch(postClientLocation({ clientId: user?.client.id, data }));
+              dispatch(postClientLocation({ clientId: user?.client?.id, data }));
             },
             error => {
               console.error(error);
@@ -78,7 +78,7 @@ const Navigation = () => {
       }
     };
 
-    if(user.client){
+   
     requestLocationPermission();
   }
 

@@ -4,7 +4,7 @@ export default {
   changePassword: 'Badilisha Nywila',
   switchLanguage: 'Badilisha Lugha',
   close: 'Funga',
-  viewAll: 'Anagalia zote',
+  viewAll: 'Angalia zote',
   topService: 'Huduma za juu.',
   current: 'Sasa',
   previous: 'Za nyuma',
@@ -71,6 +71,9 @@ providerLastLocation:'Eneo la mwisho la mtoa huduma',
 distance:'Umbali',
 loading:'Inatafuta',
 noresidenceData:'Hakuna sehemu ya makazi',
-noEmail:'Hakuna Barua pepe'
+noEmail:'Hakuna Barua pepe',
+createPassword:'Tengeneza Nywila',
+accountDeactivated:"Akaunti imezuiwa kwa muda: Akaunti yako imezuiwa kwa muda. Tafadhali wasiliana na Espe Service kwa msaada zaidi.",
+notAllowedAction:'Hauruhusiwi kufanya hichi kitendo',
 
 };

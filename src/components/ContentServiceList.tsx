@@ -26,7 +26,7 @@ const ContentServiceList = ({ selectedProviderSubServices, subServices,providerS
       <Image
         source={
           type=="subService"? 
-          { uri:item?.assets[0]?.img_url || item?.default_images[0]?.img_url }
+          { uri:item?.assets[0]?.img_url? item?.assets[0]?.img_url : item?.default_images[0]?.img_url }
            :
            {uri: item?.assets[0]?.img_url}
         }
@@ -41,9 +41,9 @@ const ContentServiceList = ({ selectedProviderSubServices, subServices,providerS
       />
       {type=="subService"?(
       <View style={styles.textContainer}>
-      <Text style={styles.categoryService}>{item?.provider_sub_list?.name || item?.name}</Text>
+      <Text style={styles.categoryService}>{ item?.provider_sub_list?.name || selectedLanguage=='en'? item?.name?.en:item?.name?.sw}</Text>
       <Text style={styles.subservice}>{selectedLanguage=='en'? item?.service?.category?.name?.en:item?.service?.category?.name?.sw}</Text>
-      <Text style={{color:colors.black}}>{item?.provider_sub_list?.description || item.description}</Text>
+      <Text style={{color:colors.black}}>{item?.provider_sub_list?.description || selectedLanguage=='en'? item.description?.en:item.description?.sw}</Text>
       </View>
       ):( <View style={styles.textContainer}>
         <Text style={styles.categoryService}>{item?.name}</Text>

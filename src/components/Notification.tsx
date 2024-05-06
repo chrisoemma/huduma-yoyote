@@ -10,7 +10,7 @@ const Notification = ({ message, type }:any) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 50000); // Adjust the duration as needed
+    }, 90000); // Adjust the duration as needed
 
     return () => clearTimeout(timer);
   }, []);
