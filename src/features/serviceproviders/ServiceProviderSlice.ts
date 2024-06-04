@@ -54,11 +54,26 @@ export const getBestProviders = createAsyncThunk(
     },
   );
 
+
+
+  export const getProviderProfile = createAsyncThunk(
+    'services/getProviderProfile',
+    async (providerId) => {
+      let header: any = await authHeader();
+      const response = await fetch(`${API_URL}/providers/provider_profile/${providerId}`, {
+        method: 'GET',
+        headers: header,
+      });
+      return (await response.json()) as any;
+    },
+  );
+
   const ServiceProviderSlice = createSlice({
     name: 'providers',
     initialState: {
       bestProviders: [],
       nearProviders:[],
+      providerProfile:{},
       subServices:[],
       providerLastLocation:{},
       providerSubServices:[],
@@ -105,6 +120,27 @@ export const getBestProviders = createAsyncThunk(
          state.loading = false;
        });
        builder.addCase(getProviderLastLocation.rejected, (state, action) => {
+         console.log('Rejected');
+         console.log(action.error);
+ 
+         state.loading = false;
+       });
+
+
+
+       //get 
+
+       builder.addCase(getProviderProfile.pending, state => {
+         state.loading = true;
+       });
+       builder.addCase(getProviderProfile.fulfilled, (state, action) => {
+
+         if (action.payload.status) {
+           state.providerProfile = {...action.payload.data.provider}
+         }
+         state.loading = false;
+       });
+       builder.addCase(getProviderProfile.rejected, (state, action) => {
          console.log('Rejected');
          console.log(action.error);
  

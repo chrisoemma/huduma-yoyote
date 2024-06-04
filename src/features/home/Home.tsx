@@ -54,9 +54,9 @@ const stylesGlobal = globalStyles();
 
   
   const handleServicePress = (service)=>{
-        navigation.navigate('Service providers',{
-          service:service,
-        })
+    navigation.navigate('Service Details',{
+      service:service,
+    })
   }
 
   const renderCategoryItem = ({ item }) => (

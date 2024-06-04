@@ -15,4 +15,8 @@ export default {
     serviceProvider:'Mtoa Huduma',
     serviceRequest:'Omba Huduma',
     editAccount:'Hariri Akaunti',
+    serviceDetails:'Taarifa zaidi za huduma',
+    viewServices:'Huduma zinazotolewa',
+    SubserviceDetails:'Taarifa zaidi za huduma ndogo',
+    ProviderProfile:'Wasifu wa Mtoa huduma'
   };

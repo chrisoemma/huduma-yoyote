@@ -301,6 +301,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
                                     <View style={stylesGlobal.subCategory}>
                                         <ContentServiceList
+                                            navigation={navigation}
                                             subServices={subServices}
                                             providerSubServices={providerSubServices}
                                             toggleSubService={toggleSubService}

@@ -15,5 +15,9 @@ export default {
     serviceProvider:'Service Provider',
     serviceRequest:'Service Request',
     editAccount:'Edit Account',
+    serviceDetails:'Service Details',
+    viewServices:'Offered service',
+    SubserviceDetails:'Sub service Details',
+    ProviderProfile:'Provider profile'
     
   };

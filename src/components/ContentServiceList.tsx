@@ -18,7 +18,14 @@ const ContentServiceList = ({ selectedProviderSubServices, subServices,providerS
 
     <TouchableOpacity 
     style={styles.contentItem}
-    onPress={()=>{}}
+
+    onPress={() => {
+      const itemType = type === "subService" ? "subService" : "providerSubService";
+      navigation.navigate('subservice Details', {
+        sub_service: item,
+        type: itemType
+      });
+    }}
     >
      
       <View style={{flexDirection:'row'}}>
@@ -26,7 +33,7 @@ const ContentServiceList = ({ selectedProviderSubServices, subServices,providerS
       <Image
         source={
           type=="subService"? 
-          { uri:item?.assets[0]?.img_url? item?.assets[0]?.img_url : item?.default_images[0]?.img_url }
+          { uri:item?.assets ? item?.assets[0]?.img_url : item?.default_images[0]?.img_url }
            :
            {uri: item?.assets[0]?.img_url}
         }

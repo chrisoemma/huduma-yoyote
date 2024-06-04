@@ -2,8 +2,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DrawerNavigator from "./DrawerNavigator";
 import CategoryScreen from "../features/category/CategoryScreen";
 import SingleCategory from "../features/category/SingleCategory";
-import ServiceScreen from "../features/Service/ServiceScreen";
-import SingleService from "../features/Service/SingleService";
 import ServiceProviders from "../features/serviceproviders/ServiceProviders";
 import ServiceRequest from "../features/Service/ServiceRequest";
 import RequestedServices from "../features/Service/RequestedServices";
@@ -19,7 +17,10 @@ import { postUserDeviceToken, postUserOnlineStatus} from "../features/auth/userS
 import { AppState } from "react-native";
 import messaging from '@react-native-firebase/messaging';
 import FCMMessageHandler from "../components/FCMMessageHandler";
-;
+import ServiceDetails from "../features/Service/ServiceDetails";
+import SubserviceDetails from "../features/subservice/SubserviceDetails";
+import ProviderProfile from "../features/providers/ProviderProfile";
+
 
   
   const AppStack = () => {
@@ -35,6 +36,7 @@ import FCMMessageHandler from "../components/FCMMessageHandler";
       const { user} = useSelector((state: RootStateOrAny) => state.user);
       const appState = useRef(AppState.currentState);
       const [appStateVisible, setAppStateVisible] = useState(appState.current);
+      
 
 
       useEffect(() => {
@@ -116,10 +118,7 @@ import FCMMessageHandler from "../components/FCMMessageHandler";
          component={SingleCategory}
          options={{ title: t('navigate:singleCategory') }}
           />
-        <Stack.Screen name="Services"
-         component={ServiceScreen}
-         options={{ title: t('navigate:service') }}
-          />
+     
        <Stack.Screen name="Change Password"
          component={ChangePassword}
          options={{ title: t('screens:changePassword') }}
@@ -130,10 +129,29 @@ import FCMMessageHandler from "../components/FCMMessageHandler";
          options={{ title: t('navigate:editAccount') }}
           />
 
-        <Stack.Screen name="Single service"
-         component={SingleService} 
-         options={{ title: t('navigate:singleService') }}
+      <Stack.Screen name="Service Details"
+         component={ServiceDetails} 
+         options={{
+           title: t('navigate:serviceDetails'),
+           headerShown: false,
+          }}
          />
+
+      <Stack.Screen name="subservice Details"
+         component={SubserviceDetails} 
+         options={{
+           title: t('navigate:SubserviceDetails'),
+           headerShown: false,
+          }}
+         />
+
+    <Stack.Screen name="Provider profile"
+         component={ProviderProfile} 
+         options={{
+           title: t('navigate:ProviderProfile'),
+          }}
+         />
+
         <Stack.Screen name="Service providers" 
         component={ServiceProviders}
         options={{ title: t('navigate:serviceProvider') }}

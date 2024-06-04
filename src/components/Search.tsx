@@ -29,20 +29,27 @@ const Search = ({
   
     const recentSearchNavigation = (item)=>{
             
-
        // console.log('iteemmeme',item)
         if(item.category=='service'){
-            navigation.navigate('Service providers',{
-                service:item.data,
-              })
+            navigation.navigate('Service Details', {
+                service: item.data,
+                source:'search'
+            });
         }else if(item.category=='category'){
-            navigation.navigate('Single category',{
+            navigation.navigate('Single category', {
                 category:item.data,
-              })
+                source:'search'
+            });
         }else if(item.category=='sub services'){
-              //screen for sub services
+            navigation.navigate('Service Details', {
+                service: item.data,
+                source:'searchSubService'
+            });
         }else{
-           ///screen for providerss
+            navigation.navigate('Provider profile', {
+                provider: item.data,
+                source:'search'
+            });
         }
     }
     const Item = ({item }: any) => (
@@ -72,20 +79,23 @@ const Search = ({
     );
 
     const getSearchedData = (searchedCategory, item) => {
-      
-
-   
-        const englishName = item?.name?.name?.en?.toLowerCase();
-        const swahiliName = item?.name?.name?.sw?.toLowerCase();
-        const searchInput = form?.search?.toLowerCase();
-        const englishMatchPercentage = (englishName?.match(new RegExp(searchInput, 'g')) || [])?.length / englishName?.length;
-        const swahiliMatchPercentage = (swahiliName?.match(new RegExp(searchInput, 'g')) || [])?.length / swahiliName?.length;
         let searchedName = '';
-        if (englishMatchPercentage > swahiliMatchPercentage) {
-            searchedName = item?.name?.name?.en; // Display English version
-        } else {
-            searchedName = item?.name?.name?.sw; // Display Swahili version
-        }
+         if(searchedCategory=='Service provider'){
+             searchedName=item?.name.name
+         }else{
+            const englishName = item?.name?.name?.en?.toLowerCase();
+            const swahiliName = item?.name?.name?.sw?.toLowerCase();
+            const searchInput = form?.search?.toLowerCase();
+            const englishMatchPercentage = (englishName?.match(new RegExp(searchInput, 'g')) || [])?.length / englishName?.length;
+            const swahiliMatchPercentage = (swahiliName?.match(new RegExp(searchInput, 'g')) || [])?.length / swahiliName?.length;
+           
+            if (englishMatchPercentage > swahiliMatchPercentage) {
+                searchedName = item?.name?.name?.en; // Display English version
+            } else {
+                searchedName = item?.name?.name?.sw; // Display Swahili version
+            }
+         }
+       
 
         const isDuplicate = recentSearches.some((search) => {
             // Check if category and name id match
@@ -105,20 +115,29 @@ const Search = ({
             dispatch(addRecentSearch(formattedObject));
         }
 
-
-
         if (searchedCategory === 'service') {
-            navigation.navigate('Service providers', {
-                service: { ...item, name: searchedName },
+            navigation.navigate('Service Details', {
+                service: item,
+                source:'search'
             });
         } else if (searchedCategory === 'category') {
+            
             navigation.navigate('Single category', {
-                category: { ...item, name: searchedName },
+                category:item,
+                source:'search'
             });
         } else if (searchedCategory === 'sub services') {
-            //screen for sub services
-        } else {
+            navigation.navigate('Service Details', {
+                service: item,
+                source:'searchSubService'
+            });
+        }else {
             ///screen for providerss
+            
+            navigation.navigate('Provider profile', {
+                provider: item,
+                source:'search'
+            });
         }
     };
       const { t } = useTranslation();
@@ -160,9 +179,7 @@ const Search = ({
                         }}
                     />
 
-
                 </View>
-               
             </View>
             <View style={styles.recentSearch}>
                {recentSearches.length>0 ? <Text
@@ -177,27 +194,25 @@ const Search = ({
                     numColumns={2}
                 />
             </View>
-
        <ScrollView>
-        <View style={styles.searches}>
-          {searches.length > 0 &&
-            searches?.map((search: any) => (
-              <View style={styles.divSettings} key={search.title}>
-                
-                {search.data.length > 0 && <Text style={[styles.title, { color: isDarkMode ? colors.white : colors.black }]}>{search.title}</Text>}
-                {search.data.map((innersearch: any) => (
-                  <TouchableOpacity onPress={() => getSearchedData(search.title, innersearch)} key={innersearch?.id}>
-                    <View style={styles.singleSearch}>
-                      <Text style={[styles.innerTitle, { color: isDarkMode ? colors.white : colors.black }]}>
-                        {getSearchedName(innersearch, form?.search?.toLowerCase())}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                  
-                ))}
-              </View>
-            ))}
-        </View>
+       <View style={styles.searches}>
+
+                    {searches.length > 0 &&
+                        searches.map((search: any) => (
+                            <View style={styles.divSettings} key={search.title}>
+                                {search.data.length > 0 && <Text style={[styles.title, { color: isDarkMode ? colors.white : colors.black }]}>{search.title}</Text>}
+                                {search.data.map((innersearch: any) => (
+                                    <TouchableOpacity onPress={() => getSearchedData(search.title, innersearch)} key={innersearch?.id}>
+                                        <View style={styles.singleSearch}>
+                                            <Text style={[styles.innerTitle, { color: isDarkMode ? colors.white : colors.black }]}>
+                                                {search.title=='Service provider'? innersearch?.name?.name : getSearchedName(innersearch, form?.search?.toLowerCase())}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        ))}   
+                </View>
       </ScrollView>
 
         </View>

@@ -4,23 +4,25 @@ import { colors } from '../utils/colors';
 import { useSelector } from 'react-redux';
 import { selectLanguage } from '../costants/languageSlice';
 
-const VerticalTabs = ({ tabs, activeTab, onTabPress,isDarkMode}:any) => {
 
+const VerticalTabs = ({ tabs, activeTab, onTabPress, isDarkMode }: any) => {
   const selectedLanguage = useSelector(selectLanguage);
 
   return (
     <ScrollView style={styles.tabsContainer}>
-      {tabs?.map((tab:any, index:any) => (
-
+      {tabs?.map((tab: any, index: any) => (
         <TouchableOpacity
           key={index}
           style={[
             styles.tabItem,
             activeTab === tab?.id && styles.activeTabItem,
+            { backgroundColor: isDarkMode ? colors.dark : colors.light },
           ]}
           onPress={() => onTabPress(tab?.id)}
         >
-          <Text style={{fontSize:16,color:colors.black}}>{selectedLanguage=='en'?tab?.name?.en:tab?.name?.sw}</Text>
+          <Text style={{ fontSize: 16, color: colors.black }}>
+            {selectedLanguage === 'en' ? tab?.name?.en : tab?.name?.sw}
+          </Text>
         </TouchableOpacity>
       ))}
     </ScrollView>
@@ -29,7 +31,6 @@ const VerticalTabs = ({ tabs, activeTab, onTabPress,isDarkMode}:any) => {
 
 const styles = StyleSheet.create({
   tabsContainer: {
-   
     backgroundColor: '#f0f0f0',
   },
   tabItem: {
@@ -41,7 +42,6 @@ const styles = StyleSheet.create({
   activeTabItem: {
     backgroundColor: '#fff',
   },
-
 });
 
 export default VerticalTabs;

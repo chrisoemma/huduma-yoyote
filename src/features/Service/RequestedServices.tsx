@@ -273,9 +273,9 @@ const RequestedServices = ({ navigation, route }: any) => {
                         <View style={[stylesGlobal.chooseServiceBtn, { justifyContent: 'space-between',marginBottom:50 }]}>
                             
 
-                            <TouchableOpacity style={[stylesGlobal.otherBtn, { backgroundColor: getStatusBackgroundColor(request_status) }]}>
+                            <View style={[stylesGlobal.otherBtn, { backgroundColor: getStatusBackgroundColor(request_status) }]}>
                                 <Text style={{ color: colors.white }}>{getStatusTranslation(request_status)}</Text>
-                            </TouchableOpacity>
+                            </View>
                             <TouchableOpacity style={stylesGlobal.chooseBtn}
                                 onPress={() => handlePresentModalPress('Near providers')}
                             >
@@ -312,6 +312,7 @@ const RequestedServices = ({ navigation, route }: any) => {
 
                                     <View style={stylesGlobal.subCategory}>
                                         <ContentServiceList
+                                            navigation={navigation}
                                             subServices={subServices}
                                             providerSubServices={providerSubServices}
                                             toggleSubService={{}}

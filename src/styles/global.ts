@@ -84,7 +84,7 @@ import { colors } from '../utils/colors';
       borderBottomRightRadius: 20,
     },
     searchContainer: {
-      marginTop: '8%',
+      marginTop: '3%',
     },
     search: {
       height: 50,

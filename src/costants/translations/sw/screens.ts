@@ -75,5 +75,14 @@ noEmail:'Hakuna Barua pepe',
 createPassword:'Tengeneza Nywila',
 accountDeactivated:"Akaunti imezuiwa kwa muda: Akaunti yako imezuiwa kwa muda. Tafadhali wasiliana na Espe Service kwa msaada zaidi.",
 notAllowedAction:'Hauruhusiwi kufanya hichi kitendo',
+description:'Maelezo',
+findProviders:'Tafuta Watoa huduma',
+sameCategoryService:'Huduma kwenye hii Kategoria',
+
+termsText: "Kwa kujisajili, unakubali",
+termsLink: "Sheria na Masharti yetu,",
+termsContinueText: "unakubali",
+privacyPolicyLink: "Sera ya Faragha",
+continuePrivacyPolicy: "Na unathibitisha kuwa una zaidi ya miaka 18. Tunaweza kutuma matangazo yanayohusiana na huduma zetu - unaweza kujiondoa wakati wowote kwenye mipangilio."
 
 };

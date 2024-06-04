@@ -75,4 +75,13 @@ export default {
 
    accountDeactivated:"Account Deactivated: Your account has been deactivated. Please contact support for assistance.",
    notAllowedAction:'You are not allowed to perform this action',
+   description:'Description',
+   findProviders:'Find Providers',
+   sameCategoryService:'Under same category',
+
+   termsText:'By signing up,you agree to our',
+   termsLink:'Terms & Conditions,',
+   termsContinueText:'acknowledge our',
+   privacyPolicyLink:'Privacy Policy',
+   continuePrivacyPolicy:'And confirm that you are over 18. We many send promotions related to our services-you can unsubscribe anytime in settings'
 };
