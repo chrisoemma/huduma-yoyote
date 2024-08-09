@@ -21,7 +21,7 @@ import {globalStyles} from '../../styles/global';
 import { useTogglePasswordVisibility } from '../../hooks/useTogglePasswordVisibility';
 import PhoneInput from 'react-native-phone-number-input';
 import { colors } from '../../utils/colors';
-import { Container } from '../../components/Container';
+import messaging from '@react-native-firebase/messaging';
 import { BasicView } from '../../components/BasicView';
 import { TextInputField } from '../../components/TextInputField';
 import { useAppDispatch } from '../../app/store';
@@ -50,6 +50,7 @@ const RegisterScreen = ({ route, navigation }: any) => {
   const [message, setMessage] = useState('');
   const [confirmError, setConfirmError] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [deviceToken, setDeviceToken] = useState('');
 
   const { t } = useTranslation();
 
@@ -96,6 +97,22 @@ const RegisterScreen = ({ route, navigation }: any) => {
   }, []);
 
 
+
+  useEffect(() => {
+    const retrieveDeviceToken = async () => {
+      try {
+        const token = await messaging().getToken();
+        console.log('new token', token);
+        setDeviceToken(token);
+      } catch (error) {
+        console.log('Error retrieving device token:', error);
+      }
+    };
+
+    retrieveDeviceToken();
+  }, []);
+
+
   const setDisappearMessage = (message: any) => {
     setMessage(message);
 
@@ -116,9 +133,8 @@ const RegisterScreen = ({ route, navigation }: any) => {
     } else {
       setConfirmError('');
     }
-
       data.app_type='client';
-    
+      data.deviceToken = deviceToken; 
     dispatch(userRegiter(data))
     .unwrap()
     .then(result => {
@@ -129,7 +145,7 @@ const RegisterScreen = ({ route, navigation }: any) => {
         navigation.navigate('Verify',{nextPage:'Verify'});
 
       }else{
-        if (result.error) {
+        if(result.error) {
           setDisappearMessage(result.error);
       } else {
         if(result.message){

@@ -33,17 +33,21 @@ const Search = ({
         if(item.category=='service'){
             navigation.navigate('Service Details', {
                 service: item.data,
-                source:'search'
+                source:'search',
+                 requestFrom:'recent',
+
             });
         }else if(item.category=='category'){
             navigation.navigate('Single category', {
                 category:item.data,
-                source:'search'
+                source:'search',
+                requestFrom:'recent'
             });
         }else if(item.category=='sub services'){
             navigation.navigate('Service Details', {
                 service: item.data,
-                source:'searchSubService'
+                source:'searchSubService',
+                requestFrom:'recent'
             });
         }else{
             navigation.navigate('Provider profile', {
@@ -118,18 +122,21 @@ const Search = ({
         if (searchedCategory === 'service') {
             navigation.navigate('Service Details', {
                 service: item,
-                source:'search'
+                source:'search',
+                requestFrom:'normal'
             });
         } else if (searchedCategory === 'category') {
             
             navigation.navigate('Single category', {
                 category:item,
-                source:'search'
+                source:'search',
+                requestFrom:'normal'
             });
         } else if (searchedCategory === 'sub services') {
             navigation.navigate('Service Details', {
                 service: item,
-                source:'searchSubService'
+                source:'searchSubService',
+                requestFrom:'normal'
             });
         }else {
             ///screen for providerss

@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {View, Dimensions, TouchableOpacity} from 'react-native';
+import React, { useState } from 'react';
+import { View, Dimensions, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Modal from 'react-native-modal';
-import {Rating} from 'react-native-ratings';
+import { Rating } from 'react-native-ratings';
 import { BasicView } from './BasicView';
 import { globalStyles } from '../styles/global';
 import TextView from './TextView';
@@ -10,6 +10,10 @@ import { colors } from '../utils/colors';
 import { TextAreaInputField } from './TextAreaInputField';
 import { RowView } from './Views';
 import { useTranslation } from 'react-i18next';
+import RatingTemplate from './RatingTemplate';
+import { useSelector } from 'react-redux';
+import { selectLanguage } from '../costants/languageSlice';
+
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -46,45 +50,63 @@ export const ModalFooter = styled.View`
   justify-self: flex-end;
 `;
 
-function RatingModal({visible, cancel, confirm}: any) {
+function RatingModal({ visible, cancel, confirm, belowData, aboveData }:any) {
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState();
+  const [templateOptions, setTemplateOptions] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
 
-  const ratingCompleted = (rating: any) => {
-    console.log(rating);
+  const selectedLanguage = useSelector(selectLanguage);
+
+  const ratingCompleted = (rating) => {
     setRating(rating);
+    setSelectedIds([]); 
+
+    if (rating <= 3) {
+      setTemplateOptions(belowData.map(item => ({
+        id: item.id,
+        reason: selectedLanguage === 'en' ? item.reason.en : item.reason.sw,
+      })));
+    } else {
+      setTemplateOptions(aboveData.map(item => ({
+        id: item.id,
+        reason: selectedLanguage === 'en' ? item.reason.en : item.reason.sw,
+      })));
+    }
+  };
+
+  const handleSelect = (selectedOptions) => {
+    const ids = selectedOptions.map(option => option.id);
+    setSelectedIds(ids);
   };
 
   const { t } = useTranslation();
 
   return (
-    <View style={{flex: 1, borderWidth: 1}}>
+    <View style={{ flex: 1, borderWidth: 1 }}>
       <Modal
-        style={{margin: 0, padding: 0}}
+        style={{ margin: 0, padding: 0 }}
         isVisible={visible}
         swipeDirection="up"
         useNativeDriver={true}
-        onBackdropPress={() => {
-          cancel();
-        }}
+        onBackdropPress={() => cancel()}
         hideModalContentWhileAnimating={true}>
         <ModalView>
           <Container>
             <ModalHandle />
-            <BasicView style={globalStyles().marginTop30}>
-              <TextView fontSize={26} color={colors.darkGrey} type="tabHeading">
-               {t('screens:rateService')}
-              </TextView>
-            </BasicView>
             <BasicView>
               <Rating
-                showRating
+                startingValue={0} // Set starting value to 0
+                showRating={true}
                 onFinishRating={ratingCompleted}
-                style={{paddingVertical: 10}}
+                style={{ paddingVertical: 10 }}
               />
-              <View style={{paddingTop: 15}}>
+              <View style={{ paddingTop: 15 }}>
+                <View style={{ marginVertical: 15 }}>
+                  <RatingTemplate options={templateOptions} onSelect={handleSelect} />
+                </View>
                 <TextAreaInputField
-                  placeholder={t('screens:enterComment')}
+                  placeholder={t('screens:shareAdditinalComment')}
                   onChangeText={setComment}
                   value={comment}
                 />
@@ -106,7 +128,7 @@ function RatingModal({visible, cancel, confirm}: any) {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => confirm({comment, rating})}
+                  onPress={() => confirm({ comment, rating, selectedIds })}
                   style={[
                     globalStyles().smallTransparentButton,
                     {
@@ -116,7 +138,7 @@ function RatingModal({visible, cancel, confirm}: any) {
                     },
                   ]}>
                   <TextView type="semiBold" fontSize={16} color={colors.white}>
-                   {t('screens:submitRating')}
+                    {t('screens:submitRating')}
                   </TextView>
                 </TouchableOpacity>
               </RowView>

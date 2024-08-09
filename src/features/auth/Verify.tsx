@@ -31,9 +31,9 @@ const VerifyScreen = ({ route, navigation }: any) => {
   const [verificationCode, setVerificationCode] = useState(['', '', '', '']);
 
 
-  useEffect(() => {
+  // useEffect(() => {
 
-  }, [user]);
+  // }, [user]);
 
 
   const inputs = Array(4).fill(0).map((_, i) => React.createRef());
@@ -84,7 +84,7 @@ const VerifyScreen = ({ route, navigation }: any) => {
         }
 
       } else {
-        console.log('user with normal  regitsrtaion token sent');
+      //  console.log('user with normal  regitsrtaion token sent');
         dispatch(userVerify({ user_id: user.id, code: numericCode, app_type: 'client' }));
       }
     } else {
@@ -97,8 +97,10 @@ const VerifyScreen = ({ route, navigation }: any) => {
   const resendLink = async () => {
     const { phone } = route?.params;
     const data = {
-      phone: phone
+      phone: user?.phone?user?.phone:phone
     }
+    // console.log('dataaa',data);
+    // return 
     const result = await dispatch(resendOTP(data)).unwrap();
     if (result.status) {
 

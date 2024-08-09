@@ -16,7 +16,7 @@ export default {
     serviceRequest:'Service Request',
     editAccount:'Edit Account',
     serviceDetails:'Service Details',
-    viewServices:'Offered service',
+    viewServices:'Click for services',
     SubserviceDetails:'Sub service Details',
     ProviderProfile:'Provider profile'
     

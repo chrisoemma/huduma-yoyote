@@ -25,6 +25,7 @@ import BannerSlice from '../features/home/BannerSlice';
 import OnboardingSlice from '../features/onboarding/OnboardingSlice';
 import languageSlice from '../costants/languageSlice';
 import RealTimeSlice from '../../RealTimeSlice';
+import feebackTemplateSlice from '../features/feedbackTemplate/FeebackTemplateSlice';
 
 
 const reducers = combineReducers({
@@ -40,6 +41,7 @@ const reducers = combineReducers({
   banners:BannerSlice,
   onboarding:OnboardingSlice,
   language:languageSlice,
+  feebackTemplate:feebackTemplateSlice
 });
 
 const persistConfig = {

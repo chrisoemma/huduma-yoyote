@@ -1,58 +1,44 @@
-import React, { useRef, useEffect } from "react";
-import { View, Animated, Image, StyleSheet, Dimensions } from "react-native";
+import React, { useState } from "react";
+import { View, TouchableOpacity, StyleSheet, Dimensions, Image, FlatList, Modal } from "react-native";
+import ImageViewer from "react-native-image-zoom-viewer";
 import { colors } from "../utils/colors";
 
-const Banner = ({ BannerHeight, BannerImgs, dotSize, dotColor }) => {
-  const scrollX = useRef(new Animated.Value(0)).current;
-  const flatListRef = useRef(null);
+const Banner = ({ BannerHeight, BannerImgs }) => {
   const { width } = Dimensions.get("screen");
   const BannerWidth = width;
-
-  useEffect(() => {
-    let currentIndex = 0;
-    const interval = setInterval(() => {
-      if (flatListRef.current) {
-        currentIndex = (currentIndex + 1) % BannerImgs.length;
-        flatListRef.current.scrollToIndex({
-          animated: true,
-          index: currentIndex,
-        });
-      }
-    }, 8000);
   
-    return () => clearInterval(interval);
-  }, [BannerImgs]);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const openModal = (index) => {
+    setCurrentIndex(index);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
   return (
-    <View style={{ height: BannerHeight, overflow: "hidden" }}>
-      <Animated.FlatList
-        ref={flatListRef}
+    <View style={{ height: BannerHeight }}>
+      <FlatList
         data={BannerImgs}
-        keyExtractor={(_, index) => index.toString()}
-        snapToInterval={BannerWidth}
-        decelerationRate="fast"
-        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item, index) => index.toString()}
         horizontal
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: false }
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity onPress={() => openModal(index)}>
+            <Image
+              source={{ uri: item.url }}
+              style={{
+                width: BannerWidth,
+                height: BannerHeight,
+                resizeMode: "cover",
+                borderRadius: 20,
+              }}
+            />
+          </TouchableOpacity>
         )}
-        bounces={false}
-        renderItem={(item) => {
-          return (
-            <View>
-              <Image
-                source={{ uri: item?.item?.url }}
-                style={{
-                  resizeMode: "cover",
-                  width: BannerWidth,
-                  height: BannerHeight,
-                  borderRadius: 20,
-                }}
-              />
-            </View>
-          );
-        }}
       />
 
       <View
@@ -63,29 +49,26 @@ const Banner = ({ BannerHeight, BannerImgs, dotSize, dotColor }) => {
         }}
       >
         <View style={{ flexDirection: "row" }}>
-          {BannerImgs?.map((_, index) => {
-            return <View style={[styles.dot]} key={index}></View>;
-          })}
+          {BannerImgs?.map((_, index) => (
+            <View style={styles.dot} key={index}></View>
+          ))}
         </View>
-
-        <Animated.View
-          style={[
-            styles.dotIndicator,
-            {
-              transform: [
-                {
-                  translateX: Animated.divide(scrollX, BannerWidth).interpolate(
-                    {
-                      inputRange: [0, 1],
-                      outputRange: [0, 20],
-                    }
-                  ),
-                },
-              ],
-            },
-          ]}
-        />
       </View>
+
+      <Modal
+        visible={isModalVisible}
+        transparent={true}
+        onRequestClose={closeModal}
+      >
+        <ImageViewer
+          imageUrls={BannerImgs.map(img => ({ url: img.url }))}
+          index={currentIndex}
+          enableSwipeDown
+          onSwipeDown={closeModal}
+          backgroundColor={colors.secondary} 
+          onCancel={closeModal}
+        />
+      </Modal>
     </View>
   );
 };
@@ -96,17 +79,12 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 10,
     marginRight: 10,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
   },
-  dotIndicator: {
-    width: 20,
-    height: 20,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.secondary,
-    position: "absolute",
-    top: -5,
-    left: -5,
+  modal: {
+    margin: 0,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

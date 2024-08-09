@@ -23,11 +23,10 @@ import { useAppDispatch } from '../../app/store';
 import Button from '../../components/Button';
 import { ButtonText } from '../../components/ButtonText';
 import { useTranslation } from 'react-i18next';
-import { updateUserInfo, userRegiter } from '../auth/userSlice';
+import { updateUserInfo} from '../auth/userSlice';
 import GooglePlacesInput from '../../components/GooglePlacesInput';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { validateTanzanianPhoneNumber } from '../../utils/utilts';
-import { PLACES_API_KEY } from '../../utils/config';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const EditAccount = ({ route, navigation }: any) => {
 
@@ -156,53 +155,55 @@ const EditAccount = ({ route, navigation }: any) => {
             </BasicView>
 
             <BasicView>
-              <Text
-                style={[
-                  stylesGlobal.inputFieldTitle,
-                  stylesGlobal.marginTop20,
-                ]}>
-                {t('auth:phone')}
-              </Text>
+  <Text
+    style={[
+      stylesGlobal.inputFieldTitle,
+      stylesGlobal.marginTop20,
+    ]}>
+    {t('auth:phone')}
+  </Text>
 
-              <Controller
-                control={control}
-                rules={{
-                  minLength: 10,
-                  required: true,
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInputField
-                    placeholder={t('screens:enterPhone')}
-                    onBlur={onBlur}
-                    onChangeText={(text) => {
-                      // Remove any non-numeric characters
-                      const cleanedText = text.replace(/\D/g, '');
-
-                      // Check if it starts with '0' or '+255'/'255'
-                      if (cleanedText.startsWith('0') && cleanedText.length <= 10) {
-                        onChange(cleanedText);
-                      } else if (
-                        (cleanedText.startsWith('255') ||
-                          cleanedText.startsWith('+255')) &&
-                        cleanedText.length <= 12
-                      ) {
-                        onChange(cleanedText);
-                      }
-                    }}
-                    value={value}
-                    keyboardType="phone-pad"
-                    maxLength={12}
-
-                  />
-                )}
-                name="phone"
-              />
-              {errors.phone && (
-                <Text style={stylesGlobal.errorMessage}>
-                  {t('auth:phoneRequired')}
-                </Text>
-              )}
-            </BasicView>
+  <Controller
+    control={control}
+    rules={{
+      minLength: 10,
+      required: true,
+    }}
+    render={({ field: { onChange, onBlur, value } }) => (
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <TextInputField
+          placeholder={t('screens:enterPhone')}
+          onBlur={onBlur}
+          onChangeText={(text) => {
+            const cleanedText = text.replace(/\D/g, '');
+            if (cleanedText.startsWith('0') && cleanedText.length <= 10) {
+              onChange(cleanedText);
+            } else if (
+              (cleanedText.startsWith('255') ||
+                cleanedText.startsWith('+255')) &&
+              cleanedText.length <= 12
+            ) {
+              onChange(cleanedText);
+            }
+          }}
+          value={value}
+          keyboardType="phone-pad"
+          maxLength={12}
+          editable={!user?.phone_verified_at} 
+        />
+        {user?.phone_verified_at && (
+          <Icon name="check-circle" size={24} color={colors.successGreen} style={{ marginLeft: 10 }} />
+        )}
+      </View>
+    )}
+    name="phone"
+  />
+  {errors.phone && (
+    <Text style={stylesGlobal.errorMessage}>
+      {t('auth:phoneRequired')}
+    </Text>
+  )}
+</BasicView>
 
             <BasicView>
               <Text
@@ -273,7 +274,7 @@ const EditAccount = ({ route, navigation }: any) => {
             </BasicView>
 
             <BasicView style={stylesGlobal.marginTop20}>
-              <Text>{t('screens:location')}:</Text>
+              <Text style={stylesGlobal.inputFieldTitle}>{t('screens:location')}:</Text>
               <GooglePlacesInput
                 setLocation={selectLocation}
                 placeholder={t('screens:whatsYourLocation')}

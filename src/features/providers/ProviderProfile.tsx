@@ -52,8 +52,6 @@ const { user,isOnline } = useSelector(
 
         <View>
           <View style={[stylesGlobal.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
-
-
             <Image
               source={
                 providerProfile?.profile_img?.startsWith('https://')

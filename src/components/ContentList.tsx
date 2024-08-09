@@ -31,6 +31,10 @@ const ContentList = ({ data, navigation, isDarkMode }: any) => {
     </TouchableOpacity>
   );
 
+
+
+  
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -51,12 +55,13 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   contentContainer: {
-    justifyContent: 'space-between',
+    justifyContent:'space-between'
   },
   contentItem: {
-    flex: 1,
+   // flex: 1,
     padding: 10,
     margin: 2,
+   // alignSelf: 'center',
   },
   image: {
     resizeMode: 'cover',

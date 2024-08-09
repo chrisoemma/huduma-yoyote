@@ -9,6 +9,7 @@ export default{
     lastNameRequired:'Last Name is required',
     enterLastName:'Enter Last Name',
     email:'Email',
+    enterEmail:'Enter Email',
     password:'Password',
     enterPassword:'Enter Password',
     passwordRequired:'Password is required',

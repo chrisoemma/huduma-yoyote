@@ -36,20 +36,20 @@ export const makePhoneCall = phoneNumber => {
 };
 
 
-function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; 
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
+// function calculateDistance(lat1, lon1, lat2, lon2) {
+//   const R = 6371; 
+//   const dLat = (lat2 - lat1) * (Math.PI / 180);
+//   const dLon = (lon2 - lon1) * (Math.PI / 180);
 
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+//   const a =
+//     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+//     Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // Distance in kilometers
+//   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//   const distance = R * c; // Distance in kilometers
 
-  return distance;
-}
+//   return distance;
+// }
 
 
 export function validateTanzanianPhoneNumber(phoneNumber) {
@@ -112,6 +112,25 @@ export const formatNumber = (number, decPlaces, decSep, thouSep) => {
       : '')
   );
 };
+
+
+export   const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+    Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c; // Distance in kilometers
+  return distance.toFixed(2);
+};
+
+
+
+
 
 export const getLocationName = async (latitude, longitude) => {
   try {
@@ -224,4 +243,33 @@ export const getStatusBackgroundColor = (status: string) => {
     default:
       return colors.secondary;
   }
+};
+
+export const sortByLanguage = (categories, language) => {
+  const sortedCategories = [...categories]; 
+  return sortedCategories.sort((a, b) => {
+    const nameA = a.name[language]?.toLowerCase();
+    const nameB = b.name[language]?.toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+}
+
+export const extractRatingData = (data) => {
+  return data.map(item => ({
+    id: item.id,
+    reason: item.reason, // or use the appropriate language key if needed
+    rating_scale: item.rating_scale,
+  }));
+};
+
+
+export const unflatten = (data) => {
+  const result = {};
+  for (const key in data) {
+    const keys = key.split('.');
+    keys.reduce((acc, part, index) => {
+      return acc[part] = acc[part] || (isNaN(Number(keys[index + 1])) ? (keys.length - 1 === index ? data[key] : {}) : []);
+    }, result);
+  }
+  return result;
 };

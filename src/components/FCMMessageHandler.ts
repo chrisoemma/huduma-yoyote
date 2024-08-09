@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
 import { useSelector, RootStateOrAny } from 'react-redux';
-import { setUserAccountStatus } from '../features/auth/userSlice';
+import { changeNidaStatus, logoutOtherDevice, setUserChanges, updateClientChanges } from '../features/auth/userSlice';
 import { useAppDispatch } from '../app/store';
 import { setRequestStatus } from '../features/requests/RequestSlice';
+import { setClientChanges } from '../features/account/ClientSlice';
+import { unflatten } from '../utils/utilts';
 
 const FCMMessageHandler = () => {
   const { user } = useSelector((state: RootStateOrAny) => state.user);
@@ -25,25 +27,26 @@ const FCMMessageHandler = () => {
   }, []);
 
   const handleRemoteMessage = remoteMessage => {
-    const { data,notification } = remoteMessage;
-
-     console.log('datatatatata',data);
+    const { data, notification } = remoteMessage;
 
     if (data && data.type) {
       const type = data.type;
-      // Perform actions based on the type
       switch (type) {
-        case 'user_status_changed':
-          dispatch(setUserAccountStatus(data.userStatus));
+        case 'account_changed':
+
+          const userChanges = data.userChanges ? JSON.parse(data.userChanges) : {};
+          const clientChanges = data.clientChanges ? JSON.parse(data.clientChanges) : {};
+          dispatch(setUserChanges(userChanges));
+          dispatch(setClientChanges(clientChanges));
+          dispatch(updateClientChanges(clientChanges))
           break;
         case 'request_status_changed':
-             dispatch(setRequestStatus(data.request))
+          dispatch(setRequestStatus(data.request))
           break;
-        case 'service_approval':
-          //Find that subservice by id then update its status
-          break;
-        case 'subscription_status':
-            //Find user active subscription status and update  it to expired
+        case 'logout_device':
+          dispatch(logoutOtherDevice());
+        case 'nida_status_chaged':
+          dispatch(changeNidaStatus(data.nidaStatus))
           break;
         default:
           // Handle other types or default case

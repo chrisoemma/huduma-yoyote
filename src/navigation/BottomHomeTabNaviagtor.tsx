@@ -47,10 +47,6 @@ export default function BottomHomeTabNavigator() {
     
 );
 
-
-
-  
-
 const tabNavScreenOptions = ({ route }: any) => ({
   
   headerShown: false,
@@ -70,6 +66,9 @@ const tabNavScreenOptions = ({ route }: any) => ({
   },
   tabBarActiveTintColor: colors.secondary,
   tabBarInactiveTintColor:isDarkMode?colors.white:colors.black,
+  tabBarStyle: {
+    backgroundColor: isDarkMode ? colors.blackBackground : colors.white, // Set your desired background color here
+  },
 });
   const { t } = useTranslation();
 
@@ -94,7 +93,7 @@ const tabNavScreenOptions = ({ route }: any) => ({
       },
     ];
   
-    if (user.client && user.status !== 'Active') {
+    if (user.client && user?.client?.status !== 'Active') {
       return screens.filter(screen => screen.name !== 'Home' && screen.name !== 'Requests');
     }
   

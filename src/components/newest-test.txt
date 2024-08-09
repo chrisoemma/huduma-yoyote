@@ -1,0 +1,95 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { View, StyleSheet, Dimensions, Animated, Image } from 'react-native';
+import MapView, { Marker, AnimatedRegion } from 'react-native-maps';
+
+const initialRegion = {
+  latitude: -6.7882878,
+  longitude:  39.2444074,
+  latitudeDelta: 0.0922,
+  longitudeDelta: 0.0421,
+};
+
+const destination = {
+  latitude: -6.7757021,
+  longitude:39.2444074,
+};
+
+const MapDisplay = () => {
+  const mapViewRef = useRef(null);
+
+  const animatedRegion = useRef(
+    new AnimatedRegion({
+      latitude: initialRegion.latitude,
+      longitude: initialRegion.longitude,
+      latitudeDelta: initialRegion.latitudeDelta,
+      longitudeDelta: initialRegion.longitudeDelta,
+    })
+  ).current;
+
+  const [isMapReady, setIsMapReady] = useState(false);
+  const [isMoving, setIsMoving] = useState(false);
+
+  useEffect(() => {
+    const animateToDestination = () => {
+      setIsMoving(true);
+
+      animatedRegion.timing({
+        latitude: destination.latitude,
+        longitude: destination.longitude,
+        duration: 5000, // 5 seconds
+        useNativeDriver: false,
+      }).start(({ finished }) => {
+        if (finished) {
+          setIsMoving(false);
+        }
+      });
+    };
+
+    if (isMapReady && !isMoving) {
+      animateToDestination();
+    }
+  }, [isMapReady, isMoving]);
+
+  const handleMapLayout = () => {
+    setIsMapReady(true);
+  };
+
+  return (
+    <View style={styles.container}>
+      <MapView
+        ref={mapViewRef}
+        style={styles.map}
+        initialRegion={initialRegion}
+        onLayout={handleMapLayout}
+      >
+        {isMapReady && (
+          <>
+            <Marker.Animated
+              coordinate={animatedRegion}
+            >
+              <Image source={isMoving ? require('../../assets/images/personmove.png') : require('../../assets/images/personstanding.png')} style={{ width:20, height: 20 }} />
+            </Marker.Animated>
+            <Marker
+              coordinate={destination}
+              title="Destination"
+              description="This is the destination"
+            />
+          </>
+        )}
+      </MapView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+});
+
+export default MapDisplay;

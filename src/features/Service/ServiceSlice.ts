@@ -67,6 +67,15 @@ const ServiceSlice = createSlice({
     clearMessage(state: any) {
       state.status = null;
     },
+    clearSingleService(state) {
+      state.service = {};
+    },
+    clearSimilarServices(state) {
+      state.similarServices = [];
+    },
+    clearSubserviceByService(state) {
+      state.subServiceByService = [];
+    },
   },
   extraReducers: builder => {
 
@@ -117,7 +126,7 @@ const ServiceSlice = createSlice({
     builder.addCase(getSingleService.fulfilled, (state, action) => {
          
       if(action.payload.status) {
-        state.service ={...action.payload.data.service} ;
+          state.service = action.payload.data.service;
       }
       state.loading = false;
     });
@@ -148,6 +157,6 @@ const ServiceSlice = createSlice({
   },
 });
 
-export const { clearMessage } = ServiceSlice.actions;
+export const { clearMessage,clearSingleService, clearSimilarServices, clearSubserviceByService  } = ServiceSlice.actions;
 
 export default ServiceSlice.reducer;

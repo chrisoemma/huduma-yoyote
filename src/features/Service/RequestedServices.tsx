@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { View, Text, SafeAreaView, Image, TouchableOpacity, StyleSheet, Button, ToastAndroid } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, StyleSheet, Button, ToastAndroid, ActivityIndicator } from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { colors } from '../../utils/colors'
 import RatingStars from '../../components/RatinsStars';
@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import ContentServiceList from '../../components/ContentServiceList';
 import MapDisplay from '../../components/MapDisplay';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { makePhoneCall } from '../../utils/utilts';
+import { extractRatingData, makePhoneCall } from '../../utils/utilts';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { getProviderLastLocation, getProviderSubServices } from '../serviceproviders/ServiceProviderSlice';
@@ -24,6 +24,8 @@ import RatingModal from '../../components/RatingModal';
 import { selectLanguage } from '../../costants/languageSlice';
 import IconOnline from 'react-native-vector-icons/Ionicons'; 
 import PusherOnlineListener from '../../components/PusherOnlineListener';
+import { getAboveRating, getBelowRating, getCancelTemplate } from '../feedbackTemplate/FeebackTemplateSlice';
+import CancelModal from '../../components/CancelModal';
 
 const RequestedServices = ({ navigation, route }: any) => {
 
@@ -35,10 +37,18 @@ const RequestedServices = ({ navigation, route }: any) => {
     );
 
 
+
+
+
+
     const selectedLanguage = useSelector(selectLanguage);
 
-    const { requestLastLocation } = useSelector(
+    const { requestLastLocation,loading } = useSelector(
         (state: RootStateOrAny) => state.requests,
+    );
+
+    const {   belowTemplate,aboveTemplate,cancelTemplate } = useSelector(
+        (state: RootStateOrAny) => state.feebackTemplate,
     );
 
     const { isDarkMode } = useSelector(
@@ -49,13 +59,14 @@ const RequestedServices = ({ navigation, route }: any) => {
         (state: RootStateOrAny) => state.providers,
     );
 
-    const { providerLastLocation } = useSelector(
+    const { providerLastLocation,loading:providerLoading } = useSelector(
         (state: RootStateOrAny) => state.providers,
       );
 
     const [userLocation, setUserLocation] = useState(null);
     const [providerLocation, setProviderLocation] = useState(null);
     const [isModalVisible, setModalVisible] = useState(false);
+    const [isCancelModalVisible, setCancelModalVisible] = useState(false);
     const handleLocationUpdate = useCallback((userLocation, providerLocation) => {
         setUserLocation(userLocation);
         setProviderLocation(providerLocation);
@@ -86,10 +97,49 @@ const RequestedServices = ({ navigation, route }: any) => {
         client_longitude:'',
         provider_latitude:'',
         provider_longitude:'',
-        requestId:''
+        requestId:'',
+        templateIds:[]
 
     }
-    const postReview = ({ comment, rating }: any) => {
+
+
+        const  confirmCancel=({selectedIds}:any)=>{
+        data.client = user?.client?.id;
+        data.status = 'Cancelled';
+        data.client_latitude=userLocation?.latitude
+        data.client_longitude=userLocation?.longitude
+        data.provider_latitude=providerLocation?.latitude
+        data.provider_longitude=providerLocation?.longitude
+        data.templateIds=selectedIds;
+
+        toggleModalCancel();
+  
+        dispatch(updateRequestStatus({ data: data, requestId:request?.id }))
+            .unwrap()
+            .then(result => {
+                if (result.status) {
+                    ToastAndroid.show(`${t('screens:requestUpdatedSuccessfully')}`, ToastAndroid.SHORT);
+                    navigation.navigate('Requests', {
+                        screen: 'Requests',
+                    });
+                } else {
+                    setDisappearMessage(
+                        `${t('screens:requestFail')}`,
+                    );
+                    console.log('dont navigate');
+                }
+            })
+            .catch(rejectedValueOrSerializedError => {
+                // handle error here
+                console.log('error');
+                console.log(rejectedValueOrSerializedError);
+            });
+       
+    }
+
+
+    const postReview = ({ comment, rating,selectedIds}: any) => {
+
         requestData.comment = comment
         requestData.rating = rating
         requestData.requestId = request?.id
@@ -97,6 +147,7 @@ const RequestedServices = ({ navigation, route }: any) => {
         requestData.client_longitude=userLocation?.longitude
         requestData.provider_latitude=providerLocation?.latitude
         requestData.provider_longitude=providerLocation?.longitude
+        requestData.templateIds=selectedIds;
         toggleModal();
         dispatch(rateRequest(requestData))
             .unwrap()
@@ -150,7 +201,7 @@ const RequestedServices = ({ navigation, route }: any) => {
 
     const { t } = useTranslation();
 
-    const request_status = request?.statuses[request?.statuses?.length - 1].status;
+    const request_status = request?.statuses[request?.statuses?.length - 1]?.status;
 
     const [message, setMessage] = useState("")
     const setDisappearMessage = (message: any) => {
@@ -162,8 +213,21 @@ const RequestedServices = ({ navigation, route }: any) => {
     };
 
     const toggleModal = () => {
+         if(aboveTemplate?.length<1 && belowTemplate?.length<1){
+            dispatch(getBelowRating());
+            dispatch(getAboveRating());
+        }
         setModalVisible(!isModalVisible);
     };
+
+
+    const toggleModalCancel = () => {
+        if(cancelTemplate?.length<1){
+           dispatch(getCancelTemplate());
+       }
+       setCancelModalVisible(!isCancelModalVisible)
+   };
+
 
     const data = {
         status: '',
@@ -182,12 +246,11 @@ const RequestedServices = ({ navigation, route }: any) => {
         data.provider_latitude=providerLocation?.latitude
         data.provider_longitude=providerLocation?.longitude
 
-
+    
         dispatch(updateRequestStatus({ data: data, requestId: id }))
             .unwrap()
             .then(result => {
                 if (result.status) {
-
                     ToastAndroid.show(`${t('screens:requestUpdatedSuccessfully')}`, ToastAndroid.SHORT);
                     navigation.navigate('Requests', {
                         screen: 'Requests',
@@ -215,7 +278,6 @@ const RequestedServices = ({ navigation, route }: any) => {
             <SafeAreaView
                 style={stylesGlobal.scrollBg}
             >
-
                 <GestureHandlerRootView style={{ flex: 1, margin: 10 }}>
                     <BasicView style={stylesGlobal.centerView}>
                         <Text style={stylesGlobal.errorMessage}>{message}</Text>
@@ -243,7 +305,7 @@ const RequestedServices = ({ navigation, route }: any) => {
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <View>
-                                <Text style={{ marginVertical: 5, color: colors.black }}>{request?.provider?.name}</Text>
+                                <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.black}}>{request?.provider.business_name?request?.provider?.business_name:request?.provider?.name}</Text>
                                 <RatingStars rating={request?.provider?.average_rating == null ? 0 : request?.provider?.average_rating} />
                                 <Text style={{ marginVertical: 5, color: colors.secondary }}>{ selectedLanguage=='en'? request?.service?.name?.en :request?.service?.name?.sw}</Text>
                             </View>
@@ -286,6 +348,14 @@ const RequestedServices = ({ navigation, route }: any) => {
 
                     <View>
                         <View style={styles.mapContainer}>
+
+                        {/* {loading && providerLoading && ( */}
+        {/* <View style={{ ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View> */}
+      {/* )} */}
+
+                      {/* {!loading && !providerLoading  && ( */}
                             <MapDisplay
                                 onLocationUpdate={handleLocationUpdate}
                                 providerLastLocation={providerLastLocation}
@@ -293,6 +363,8 @@ const RequestedServices = ({ navigation, route }: any) => {
                                 requestStatus={request_status}
                                 requestLastLocation={requestLastLocation}
                             />
+
+                        {/* )}  */}
                         </View>
                     </View>
 
@@ -327,7 +399,7 @@ const RequestedServices = ({ navigation, route }: any) => {
                         </View>
                     </BottomSheetModalProvider>
                     <View style={{
-                        backgroundColor: isDarkMode ? colors.black : colors.whiteBackground, height: 100,
+                        backgroundColor: isDarkMode ? colors.blackBackground : colors.whiteBackground, height: 100,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         padding: 20
@@ -347,9 +419,22 @@ const RequestedServices = ({ navigation, route }: any) => {
 
                         ) : <></>}
 
-                        {request_status == 'Requested' || request_status == 'Accepted' ? (
+                        {/* {request_status == 'Requested' || request_status == 'Accepted' ? (
                             <TouchableOpacity
                                 onPress={() => updateRequest(request?.id, 'Cancelled')}
+                                style={{
+                                    backgroundColor: colors.dangerRed, borderRadius: 20,
+                                    justifyContent: 'center',
+                                    padding: 20
+                                }}>
+                                <Text style={{ color: colors.white }}>{t('screens:cancel')}</Text>
+                            </TouchableOpacity>
+                        ) : <></>} */}
+
+
+                             {request_status == 'Requested' || request_status == 'Accepted' ? (
+                            <TouchableOpacity
+                                onPress={() => toggleModalCancel()}
                                 style={{
                                     backgroundColor: colors.dangerRed, borderRadius: 20,
                                     justifyContent: 'center',
@@ -377,13 +462,21 @@ const RequestedServices = ({ navigation, route }: any) => {
                 </GestureHandlerRootView>
             </SafeAreaView>
 
+
+            <CancelModal
+                cancelData={extractRatingData(cancelTemplate)}
+                cancel={toggleModalCancel}
+                visible={isCancelModalVisible}
+                confirmCancel={confirmCancel}
+            />
+           
             <RatingModal
+                belowData={extractRatingData(belowTemplate)}
+                aboveData={extractRatingData(aboveTemplate)}
                 cancel={toggleModal}
                 confirm={postReview}
                 visible={isModalVisible}
             />
-
-
         </>
     )
 }

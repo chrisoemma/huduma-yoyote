@@ -60,7 +60,7 @@ proceedtoCreateAccount:'Ndio, Tengeneza Akaunti',
 goBack:'Rudi nyuma',
 cancelAccount:'Sitisha utengenezaji wa akunti',
 userMultiAccountCreated: 'Hongera,Akaunti yako imesajiliwa Kimamilifu',
-whatsYourLocation:'Eneo la ofisi liko wapi?',
+whatsYourLocation:'Andika hapa mahali ulipo',
 currentLocation:'Eneo Nilipo',
 yourLocation:'Eneo uliopo',
 yourHere:'Upo hapa',
@@ -83,6 +83,8 @@ termsText: "Kwa kujisajili, unakubali",
 termsLink: "Sheria na Masharti yetu,",
 termsContinueText: "unakubali",
 privacyPolicyLink: "Sera ya Faragha",
-continuePrivacyPolicy: "Na unathibitisha kuwa una zaidi ya miaka 18. Tunaweza kutuma matangazo yanayohusiana na huduma zetu - unaweza kujiondoa wakati wowote kwenye mipangilio."
+continuePrivacyPolicy: "Na unathibitisha kuwa una zaidi ya miaka 18. Tunaweza kutuma matangazo yanayohusiana na huduma zetu - unaweza kujiondoa wakati wowote kwenye mipangilio.",
+shareAdditinalComment: "Tungetaka kusikia maoni yako ya ziada!",
+ cancelRequest:'Ghairi huduma',
 
 };

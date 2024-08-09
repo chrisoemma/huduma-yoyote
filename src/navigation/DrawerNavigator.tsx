@@ -67,7 +67,7 @@ const DrawerNavigator=()=>{
       height:65
     },
     drawerStyle: {
-      backgroundColor: isDarkMode ? colors.black : colors.whiteBackground,
+      backgroundColor: isDarkMode ? colors.blackBackground : colors.whiteBackground,
       width:'60%',
     },
   };

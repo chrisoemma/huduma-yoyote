@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { View, Text, SafeAreaView, Image, TouchableOpacity, StyleSheet, Modal, ToastAndroid, TouchableWithoutFeedback } from 'react-native'
-import {globalStyles} from '../../styles/global'
+import { globalStyles } from '../../styles/global'
 import { colors } from '../../utils/colors'
 import RatingStars from '../../components/RatinsStars';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -18,9 +18,9 @@ import { useSelector, RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { getProviderLastLocation, getProviderSubServices } from '../serviceproviders/ServiceProviderSlice';
 import { BasicView } from '../../components/BasicView';
-import { createRequest} from '../requests/RequestSlice';
+import { createRequest } from '../requests/RequestSlice';
 import { selectLanguage } from '../../costants/languageSlice';
-import IconOnline from 'react-native-vector-icons/Ionicons'; 
+import IconOnline from 'react-native-vector-icons/Ionicons';
 import PusherOnlineListener from '../../components/PusherOnlineListener';
 
 
@@ -29,15 +29,15 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     const { service, provider } = route.params;
 
-    const { subServices,providerSubServices } = useSelector(
+    const { subServices, providerSubServices } = useSelector(
         (state: RootStateOrAny) => state.providers,
     );
 
-    const { loading,} = useSelector(
+    const { loading, } = useSelector(
         (state: RootStateOrAny) => state.requests,
     );
 
-    const { user,isOnline } = useSelector(
+    const { user, isOnline } = useSelector(
         (state: RootStateOrAny) => state.user,
     );
 
@@ -45,11 +45,11 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     const { isDarkMode } = useSelector(
         (state: RootStateOrAny) => state.theme,
-      );
+    );
 
-      const { providerLastLocation } = useSelector(
+    const { providerLastLocation } = useSelector(
         (state: RootStateOrAny) => state.providers,
-      );
+    );
 
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [sheetTitle, setSheetTitle] = useState('');
@@ -58,7 +58,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     useEffect(() => {
         dispatch(getProviderLastLocation(provider?.provider_id));
-     }, [])
+    }, [])
 
     const [userLocation, setUserLocation] = useState(null);
     const [providerLocation, setProviderLocation] = useState(null);
@@ -92,32 +92,32 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     const [selectedSubservice, setSelectedSubservice] = useState([]);
     const [selectedProviderSubService, setSelectedProviderSubService] = useState([]);
- 
+
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const toggleModal = () => {
-      setIsModalVisible(!isModalVisible);
+        setIsModalVisible(!isModalVisible);
     };
     const { t } = useTranslation();
 
-    const toggleSubService = (type,subService) => {
+    const toggleSubService = (type, subService) => {
         console.log('toungled_subservice', subService);
-          if(type=='subService'){
-        if (selectedSubservice.includes(subService)) {
-            setSelectedSubservice(selectedSubservice.filter((s) => s !== subService));
+        if (type == 'subService') {
+            if (selectedSubservice.includes(subService)) {
+                setSelectedSubservice(selectedSubservice.filter((s) => s !== subService));
+            } else {
+                setSelectedSubservice([...selectedSubservice, subService]);
+            }
         } else {
-            setSelectedSubservice([...selectedSubservice, subService]);
+            if (selectedProviderSubService.includes(subService)) {
+                setSelectedProviderSubService(selectedProviderSubService.filter((s) => s !== subService));
+            } else {
+                setSelectedProviderSubService([...selectedProviderSubService, subService]);
+            }
         }
-    }else{
-        if (selectedProviderSubService.includes(subService)) {
-            setSelectedProviderSubService(selectedProviderSubService.filter((s) => s !== subService));
-        } else {
-            setSelectedProviderSubService([...selectedProviderSubService, subService]);
-        }  
-    }
     };
 
- 
+
 
     const handleClearAll = () => {
         setSelectedSubservice([]);
@@ -161,7 +161,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
         data.provider_id = provider?.provider_id;
         data.request_time = new Date().toISOString();
         data.sub_service = selectedSubservice
-        data.provider_sub_service=selectedProviderSubService
+        data.provider_sub_service = selectedProviderSubService
         data.client_latitude = userLocation?.latitude
         data.client_longitude = userLocation?.longitude
         data.provider_latitude = providerLocation?.latitude
@@ -169,7 +169,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
 
 
-       
+
         dispatch(createRequest({ data: data }))
             .unwrap()
             .then(result => {
@@ -199,7 +199,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     return (
         <>
-         <PusherOnlineListener remoteUserId={provider.user_id} />
+            <PusherOnlineListener remoteUserId={provider.user_id} />
             <SafeAreaView
                 style={stylesGlobal.scrollBg}
             >
@@ -208,9 +208,9 @@ const ServiceRequest = ({ navigation, route }: any) => {
                         <BasicView style={stylesGlobal.centerView}>
                             <Text style={stylesGlobal.errorMessage}>{message}</Text>
                         </BasicView>
-                        <TouchableWithoutFeedback  onPress={toggleModal} style={[stylesGlobal.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
+                        <TouchableWithoutFeedback onPress={toggleModal} style={[stylesGlobal.circle, { backgroundColor: colors.white, marginTop: 15, alignContent: 'center', justifyContent: 'center' }]}>
 
-                       
+
                             <Image
                                 source={
                                     provider?.profile_img?.startsWith('https://')
@@ -227,12 +227,12 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     alignSelf: 'center',
                                 }}
                             />
-                         </TouchableWithoutFeedback >
+                        </TouchableWithoutFeedback >
                         <View style={{ flexDirection: 'row' }}>
                             <View>
-                                <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.black }}>{provider?.name}</Text>
+                                <Text style={{ marginVertical: 5, color: isDarkMode ? colors.white : colors.black }}>{provider?.business_name ? provider.business_name : provider?.name}</Text>
                                 <RatingStars rating={provider?.average_rating == null ? 0 : provider?.average_rating} />
-                                <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.secondary,fontWeight:'bold'  }}>{selectedLanguage? service?.name?.en :service?.name?.sw}</Text>
+                                <Text style={{ marginVertical: 5, color: isDarkMode ? colors.white : colors.secondary, fontWeight: 'bold' }}>{selectedLanguage ? service?.name?.en : service?.name?.sw}</Text>
                             </View>
                             <TouchableOpacity style={{
                                 flexDirection: 'row',
@@ -247,18 +247,18 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     color={colors.successGreen}
                                     size={20}
                                 />
-                                <Text style={{ paddingHorizontal: 5, fontWeight: 'bold',color:isDarkMode?colors.white:colors.blue }}>{PhoneNumber}</Text>
+                                <Text style={{ paddingHorizontal: 5, fontWeight: 'bold', color: isDarkMode ? colors.white : colors.blue }}>{PhoneNumber}</Text>
                             </TouchableOpacity>
                         </View>
                         <View>
-                        <View style={styles.divOnline}>
-                        <IconOnline name={isOnline ? 'checkmark-circle' : 'close-circle'} size={24} color={isOnline ? 'green' :colors.darkGrey} />
-                        <Text style={styles.text}>{isOnline ? 'Online' : 'Offline'}</Text>
-                        </View>
+                            <View style={styles.divOnline}>
+                                <IconOnline name={isOnline ? 'checkmark-circle' : 'close-circle'} size={24} color={isOnline ? 'green' : colors.darkGrey} />
+                                <Text style={styles.text}>{isOnline ? 'Online' : 'Offline'}</Text>
+                            </View>
                             {/* <Text style={{marginBottom:15}}>{selectedLanguage=='en'? service?.description?.en:service?.description?.sw}</Text> */}
-                            
+
                             <View style={stylesGlobal.chooseServiceBtn}>
-                                <TouchableOpacity style={[stylesGlobal.chooseBtn,{marginBottom:50}]}
+                                <TouchableOpacity style={[stylesGlobal.chooseBtn, { marginBottom: 50 }]}
                                     onPress={() => handlePresentModalPress('Near providers')}
                                 >
                                     <Text style={{ color: colors.white }}>{t('screens:chooseService')}</Text>
@@ -266,7 +266,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                 {/* <TouchableOpacity style={stylesGlobal.otherBtn}>
                                     <Text style={{ color: colors.white }}>{t('screens:otherService')}</Text>
                                 </TouchableOpacity> */}
-                               
+
                             </View>
                         </View>
                     </View>
@@ -313,7 +313,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
                                 </BottomSheetScrollView>
                                 <View style={{ flexDirection: 'row', }}>
-                                    {selectedSubservice.length > 1 || selectedProviderSubService >1 && (
+                                    {selectedSubservice.length > 1 || selectedProviderSubService > 1 && (
                                         <TouchableOpacity
                                             style={[stylesGlobal.floatingButton, { backgroundColor: colors.dangerRed, right: '70%', }]}
                                             onPress={handleClearAll}
@@ -351,27 +351,27 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
 
             <Modal visible={isModalVisible} transparent={true} onRequestClose={toggleModal}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableWithoutFeedback onPress={toggleModal}>
-            <Image
-                 source={
-                    provider?.profile_img?.startsWith('https://')
-                        ? { uri: provider.profile_img }
-                        : provider?.user_img?.startsWith('https://')
-                            ? { uri: provider.user_img }
-                            : require('../../../assets/images/profile.png') // Default static image
-                }
-              style={{
-                resizeMode: 'contain',
-                width: '80%',
-                height: '80%',
-              //  borderRadius:200,
-                overflow: 'hidden', // Ensure that the borderRadius is applied correctly
-              }}
-            />
-          </TouchableWithoutFeedback>
-        </View>
-      </Modal>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <TouchableWithoutFeedback onPress={toggleModal}>
+                        <Image
+                            source={
+                                provider?.profile_img?.startsWith('https://')
+                                    ? { uri: provider.profile_img }
+                                    : provider?.user_img?.startsWith('https://')
+                                        ? { uri: provider.user_img }
+                                        : require('../../../assets/images/profile.png') // Default static image
+                            }
+                            style={{
+                                resizeMode: 'contain',
+                                width: '80%',
+                                height: '80%',
+                                //  borderRadius:200,
+                                overflow: 'hidden', // Ensure that the borderRadius is applied correctly
+                            }}
+                        />
+                    </TouchableWithoutFeedback>
+                </View>
+            </Modal>
 
         </>
     )
@@ -390,11 +390,11 @@ const styles = StyleSheet.create({
     divOnline: {
         flexDirection: 'row',
         alignItems: 'center',
-      },
+    },
     text: {
         marginLeft: 5,
         fontSize: 16,
-      },
+    },
     title: {
         alignSelf: 'center',
         fontSize: 15,

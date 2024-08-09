@@ -9,6 +9,7 @@ export default {
     lastNameRequired:'Jina la Mwisho Linahitajika',
     enterLastName:'Ingiza jina la mwisho',
     email: 'Barua pepe',
+     enterEmail:'Ingiza barua pepe',
     password: 'Nenosiri',
     enterPassword:'Ingiza Nenosiri',
     passwordRequired: 'Nenosiri linahitajika',

@@ -27,6 +27,16 @@ export const getClient = createAsyncThunk(
       clearMessage(state: any) {
         state.status = null;
       },
+
+      setClientChanges: (state, action) => {
+        if (Object.keys(action.payload).length > 0) {
+          state.client = {
+            ...state.client,
+            ...action.payload,
+          };
+        }
+      },
+   
     },
     extraReducers: builder => {
        
@@ -50,6 +60,6 @@ export const getClient = createAsyncThunk(
     },
   });
   
-  export const { clearMessage } = ClientSlice.actions;
+  export const { clearMessage,setClientChanges } = ClientSlice.actions;
   
   export default ClientSlice.reducer;

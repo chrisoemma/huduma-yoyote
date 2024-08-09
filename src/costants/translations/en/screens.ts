@@ -5,7 +5,7 @@ export default {
   close: 'Close',
   changePassword: 'Change password',
   viewAll: 'View All',
-  topService: 'Top service',
+  topService: 'Top services',
   current: 'Current',
   previous: 'Previous',
   nearMe: 'Near Me',
@@ -25,7 +25,7 @@ export default {
   cancel: 'Cancel',
   pleaseAddService: 'Please Add Service',
   requestSentSuccessfully: 'Requests Sent Sucessfully',
-  comfirm: 'Comfirm',
+  comfirm: 'Confirm',
   action: 'Action',
   cancelService: 'Cancel Request',
   requestUpdatedSuccessfully: 'Request Updated Successfully',
@@ -59,7 +59,7 @@ export default {
   proceedtoCreateAccount: 'Yes,Create Account',
   cancelAccount: 'Stop account creation',
   userMultiAccountCreated: 'Your Account is created successfully',
-  whatsYourLocation:'What\'s your location',
+  whatsYourLocation:'Type here your location',
   currentLocation:'Current Location',
   yourLocation:'Your Location',
    yourHere:'Your Here',
@@ -83,5 +83,7 @@ export default {
    termsLink:'Terms & Conditions,',
    termsContinueText:'acknowledge our',
    privacyPolicyLink:'Privacy Policy',
-   continuePrivacyPolicy:'And confirm that you are over 18. We many send promotions related to our services-you can unsubscribe anytime in settings'
+   continuePrivacyPolicy:'And confirm that you are over 18. We many send promotions related to our services-you can unsubscribe anytime in settings',
+  shareAdditinalComment: "We’d love to hear any extra comments you have!",
+  cancelRequest:'Cancel Request'
 };

@@ -126,9 +126,8 @@ export const updateProfile = createAsyncThunk(
 
       return await response.json();
     } catch (error) {
-      // Handle the error gracefully, e.g., log the error and return an appropriate response
       console.error('Error in updateProviderInfo:', error);
-      throw error; // Rethrow the error to be caught by Redux Toolkit
+      throw error; 
     }
   }
 );
@@ -333,12 +332,35 @@ const userSlice = createSlice({
     setUserOnlineStatus: (state, action) => {
       state.isOnline = action.payload;
     },
-    setUserAccountStatus:(state,action)=>{
-      state.user.status=action.payload
+    setUserChanges: (state, action) => {
+      if (Object.keys(action.payload).length > 0) {
+        state.user = {
+          ...state.user,
+          ...action.payload,
+        };
+      }
     },
+    changeNidaStatus: (state, action) => {
+      const latestStatus = state?.user?.client?.nida_statuses[state?.user?.client?.nida_statuses?.length - 1];
+      if (latestStatus) {
+        latestStatus.status = action.payload;
+      }
+    },
+    updateClientChanges: (state, action) => {
+      if (Object.keys(action.payload).length > 0) {
+        state.user.client = {
+          ...state.user.client,
+          ...action.payload,
+        };
+      }
+    },
+
     setFirstTime: (state, action) => {
       state.isFirstTimeUser = action.payload;
     },
+    logoutOtherDevice(state:any){
+      logout(state);
+    }
   },
   extraReducers: builder => {
     //LOGIN
@@ -354,7 +376,8 @@ const userSlice = createSlice({
       if (action.payload.status) {
         state.user = action.payload.user as any;
         state.user.token = action.payload.token;
-        state.config = action.payload.config;
+        state.deviceToken= action.payload.user?.device_token;
+       // state.config = action.payload.config;
         AsyncStorage.setItem('token', action.payload.token);
         updateStatus(state, '');
       } else {
@@ -384,10 +407,13 @@ const userSlice = createSlice({
     
           if (action.payload.status) {
             state.user = action.payload.user as any;
+            state.user.token = action.payload.token;
+            AsyncStorage.setItem('token', action.payload.token);
             updateStatus(state, '');
           } else {
             updateStatus(state, action.payload);
           }
+
         });
         builder.addCase(createAccountPassword.rejected, (state, action) => {
           console.log('Rejected');
@@ -684,10 +710,8 @@ const userSlice = createSlice({
         updateStatus(state, '');
       });
 
-
-
+      
     //Change password
-
     builder.addCase(changePassword.pending, state => {
       console.log('Pending');
       state.loading = true;
@@ -716,6 +740,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { userLogout, clearMessage,setFirstTime,setUserOnlineStatus,setUserAccountStatus } = userSlice.actions;
+export const { userLogout,changeNidaStatus, clearMessage,setFirstTime,updateClientChanges, setUserChanges,setUserOnlineStatus,logoutOtherDevice } = userSlice.actions;
 
 export default userSlice.reducer;

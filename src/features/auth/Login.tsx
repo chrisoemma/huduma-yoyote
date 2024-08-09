@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 
 import Icon from 'react-native-vector-icons/Feather';
 
@@ -18,7 +19,6 @@ import {globalStyles} from '../../styles/global';
 import { useTogglePasswordVisibility } from '../../hooks/useTogglePasswordVisibility';
 import PhoneInput from 'react-native-phone-number-input';
 import { colors } from '../../utils/colors';
-import { Container } from '../../components/Container';
 import { BasicView } from '../../components/BasicView';
 import Button from '../../components/Button';
 import { ButtonText } from '../../components/ButtonText';
@@ -40,6 +40,23 @@ const LoginScreen = ({ route, navigation }: any) => {
   );
   const { passwordVisibility, rightIcon, handlePasswordVisibility } =
     useTogglePasswordVisibility();
+
+    const [deviceToken, setDeviceToken] = useState('');
+
+    useEffect(() => {
+      const retrieveDeviceToken = async () => {
+        try {
+     
+          const token = await messaging().getToken();
+          console.log('new token',token);
+          setDeviceToken(token);
+        } catch (error) {
+          console.log('Error retrieving device token:', error);
+        }
+      };
+
+      retrieveDeviceToken();
+    }, []);
 
   const phoneInput = useRef<PhoneInput>(null);
 
@@ -68,19 +85,21 @@ const LoginScreen = ({ route, navigation }: any) => {
       password: '',
     },
   });
-  const onSubmit = async(data: any) => {
+ 
 
+
+  const onSubmit = async (data: any) => {
     try {
-     data.app_type='client';
-    const result = await dispatch(userLogin(data)).unwrap(); 
+      data.app_type = 'client';
+      data.deviceToken = deviceToken;
+      const result = await dispatch(userLogin(data)).unwrap();
 
-    if (result.status) {
-       return  true 
-    } else {
-      setDisappearMessage(result.error); 
-    }
-
-   } catch (error) {
+      if (result.status) {
+        return true;
+      } else {
+        setDisappearMessage(result.error);
+      }
+    } catch (error) {
       console.warn(error);
       return false;
     }

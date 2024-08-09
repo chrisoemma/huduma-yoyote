@@ -79,8 +79,6 @@ const CreateNewPassword = ({ route, navigation }: any) => {
 
                     if (result.status) {
                         ToastAndroid.show(`${t('auth:accountPasswordCreated')}`, ToastAndroid.SHORT);
-
-                        navigation.navigate('Login');
                     } else {
                         console.log('Message with error should be set');
                     }

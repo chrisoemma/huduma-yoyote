@@ -49,8 +49,6 @@ const ProviderList = ({ navigation, onPress, iconType, provider, service, isDark
           <RatingStars rating={provider?.average_rating == null ? 0 : provider?.average_rating} />
         </View>
       </TouchableOpacity>
-
-     
     </>
   );
 };

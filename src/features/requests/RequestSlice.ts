@@ -264,11 +264,11 @@ const RequestSlice = createSlice({
 
 
     builder.addCase(updateRequestStatus.fulfilled, (state, action) => {
-      console.log('Update Task Fulfilled');
-      console.log('request', action.payload);
+      
+      console.log('request123', action.payload);
 
       const updatedRequest = action.payload.data.request;
-      const status = updatedRequest.statuses[updatedRequest.statuses.length - 1].status;
+      const status = updatedRequest.statuses[updatedRequest?.statuses?.length - 1].status;
 
       console.log('statttses', status);
 

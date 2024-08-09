@@ -10,4 +10,5 @@ export const TextAreaInputField = styled.TextInput`
   padding-horizontal: 10px;
   border-width: 1px;
   border-color: ${colors.alsoLightGrey};
+  color:${colors.black};
 `;

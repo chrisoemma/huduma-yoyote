@@ -40,6 +40,8 @@ const Account = ({ navigation }: any) => {
   }
 
 
+console.log('userrr',user);
+
   const makeid = (length: any) => {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -170,11 +172,11 @@ const Account = ({ navigation }: any) => {
       <ScrollView style={globalStyles().appView}>
 
 
-      {user.status == 'In Active' ? (<Notification
+      {user?.client?.status == 'Deactivated' ? (<Notification
           message={`${t('screens:accountDeactivated')}`}
           type="danger"
         />) : (<View />)}
-         {user?.client && user?.status !== 'In Active' ? (
+         {user?.client && user?.client?.status !== 'Deactivated' ? (
         <View style={styles.btnView}>
           {profile == null ? (<View />) : (
             <TouchableOpacity
@@ -271,7 +273,7 @@ const Account = ({ navigation }: any) => {
               size={25}
             />
             {
-              locationName == '' ? (<Text style={{color: isDarkMode ? colors.white : colors.alsoGrey}}> {t('screens:noresidenceData')}</Text>) : ( <Text style={{ color: isDarkMode ? colors.white : colors.alsoGrey }}>{breakTextIntoLines(locationName, 20)}</Text>)
+              locationName =='' ? (<Text style={{color: isDarkMode ? colors.white : colors.alsoGrey}}> {t('screens:noresidenceData')}</Text>) : ( <Text style={{ color: isDarkMode ? colors.white : colors.alsoGrey }}>{breakTextIntoLines(locationName, 20)}</Text>)
             }
 
           </TouchableOpacity>

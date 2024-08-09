@@ -8,7 +8,7 @@ export const getCategories = createAsyncThunk(
     'categories/getCategories',
     async () => {
       let header: any = await authHeader();
-      const response = await fetch(`${API_URL}/categories`, {
+      const response = await fetch(`${API_URL}/categories/categories_with_provider`, {
         method: 'GET',
         headers: header,
       });
@@ -31,9 +31,8 @@ export const getCategories = createAsyncThunk(
   export const getSingleCategory = createAsyncThunk(
     'categories/getSingleCategory',
     async (id) => {
-        console.log('idddssss',id);
       let header: any = await authHeader();
-      const response = await fetch(`${API_URL}/categories/${id}`, {
+      const response = await fetch(`${API_URL}/categories/get_service_by_category_with_provider/${id}`, {
         method: 'GET',
         headers: header,
       });

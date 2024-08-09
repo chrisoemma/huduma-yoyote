@@ -7,11 +7,19 @@ import ContentList from '../../components/ContentList';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { getCategoryServices } from './CategorySlice';
+import { selectLanguage } from '../../costants/languageSlice';
+import { sortByLanguage } from '../../utils/utilts';
 
 const CategoryScreen = ({ route, navigation }: any) => {
   const { loading, category_services } = useSelector(
     (state: RootStateOrAny) => state.categories,
   );
+
+
+  const selectedLanguage = useSelector(selectLanguage);
+
+
+  const sortedCategories = sortByLanguage(category_services, selectedLanguage);
 
   const { isDarkMode } = useSelector(
     (state: RootStateOrAny) => state.theme,
@@ -27,21 +35,21 @@ const CategoryScreen = ({ route, navigation }: any) => {
   const [contentData, setContentData] = useState([]);
 
   useEffect(() => {
-    if (category_services.length > 0) {
-      const defaultCategory = category_services[0];
+    if (sortedCategories.length > 0) {
+      const defaultCategory = sortedCategories[0];
       setActiveTab(defaultCategory.id);
-      setContentData(defaultCategory.services);
+      setContentData(sortByLanguage(defaultCategory.services,selectedLanguage));
     }
   }, [category_services]);
 
   const handleTabPress = (tabIndex: any) => {
     setActiveTab(tabIndex);
-    const categoryServices = category_services.find(
+    const categoryServices = sortedCategories.find(
       (entry) => entry.id === tabIndex
     );
 
     if (categoryServices) {
-      setContentData(categoryServices.services);
+      setContentData(sortByLanguage(categoryServices.services,selectedLanguage));
     }
   };
 
@@ -51,7 +59,7 @@ const CategoryScreen = ({ route, navigation }: any) => {
       <View style={globalStyles().mainContainer}>
         <View style={globalStyles().side}>
           <VerticalTabs
-            tabs={category_services}
+            tabs={sortedCategories}
             isDarkMode={isDarkMode}
             activeTab={activeTab}
             onTabPress={handleTabPress}

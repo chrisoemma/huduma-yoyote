@@ -8,9 +8,9 @@ import { colors } from '../utils/colors';
     (state: RootStateOrAny) => state.theme,
   );
 
-  const containerBackgroundColor = isDarkMode ? 'black' : colors.lightGrey;
-  const scrollBgBackgroundColor = isDarkMode ? 'black' : colors.whiteBackground;
-  const textInputColor = isDarkMode ? 'white' : 'black';
+  const containerBackgroundColor = isDarkMode ? colors.blackBackground : colors.lightGrey;
+  const scrollBgBackgroundColor = isDarkMode ? colors.blackBackground : colors.whiteBackground;
+  const textInputColor = isDarkMode ? 'white' : colors.blackBackground;
   const buttonText = isDarkMode ? colors.white : colors.primary;
   const borderColor = isDarkMode ? 'gray' : colors.lightGrey;
   const shadowColor = isDarkMode ? '#000' : 'transparent';
@@ -37,7 +37,7 @@ import { colors } from '../utils/colors';
       padding: 15,
       right: 0,
       zIndex: 1000,
-      backgroundColor: isDarkMode ? 'black' : 'white',
+      backgroundColor: isDarkMode ? 'black' : colors.blackBackground,
       borderWidth: 1,
       borderColor: borderColor,
       borderRadius: 20,
@@ -63,6 +63,7 @@ import { colors } from '../utils/colors';
     seeAll: {
       marginTop: 8,
       paddingRight: 10,
+      fontWeight:'bold',
       color: colors.secondary,
       fontSize: 13,
     },
@@ -115,17 +116,17 @@ import { colors } from '../utils/colors';
       alignSelf: 'center',
     },
     banner: {
-      zIndex: 1,
-      marginHorizontal: 10,
-      marginVertical: 8,
-      elevation: 4,
-      shadowColor: shadowColor,
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: isDarkMode ? 0.25 : 0,
-      shadowRadius: isDarkMode ? 3.84 : 0,
+   //   zIndex: 1,
+      // marginHorizontal: 10,
+      // marginVertical: 8,
+      // elevation: 4,
+      // shadowColor: shadowColor,
+      // shadowOffset: {
+      //   width: 0,
+      //   height: 2,
+      // },
+      // shadowOpacity: isDarkMode ? 0.25 : 0,
+      // shadowRadius: isDarkMode ? 3.84 : 0,
     },
      
     centerView: {
@@ -180,7 +181,7 @@ import { colors } from '../utils/colors';
       justifyContent: 'center',
     },
     smallTransparentButton: {
-      borderRadius: 4,
+      borderRadius:20,
       justifyContent: 'center',
       paddingHorizontal: 8,
       paddingVertical: 4,

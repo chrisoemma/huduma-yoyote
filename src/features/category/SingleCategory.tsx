@@ -15,7 +15,7 @@ import { selectLanguage } from '../../costants/languageSlice';
 
 const SingleCategory = ({ route, navigation }: any) => {
 
-  const { category, source } = route.params;
+  const { category, source,requestFrom } = route.params;
   const { isDarkMode } = useSelector(
     (state: RootStateOrAny) => state.theme,
   );
@@ -30,13 +30,14 @@ const SingleCategory = ({ route, navigation }: any) => {
   let title = selectedLanguage == 'en' ? category?.name?.en : category?.name?.sw;
   let categoryId = category?.id
 
-  if (source) {
+   if(requestFrom=='normal'){
     title = selectedLanguage == 'en' ? category?.name.name?.en : category?.name?.name?.sw;
     categoryId = category?.name.id
-  } else {
+   }else{
     title = selectedLanguage == 'en' ? category?.name?.en : category?.name?.sw;
     categoryId = category?.id
-  }
+   }
+
 
   React.useLayoutEffect(() => {
     if (category) {

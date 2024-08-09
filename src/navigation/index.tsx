@@ -15,6 +15,7 @@ import { selectLanguage } from '../costants/languageSlice';
 import NewAccountStack from './NewAccountStack';
 import { postClientLocation } from '../features/LocationUpdates/LocationSlice';
 import Geolocation from '@react-native-community/geolocation';
+import { colors } from '../utils/colors';
 
 
 
@@ -57,12 +58,12 @@ const Navigation = () => {
               dispatch(postClientLocation({ clientId: user?.client?.id, data }));
             },
             error => {
-              console.error(error);
-              Alert.alert(
-                'Error',
-                'Failed to fetch your location. Please make sure location services are enabled.',
-                [{ text: 'OK' }]
-              );
+              //console.error(error);
+              // Alert.alert(
+              //   'Error',
+              //   'Failed to fetch your location. Please make sure location services are enabled.',
+              //   [{ text: 'OK' }]
+              // );
             },
             { enableHighAccuracy: true, timeout: 30000, maximumAge: 60000,distanceFilter: 1000 }
           );
@@ -116,7 +117,7 @@ const Navigation = () => {
     ...DarkTheme,
     colors: {
       ...DarkTheme.colors,
-      background: 'black',
+      background:colors.blackBackground,
       text: 'white',
     },
   };
