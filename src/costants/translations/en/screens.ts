@@ -68,7 +68,7 @@ export default {
    providerLastLocation:'Provider last location',
    lastLocation:'Your last location',
    distance:'Distance',
-   loading:'Loading',
+   loading:'Loading...',
    noresidenceData:'No residence location',
    noEmail:'No Email',
    createPassword:'Create password',
@@ -85,5 +85,7 @@ export default {
    privacyPolicyLink:'Privacy Policy',
    continuePrivacyPolicy:'And confirm that you are over 18. We many send promotions related to our services-you can unsubscribe anytime in settings',
   shareAdditinalComment: "We’d love to hear any extra comments you have!",
-  cancelRequest:'Cancel Request'
+  cancelRequest:'Cancel Request',
+   requestFail:'Request Fail'
+ 
 };

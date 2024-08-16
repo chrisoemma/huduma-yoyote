@@ -6,6 +6,7 @@ import { persistStore } from 'redux-persist';
 import Navigation from './src/navigation';
 import store from './src/app/store';
 import { MenuProvider } from 'react-native-popup-menu'; 
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 
 
@@ -18,9 +19,11 @@ const App = () => {
     
     <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
+    <RootSiblingParent>
        <MenuProvider>
         <Navigation />
        </MenuProvider>
+      </RootSiblingParent>
     </PersistGate>
   </Provider>
      

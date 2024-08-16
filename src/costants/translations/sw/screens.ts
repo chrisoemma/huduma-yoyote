@@ -69,7 +69,7 @@ yourLastLocation:'Eneo ulilokwepo',
 providerIsHere:'Mtoa huduma yuko apa',
 providerLastLocation:'Eneo la mwisho la mtoa huduma',
 distance:'Umbali',
-loading:'Inatafuta',
+loading:'Inazunguka...',
 noresidenceData:'Hakuna sehemu ya makazi',
 noEmail:'Hakuna Barua pepe',
 createPassword:'Tengeneza Nywila',
@@ -86,5 +86,6 @@ privacyPolicyLink: "Sera ya Faragha",
 continuePrivacyPolicy: "Na unathibitisha kuwa una zaidi ya miaka 18. Tunaweza kutuma matangazo yanayohusiana na huduma zetu - unaweza kujiondoa wakati wowote kwenye mipangilio.",
 shareAdditinalComment: "Tungetaka kusikia maoni yako ya ziada!",
  cancelRequest:'Ghairi huduma',
+ requestFail:'Ombi limeshindikana'
 
 };

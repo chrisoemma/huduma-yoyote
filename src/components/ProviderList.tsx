@@ -9,6 +9,8 @@ const ProviderList = ({ navigation, onPress, iconType, provider, service, isDark
   const stylesGlobal = globalStyles();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  //console.log('service list',service);
+
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };

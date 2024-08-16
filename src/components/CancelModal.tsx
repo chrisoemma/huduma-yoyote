@@ -113,6 +113,7 @@ function CancelModal({ visible, cancel, confirmCancel, cancelData }:any) {
         
                         <TouchableOpacity
                           onPress={() => confirmCancel({selectedIds })}
+                         // disabled={changeStatusLoading}
                           style={[
                             globalStyles().smallTransparentButton,
                             {

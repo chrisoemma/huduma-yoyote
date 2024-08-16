@@ -22,9 +22,9 @@ const RequestList = ({item,navigation}:any) => {
 
   const { t } = useTranslation();
 
-  const request_status = item?.statuses[item?.statuses?.length - 1].status;
+ const request_status = item?.statuses[item?.statuses?.length - 1]?.status;
 
-
+//console.log('item',request_status);
   const subServices = combineSubServices(item);
 
 

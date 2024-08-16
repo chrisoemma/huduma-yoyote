@@ -32,7 +32,7 @@ const RatingStars = ({rating}: any) => {
   return (
     <Container>
       {[...Array(5)].map((e, i) => (
-        <Star currentIndex={i + 1} />
+        <Star key={i} currentIndex={i + 1} />
       ))}
     </Container>
   );

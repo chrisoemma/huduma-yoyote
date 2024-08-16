@@ -22,6 +22,8 @@ const ServiceProviders = ({navigation,route}:any) => {
     (state: RootStateOrAny) => state.providers,
 );
 
+
+console.log('neaby providers',bestProviders);
 const { isDarkMode } = useSelector(
   (state: RootStateOrAny) => state.theme,
 );
@@ -40,6 +42,7 @@ useEffect(() => {
 
   const renderProviderItem = ({ item }:any) => (
     
+     
     <View style={styles.itemlistContainer}>
       <ProviderList  
        navigation={navigation} 
@@ -69,6 +72,7 @@ useEffect(() => {
     </View>
     <View style={styles.listContainer}>
         <FlatList
+        
           data={activeTab === 'nearMe'?nearProviders:bestProviders}
           renderItem={renderProviderItem}
           keyExtractor={(item) => item.provider_id.toString()}

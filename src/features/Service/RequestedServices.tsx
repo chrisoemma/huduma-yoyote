@@ -26,6 +26,7 @@ import IconOnline from 'react-native-vector-icons/Ionicons';
 import PusherOnlineListener from '../../components/PusherOnlineListener';
 import { getAboveRating, getBelowRating, getCancelTemplate } from '../feedbackTemplate/FeebackTemplateSlice';
 import CancelModal from '../../components/CancelModal';
+import showToast from '../../components/ShowToast/showToast';
 
 const RequestedServices = ({ navigation, route }: any) => {
 
@@ -43,7 +44,7 @@ const RequestedServices = ({ navigation, route }: any) => {
 
     const selectedLanguage = useSelector(selectLanguage);
 
-    const { requestLastLocation,loading } = useSelector(
+    const { requestLastLocation,loading,changeStatusLoading } = useSelector(
         (state: RootStateOrAny) => state.requests,
     );
 
@@ -112,20 +113,23 @@ const RequestedServices = ({ navigation, route }: any) => {
         data.provider_longitude=providerLocation?.longitude
         data.templateIds=selectedIds;
 
+        console.log('dataaa1234',request?.id)
+        return
+
         toggleModalCancel();
   
         dispatch(updateRequestStatus({ data: data, requestId:request?.id }))
             .unwrap()
             .then(result => {
+
+                console.log('results',result);
                 if (result.status) {
-                    ToastAndroid.show(`${t('screens:requestUpdatedSuccessfully')}`, ToastAndroid.SHORT);
+                    showToast(`${t('screens:requestUpdatedSuccessfully')}`,'success','long')
                     navigation.navigate('Requests', {
                         screen: 'Requests',
                     });
                 } else {
-                    setDisappearMessage(
-                        `${t('screens:requestFail')}`,
-                    );
+                    showToast(`${t('screens:requestFail')}`,'danger','long')
                     console.log('dont navigate');
                 }
             })
@@ -467,6 +471,7 @@ const RequestedServices = ({ navigation, route }: any) => {
                 cancelData={extractRatingData(cancelTemplate)}
                 cancel={toggleModalCancel}
                 visible={isCancelModalVisible}
+                changeStatusLoading={changeStatusLoading}
                 confirmCancel={confirmCancel}
             />
            

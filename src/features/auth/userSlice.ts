@@ -571,8 +571,6 @@ const userSlice = createSlice({
       updateStatus(state, '');
     });
 
-
-
         //RESEND OTP
         builder.addCase(resendOTP.pending, state => {
           state.loading = true;

@@ -172,7 +172,7 @@ import { colors } from '../utils/colors';
     touchablePlainTextSecondary: {
       fontFamily: 'Prompt-Regular',
       color: colors.secondary,
-      fontSize: 16,
+      fontSize: 13.5,
     },
     primaryButton: {
       backgroundColor: colors.primary,
@@ -327,7 +327,7 @@ import { colors } from '../utils/colors';
     },
     chooseBtn: {
       marginHorizontal: 3,
-      backgroundColor: isDarkMode ? colors.secondary : colors.primary,
+      backgroundColor:colors.secondary,
       padding: 5,
       borderRadius: 5,
     },

@@ -34,8 +34,8 @@ export const updateRequestStatus = createAsyncThunk(
   'requests/updateRequestStatus',
   async ({ data, requestId }: any) => {
 
-    console.log('dataaa', data)
-    console.log('request_id', requestId);
+    // console.log('dataaa', data)
+    // console.log('request_id', requestId);
 
     const response = await fetch(`${API_URL}/requests/update_status/${requestId}`, {
       method: 'PUT',
@@ -116,6 +116,8 @@ const RequestSlice = createSlice({
     activeRequest: {},
     requests: [],
     requestLastLocation:{},
+    createRequestLoading:false,
+    changeStatusLoading:false,
     rating: {},
     ratings: [],
     request: {},
@@ -167,7 +169,7 @@ const RequestSlice = createSlice({
     });
     builder.addCase(getActiveRequests.fulfilled, (state, action) => {
 
-      if (action.payload.status) {
+      if (action.payload && action.payload.status) {
         state.activeRequests = action.payload.data.requests;
       }
       state.loading = false;
@@ -185,7 +187,7 @@ const RequestSlice = createSlice({
     });
     builder.addCase(getPastRequests.fulfilled, (state, action) => {
 
-      if (action.payload.status) {
+      if (action.payload &&  action.payload.status) {
         state.pastRequests = action.payload.data.requests;
       }
       state.loading = false;
@@ -203,28 +205,30 @@ const RequestSlice = createSlice({
 
     builder.addCase(createRequest.pending, state => {
       console.log('Pending');
-      state.loading = true;
+      state.createRequestLoading = true;
       updateStatus(state, '');
     });
     builder.addCase(createRequest.fulfilled, (state, action) => {
 
-      state.loading = false;
+   
       updateStatus(state, '');
 
       console.log('action.payload.data.activeReques', action.payload.data.activeRequest)
 
-      if (action.payload.status) {
+      if (action.payload &&  action.payload.status) {
         state.activeRequest = { ...action.payload.data.activeRequest };
-        updateStatus(state, '');
-      } else {
         updateStatus(state, action.payload.status);
+        state.activeRequests.push(state.activeRequest);
+      } else {
+        updateStatus(state, '');
       }
-
-      state.activeRequests.push(state.activeRequest);
+      
+      state.createRequestLoading = false;
     });
+    
     builder.addCase(createRequest.rejected, (state, action) => {
       console.log('Rejected');
-      state.loading = false;
+      state.createRequestLoading = false;
       updateStatus(state, '');
     });
 
@@ -239,7 +243,7 @@ const RequestSlice = createSlice({
      builder.addCase(getRequestLastLocation.fulfilled, (state, action) => {
      // console.log('Fulfilled case');
       // console.log(action.payload);
-       if (action.payload.status) {
+       if (action.payload &&  action.payload.status) {
          state.requestLastLocation = action.payload.data;
        }
        state.loading = false;
@@ -258,28 +262,30 @@ const RequestSlice = createSlice({
 
     builder.addCase(updateRequestStatus.pending, (state) => {
       console.log('Update sTATUS Pending');
-      state.loading = true;
+      state.changeStatusLoading = true;
       updateStatus(state, '');
     });
 
 
     builder.addCase(updateRequestStatus.fulfilled, (state, action) => {
-      
-      console.log('request123', action.payload);
+
+     //  console.log('paload',action.payload);
+      if (action.payload &&  action.payload.status) {
 
       const updatedRequest = action.payload.data.request;
       const status = updatedRequest.statuses[updatedRequest?.statuses?.length - 1].status;
-
-      console.log('statttses', status);
-
-      // Find the index of the updated request in activeRequests
       const requestIndex = state.activeRequests.findIndex(
         (request) => request.id === updatedRequest.id
       );
-
       if (requestIndex !== -1) {
-        if (['Requested', 'Accepted', 'Confirmed'].includes(status)) {
-          // Update the request in activeRequests
+
+        state.activeRequests[requestIndex] = {
+          ...state.activeRequests[requestIndex],
+          statuses: updatedRequest.statuses,
+        };
+
+        
+        if (['Requested', 'Accepted', 'Confirmed','Comfirmed'].includes(status)) {
           state.activeRequests = [
             ...state.activeRequests.slice(0, requestIndex),
             updatedRequest,
@@ -293,17 +299,21 @@ const RequestSlice = createSlice({
           ];
 
           // Add the request to pastRequests
-          state.pastRequests = [...state.pastRequests, updatedRequest];
+          state.pastRequests = [...state.pastRequests, {
+            ...state.activeRequests[requestIndex], // Preserve the rest of the request details
+            statuses: updatedRequest.statuses,
+          }];
         }
       }
 
-      state.loading = false;
+    }
+      state.changeStatusLoading = false;
       updateStatus(state, '');
     });
 
     builder.addCase(updateRequestStatus.rejected, (state, action) => {
       console.log('Rejected');
-      state.loading = false;
+      state.changeStatusLoading = false;
       updateStatus(state, '');
     });
 
@@ -315,16 +325,15 @@ const RequestSlice = createSlice({
     });
     builder.addCase(rateRequest.fulfilled, (state, action) => {
 
+      if (action.payload &&  action.payload.status) {
+
       const updatedRequest = action.payload.data.request;
       const status = updatedRequest.statuses[updatedRequest.statuses.length - 1].status;
-
       const requestIndex = state.activeRequests.findIndex(
         (request) => request.id === updatedRequest.id
       );
-
       if (requestIndex !== -1) {
-        if (['Requested', 'Accepted', 'Confirmed'].includes(status)) {
-          // Update the request in activeRequests
+        if (['Requested', 'Accepted', 'Confirmed', 'Comfirmed'].includes(status)) {
           state.activeRequests = [
             ...state.activeRequests.slice(0, requestIndex),
             updatedRequest,
@@ -338,7 +347,7 @@ const RequestSlice = createSlice({
           state.pastRequests = [...state.pastRequests, updatedRequest];
         }
       }
-
+    }
       state.loading = false;
       updateStatus(state, '');
     });

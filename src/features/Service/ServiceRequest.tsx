@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { View, Text, SafeAreaView, Image, TouchableOpacity, StyleSheet, Modal, ToastAndroid, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, SafeAreaView, Image, TouchableOpacity, StyleSheet, Modal, ToastAndroid, TouchableWithoutFeedback, ActivityIndicator } from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { colors } from '../../utils/colors'
 import RatingStars from '../../components/RatinsStars';
@@ -22,18 +22,24 @@ import { createRequest } from '../requests/RequestSlice';
 import { selectLanguage } from '../../costants/languageSlice';
 import IconOnline from 'react-native-vector-icons/Ionicons';
 import PusherOnlineListener from '../../components/PusherOnlineListener';
+import showToast from '../../components/ShowToast/showToast';
 
 
 const ServiceRequest = ({ navigation, route }: any) => {
 
 
     const { service, provider } = route.params;
+   // console.log('service1234',service.id)
 
     const { subServices, providerSubServices } = useSelector(
         (state: RootStateOrAny) => state.providers,
     );
 
-    const { loading, } = useSelector(
+
+    // console.log('subservice',subServices)
+    // console.log('providerSubServices',providerSubServices)
+
+    const { loading,createRequestLoading } = useSelector(
         (state: RootStateOrAny) => state.requests,
     );
 
@@ -73,6 +79,9 @@ const ServiceRequest = ({ navigation, route }: any) => {
 
     // variables
     const snapPoints = useMemo(() => ['20%', '100%'], []);
+
+
+  //  console.log('provider last location',providerLastLocation);
 
     // callbacks
     const handlePresentModalPress = useCallback((title: any) => {
@@ -167,23 +176,21 @@ const ServiceRequest = ({ navigation, route }: any) => {
         data.provider_latitude = providerLocation?.latitude
         data.provider_longitude = providerLocation?.longitude
 
-
-
-
         dispatch(createRequest({ data: data }))
             .unwrap()
             .then(result => {
                 if (result.status) {
                     setSelectedSubservice([]);
                     setSelectedProviderSubService([])
-                    ToastAndroid.show(`${t('screens:requestSentSuccessfully')}`, ToastAndroid.SHORT);
+                    
+                    showToast(`${t('screens:requestSentSuccessfully')}`,'success','long')
                     navigation.navigate('Requests', {
                         screen: 'Requests',
                     });
                 } else {
-                    setDisappearMessage(
-                        `${t('screens:requestFail')}`,
-                    );
+
+                    showToast(`${t('screens:requestFail')}`,'danger','long')
+                
                     console.log('dont navigate');
                 }
             })
@@ -262,7 +269,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     onPress={() => handlePresentModalPress('Near providers')}
                                 >
                                     <Text style={{ color: colors.white }}>{t('screens:chooseService')}</Text>
-                                </TouchableOpacity>
+                             </TouchableOpacity>
                                 {/* <TouchableOpacity style={stylesGlobal.otherBtn}>
                                     <Text style={{ color: colors.white }}>{t('screens:otherService')}</Text>
                                 </TouchableOpacity> */}
@@ -326,19 +333,29 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                 </View>
 
                                 <TouchableOpacity
-                                    style={[stylesGlobal.floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
-                                    disabled={loading}
-                                    onPress={() => {
-                                        if (selectedSubservice.length > 0 || selectedProviderSubService.length > 0) {
-                                            sendRequest();
-                                        } else {
-                                            ToastAndroid.show(`${t('screens:pleaseAddService')}`, ToastAndroid.SHORT);
-                                        }
-                                    }}
-
-                                >
-                                    <Text style={stylesGlobal.floatingBtnText}>{`(${selectedSubservice.length + selectedProviderSubService.length}) ${t('screens:request')}`}</Text>
-                                </TouchableOpacity>
+            style={[stylesGlobal.floatingButton, { backgroundColor: selectedSubservice.length > 0 ? colors.secondary : colors.primary }]}
+            disabled={createRequestLoading} // Disable button when loading
+            onPress={() => {
+                if (selectedSubservice.length > 0 || selectedProviderSubService.length > 0) {
+                    sendRequest();
+                } else {
+                      showToast(`${t('screens:pleaseAddService')}`,'warning','long')
+                }
+            }}
+        >
+            {createRequestLoading ? (
+                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                 <ActivityIndicator size="small" color={colors.white} />
+                 <Text style={[stylesGlobal.floatingBtnText, { marginLeft: 5 }]}>
+                    {t('screens:loading')}
+                 </Text>
+             </View>
+            ) : (
+                <Text style={stylesGlobal.floatingBtnText}>
+                    {`(${selectedSubservice.length + selectedProviderSubService.length}) ${t('screens:request')}`}
+                </Text>
+            )}
+        </TouchableOpacity>
 
                             </BottomSheetModal>
 
