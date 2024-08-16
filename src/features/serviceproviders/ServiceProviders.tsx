@@ -23,7 +23,7 @@ const ServiceProviders = ({navigation,route}:any) => {
 );
 
 
-console.log('neaby providers',bestProviders);
+
 const { isDarkMode } = useSelector(
   (state: RootStateOrAny) => state.theme,
 );

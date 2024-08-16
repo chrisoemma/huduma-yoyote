@@ -37,10 +37,7 @@ const RequestedServices = ({ navigation, route }: any) => {
         (state: RootStateOrAny) => state.user,
     );
 
-
-
-
-
+    const [contextData, setContext] = useState('');
 
     const selectedLanguage = useSelector(selectLanguage);
 
@@ -111,12 +108,9 @@ const RequestedServices = ({ navigation, route }: any) => {
         data.client_longitude=userLocation?.longitude
         data.provider_latitude=providerLocation?.latitude
         data.provider_longitude=providerLocation?.longitude
+        data.context = contextData;
         data.templateIds=selectedIds;
-
-        console.log('dataaa1234',request?.id)
-        return
-
-        toggleModalCancel();
+        toggleModalCancel(contextData);
   
         dispatch(updateRequestStatus({ data: data, requestId:request?.id }))
             .unwrap()
@@ -140,6 +134,17 @@ const RequestedServices = ({ navigation, route }: any) => {
             });
        
     }
+
+
+    const toggleModalCancel = (context) => {
+
+        if (context !== contextData) {
+          //  console.log('context123',context);
+            setContext(context);
+            dispatch(getCancelTemplate(context));
+        }
+        setCancelModalVisible(!isCancelModalVisible)
+    };
 
 
     const postReview = ({ comment, rating,selectedIds}: any) => {
@@ -225,12 +230,6 @@ const RequestedServices = ({ navigation, route }: any) => {
     };
 
 
-    const toggleModalCancel = () => {
-        if(cancelTemplate?.length<1){
-           dispatch(getCancelTemplate());
-       }
-       setCancelModalVisible(!isCancelModalVisible)
-   };
 
 
     const data = {
@@ -255,14 +254,12 @@ const RequestedServices = ({ navigation, route }: any) => {
             .unwrap()
             .then(result => {
                 if (result.status) {
-                    ToastAndroid.show(`${t('screens:requestUpdatedSuccessfully')}`, ToastAndroid.SHORT);
+                    showToast(`${t('screens:requestUpdatedSuccessfully')}`,'success','long')
                     navigation.navigate('Requests', {
                         screen: 'Requests',
                     });
                 } else {
-                    setDisappearMessage(
-                        `${t('screens:requestFail')}`,
-                    );
+                    showToast(`${t('screens:requestFail')}`,'success','long')
                     console.log('dont navigate');
                 }
             })
@@ -438,7 +435,7 @@ const RequestedServices = ({ navigation, route }: any) => {
 
                              {request_status == 'Requested' || request_status == 'Accepted' ? (
                             <TouchableOpacity
-                                onPress={() => toggleModalCancel()}
+                                onPress={() => {request_status == 'Requested' ? toggleModalCancel('Opening'):toggleModalCancel('After')}}
                                 style={{
                                     backgroundColor: colors.dangerRed, borderRadius: 20,
                                     justifyContent: 'center',
@@ -450,7 +447,7 @@ const RequestedServices = ({ navigation, route }: any) => {
 
 
                         {request_status == 'Comfirmed' || (request_status == 'Completed' && !request?.rating) ? (
-                            //Rating should be taken while is completed 
+                           <>
                             <TouchableOpacity
                                 onPress={() => toggleModal()}
                                 style={{
@@ -460,7 +457,17 @@ const RequestedServices = ({ navigation, route }: any) => {
                                 }}>
                                 <Text style={{ color: colors.white }}>{t('screens:rateService')}</Text>
                             </TouchableOpacity>
-
+                            {request_status=='Comfirmed'?(<TouchableOpacity
+                                onPress={() => toggleModalCancel('After')}
+                                style={{
+                                    backgroundColor: colors.dangerRed, borderRadius: 20,
+                                    justifyContent: 'center',
+                                    padding: 20
+                                }}>
+                                <Text style={{ color: colors.white }}>{t('screens:cancel')}</Text>
+                            </TouchableOpacity>):(<></>)
+                            }
+                          </>
                         ) : <></>}
                     </View>
                 </GestureHandlerRootView>

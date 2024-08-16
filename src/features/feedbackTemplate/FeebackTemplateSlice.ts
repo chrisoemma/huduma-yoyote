@@ -29,9 +29,9 @@ export const getBelowRating = createAsyncThunk(
 
   export const getCancelTemplate = createAsyncThunk(
     'feedbackTemplate/getCancelTemplate',
-    async () => {
+    async (context) => {
       let header: any = await authHeader();
-      const response = await fetch(`${API_URL}/feedback_templates/client_cancel`, {
+      const response = await fetch(`${API_URL}/feedback_templates/client_cancel/${context}`, {
         method: 'GET',
         headers: header,
       });

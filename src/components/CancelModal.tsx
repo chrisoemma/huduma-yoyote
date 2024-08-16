@@ -51,7 +51,7 @@ export const ModalFooter = styled.View`
   justify-self: flex-end;
 `;
 
-function CancelModal({ visible, cancel, confirmCancel, cancelData }:any) {
+function CancelModal({ visible, cancel, confirmCancel, cancelData,changeStatusLoading }:any) {
     const [templateOptions, setTemplateOptions] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const selectedLanguage = useSelector(selectLanguage);
@@ -113,7 +113,7 @@ function CancelModal({ visible, cancel, confirmCancel, cancelData }:any) {
         
                         <TouchableOpacity
                           onPress={() => confirmCancel({selectedIds })}
-                         // disabled={changeStatusLoading}
+                          disabled={changeStatusLoading}
                           style={[
                             globalStyles().smallTransparentButton,
                             {

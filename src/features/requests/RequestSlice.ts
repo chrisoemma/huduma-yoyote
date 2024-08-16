@@ -268,48 +268,48 @@ const RequestSlice = createSlice({
 
 
     builder.addCase(updateRequestStatus.fulfilled, (state, action) => {
-
-     //  console.log('paload',action.payload);
-      if (action.payload &&  action.payload.status) {
-
-      const updatedRequest = action.payload.data.request;
-      const status = updatedRequest.statuses[updatedRequest?.statuses?.length - 1].status;
-      const requestIndex = state.activeRequests.findIndex(
-        (request) => request.id === updatedRequest.id
-      );
-      if (requestIndex !== -1) {
-
-        state.activeRequests[requestIndex] = {
-          ...state.activeRequests[requestIndex],
-          statuses: updatedRequest.statuses,
-        };
-
-        
-        if (['Requested', 'Accepted', 'Confirmed','Comfirmed'].includes(status)) {
-          state.activeRequests = [
-            ...state.activeRequests.slice(0, requestIndex),
-            updatedRequest,
-            ...state.activeRequests.slice(requestIndex + 1),
-          ];
-        } else if (['Cancelled', 'Rejected', 'Completed'].includes(status)) {
-          // Remove the request from activeRequests
-          state.activeRequests = [
-            ...state.activeRequests.slice(0, requestIndex),
-            ...state.activeRequests.slice(requestIndex + 1),
-          ];
-
-          // Add the request to pastRequests
-          state.pastRequests = [...state.pastRequests, {
-            ...state.activeRequests[requestIndex], // Preserve the rest of the request details
-            statuses: updatedRequest.statuses,
-          }];
+      console.log('payload', action.payload);
+    
+      if (action.payload && action.payload.status) {
+        const updatedRequest = action.payload.data.request;
+        const newStatus = updatedRequest.statuses[updatedRequest.statuses.length - 1].status;
+        const requestIndex = state.activeRequests.findIndex(
+          (request) => request.id === updatedRequest.id
+        );
+    
+        if (requestIndex !== -1) {
+          // Determine if the status has changed to a past status
+          const isPastStatus = ['Cancelled', 'Rejected', 'Completed'].includes(newStatus);
+    
+          if (isPastStatus) {
+            // Remove the request from activeRequests
+            state.activeRequests = [
+              ...state.activeRequests.slice(0, requestIndex),
+              ...state.activeRequests.slice(requestIndex + 1),
+            ];
+    
+            // Add the request to pastRequests
+            state.pastRequests = [
+              ...state.pastRequests,
+              {
+                ...state.activeRequests[requestIndex], // Preserve other request details
+                statuses: updatedRequest.statuses,
+              },
+            ];
+          } else {
+            // Update the statuses if it's still an active request
+            state.activeRequests[requestIndex] = {
+              ...state.activeRequests[requestIndex],
+              statuses: updatedRequest.statuses,
+            };
+          }
         }
       }
-
-    }
+    
       state.changeStatusLoading = false;
       updateStatus(state, '');
     });
+    
 
     builder.addCase(updateRequestStatus.rejected, (state, action) => {
       console.log('Rejected');
@@ -324,33 +324,50 @@ const RequestSlice = createSlice({
       updateStatus(state, '');
     });
     builder.addCase(rateRequest.fulfilled, (state, action) => {
-
-      if (action.payload &&  action.payload.status) {
-
-      const updatedRequest = action.payload.data.request;
-      const status = updatedRequest.statuses[updatedRequest.statuses.length - 1].status;
-      const requestIndex = state.activeRequests.findIndex(
-        (request) => request.id === updatedRequest.id
-      );
-      if (requestIndex !== -1) {
-        if (['Requested', 'Accepted', 'Confirmed', 'Comfirmed'].includes(status)) {
-          state.activeRequests = [
-            ...state.activeRequests.slice(0, requestIndex),
-            updatedRequest,
-            ...state.activeRequests.slice(requestIndex + 1),
-          ];
-        } else if (['Cancelled', 'Rejected', 'Completed'].includes(status)) {
-          state.activeRequests = [
-            ...state.activeRequests.slice(0, requestIndex),
-            ...state.activeRequests.slice(requestIndex + 1),
-          ];
-          state.pastRequests = [...state.pastRequests, updatedRequest];
+      //console.log('payload', action.payload);
+    
+      if (action.payload && action.payload.status) {
+        const updatedRequest = action.payload.data.request;
+        const newStatus = updatedRequest.statuses[updatedRequest.statuses.length - 1].status;
+        const requestIndex = state.activeRequests.findIndex(
+          (request) => request.id === updatedRequest.id
+        );
+    
+        if (requestIndex !== -1) {
+          // Determine if the status has changed to a past status
+          const isPastStatus = ['Cancelled', 'Rejected', 'Completed'].includes(newStatus);
+    
+          if (isPastStatus) {
+            // Remove the request from activeRequests
+            const requestToMove = {
+              ...state.activeRequests[requestIndex], // Preserve other request details
+              statuses: updatedRequest.statuses, // Update the statuses only
+            };
+    
+            state.activeRequests = [
+              ...state.activeRequests.slice(0, requestIndex),
+              ...state.activeRequests.slice(requestIndex + 1),
+            ];
+    
+            // Add the request to pastRequests
+            state.pastRequests = [
+              ...state.pastRequests,
+              requestToMove,
+            ];
+          } else {
+            // Update the statuses if it's still an active request
+            state.activeRequests[requestIndex] = {
+              ...state.activeRequests[requestIndex],
+              statuses: updatedRequest.statuses,
+            };
+          }
         }
       }
-    }
+    
       state.loading = false;
       updateStatus(state, '');
     });
+    
     builder.addCase(rateRequest.rejected, (state, action) => {
       console.log('Rejected');
       state.loading = false;
