@@ -446,6 +446,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     position: 'absolute',
     bottom: 10,
+    fontFamily: 'Prompt-Regular',
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,

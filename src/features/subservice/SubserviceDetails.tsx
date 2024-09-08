@@ -1,191 +1,156 @@
-import { View, Text, TouchableOpacity, Dimensions, StyleSheet,Image, ScrollView,Modal } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import React, { useState } from 'react';
 import { globalStyles } from '../../styles/global';
-import { useSelector,RootStateOrAny } from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '../../utils/colors';
+import { useSelector, RootStateOrAny } from 'react-redux';
+import VideoPlayer from '../../components/VideoPlayer';
 import { useTranslation } from 'react-i18next';
 import { selectLanguage } from '../../costants/languageSlice';
-import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
-import { useSharedValue } from 'react-native-reanimated';
-import { useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { BasicView } from '../../components/BasicView';
-import { colors } from '../../utils/colors';
-import VideoPlayer from '../../components/VideoPlayer';
+// import { selectLanguage } from '../../costants/languangeSlice';
 
+const SubserviceDetails = ({ route, navigation }: any) => {
+  const { providerSubService, type, sub_service } = route.params;
 
-const SubserviceDetails = ({ route }: any) => {
-
-    const { providerSubService, type, sub_service } = route.params
-    const width = Dimensions.get("window").width;
-const height = Dimensions.get("window").height;
 
   const stylesGlobal = globalStyles();
-
   const { isDarkMode } = useSelector((state: RootStateOrAny) => state.theme);
   const [isVideoModalVisible, setVideoModalVisible] = useState(false);
   const { t } = useTranslation();
-
   const selectedLanguage = useSelector(selectLanguage);
 
   const toggleVideoModal = () => {
     setVideoModalVisible(!isVideoModalVisible);
   };
 
-  const ref = React.useRef<ICarouselInstance>(null);
-  const progress = useSharedValue<number>(0);
-  const navigation = useNavigation();
-
-  const [activeIndex, setActiveIndex] = React.useState<number>(0);
-
-  const onPressPagination = (index: number) => {
-    ref.current?.scrollTo({
-      count: index - progress.value,
-      animated: true,
-    });
-    setActiveIndex(index);
-  };
-
-  const handleBackNavigation = () => {
-    navigation.goBack();
-  };
-  
-  const itemType = type === "subService" ? "subService" : "providerSubService";
-
-  const images = type == 'subService'? sub_service?.assets || sub_service?.default_images: providerSubService?.assets || providerSubService?.default_images;
-
   return (
-    <ScrollView style={[stylesGlobal.scrollBg,{flex:1}]}>
-      <Carousel
-        ref={ref}
-        width={width}
-        height={width * 0.8}
-        data={images }
-        renderItem={({ item }) => (
-          <View style={{ position: 'relative' }}>
-            <TouchableOpacity onPress={handleBackNavigation} style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}>
-              <Ionicons name="arrow-back" size={30} color="black" />
-            </TouchableOpacity>
-            <Image
-              source={{ uri: item?.img_url }}
-              style={{ width: '100%', height: '100%' }}
-              resizeMode="cover"
-            />
-          </View>
-        )}
-      />
-
-      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 10 }}>
-        {images?.map((_, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => onPressPagination(index)}
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: 5,
-              backgroundColor: index === activeIndex ? 'blue' : 'gray',
-              marginHorizontal: 5,
-            }}
-          />
-        ))}
-      </View>
-
-      <BasicView>
-      {type == 'subService' ? (
+    <ScrollView style={stylesGlobal.scrollBg}>
+      <SafeAreaView>
+        <View>
+          {type == 'subService' ? (
             <>
+              <Image
+                source={{ uri: sub_service?.assets[0]?.img_url || sub_service?.default_images[0]?.img_url }}
+                style={[
+                  styles.image,
+                  {
+                    borderBottomRightRadius: 10,
+                    borderBottomLeftRadius: 10,
+                  },
+                ]}
+              />
               <View style={styles.textContainer}>
-                <Text style={styles.subText}>{sub_service?.provider_sub_list?.name || selectedLanguage=='en'? sub_service?.name?.en:sub_service?.name?.sw}</Text>
-                <Text style={[styles.desc, { color: isDarkMode ? colors.white : colors.alsoGrey }]}>{sub_service?.provider_sub_list?.description || selectedLanguage=='en'? sub_service?.description?.en:sub_service?.description?.sw}</Text>
+                <Text style={styles.subText}>
+                  {sub_service?.provider_sub_list?.name || (selectedLanguage == 'en' ? sub_service?.name?.en : sub_service?.name?.sw)}
+                </Text>
+                <Text style={[styles.desc, { color: isDarkMode ? colors.white : colors.alsoGrey }]}>
+                  {sub_service?.provider_sub_list?.description || (selectedLanguage == 'en' ? sub_service?.description?.en : sub_service?.description?.sw)}
+                </Text>
               </View>
-              {sub_service?.assets && sub_service?.assets[0]?.video_url !== null || sub_service?.default_images && sub_service?.default_images[0]?.video_url !== null ? (
-  <TouchableOpacity style={styles.viewVideo} onPress={toggleVideoModal}>
-    <Text style={styles.videoText}>{t('screens:video')}</Text>
-  </TouchableOpacity>
-) : (<></>)}
+              {/* {sub_service?.assets[0]?.video_url !== null || sub_service?.default_images[0]?.video_url !== null ? (
+                <TouchableOpacity style={styles.viewVideo} onPress={toggleVideoModal}>
+                  <Text style={styles.videoText}>{t('screens:video')}</Text>
+                </TouchableOpacity>
+              ) : null} */}
             </>
-          ) : (<></>)
-          }
+          ) : null}
 
-        
-        {type == 'providerSubService' ? (
+          {type == 'providerSubService' ? (
             <>
+              <Image
+                source={{ uri: providerSubService?.assets[0]?.img_url || providerSubService?.default_images[0]?.img_url }}
+                style={[
+                  styles.image,
+                  {
+                    borderBottomRightRadius: 10,
+                    borderBottomLeftRadius: 10,
+                  },
+                ]}
+              />
               <View style={styles.textContainer}>
                 <Text style={styles.subText}>{providerSubService?.provider_sub_list?.name || providerSubService?.name}</Text>
                 <Text style={[styles.desc, { color: isDarkMode ? colors.white : colors.alsoGrey }]}>{providerSubService?.description}</Text>
               </View>
-              {providerSubService?.assets && providerSubService?.assets[0].video_url !== null ? (
+              {providerSubService?.assets[0].video_url !== null ? (
                 <TouchableOpacity style={styles.viewVideo} onPress={toggleVideoModal}>
                   <Text style={styles.videoText}>{t('screens:video')}</Text>
                 </TouchableOpacity>
-              ) : (<></>)
-              }
+              ) : null}
             </>
-          ) : (<></>)
-          }
-      </BasicView>
+          ) : null}
+        </View>
 
-    
-
-<Modal visible={isVideoModalVisible}>
-  <View style={styles.videoModalContainer}>
-    <TouchableOpacity onPress={toggleVideoModal}>
-      <Text style={styles.closeButton}>{t('screens:close')}</Text>
-    </TouchableOpacity>
-    {type === 'subService' && (sub_service?.assets && sub_service?.assets[0]?.video_url ||  sub_service?.default_images && sub_service?.default_images[0]?.video_url) ? (
-      <VideoPlayer
-        video_url={`${sub_service?.assets[0]?.video_url || sub_service?.default_images[0]?.video_url}`}
-      />
-    ) : null}
-    {type === 'providerSubService' &&  sub_service?.default_images && sub_service?.default_images[0]?.video_url ? (
-      <VideoPlayer
-        video_url={`${providerSubService?.assets[0]?.video_url}`}
-      />
-    ) : null}
-  </View>
-</Modal>
-      </ScrollView>
-  )
-}
+        <Modal visible={isVideoModalVisible} transparent={true} animationType="slide">
+          <View style={styles.videoModalContainer}>
+            <TouchableOpacity onPress={toggleVideoModal} style={styles.closeButtonContainer}>
+              <Text style={styles.closeButton}>{t('screens:close')}</Text>
+            </TouchableOpacity>
+            {type == 'subService' && (sub_service?.assets[0]?.video_url || sub_service?.default_images[0]?.video_url) ? (
+              <VideoPlayer video_url={sub_service?.assets[0]?.video_url || sub_service?.default_images[0]?.video_url} />
+            ) : null}
+            {type == 'providerSubService' && providerSubService?.assets[0]?.video_url !== null ? (
+              <VideoPlayer video_url={providerSubService?.assets[0]?.video_url} />
+            ) : null}
+          </View>
+        </Modal>
+      </SafeAreaView>
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
-
+  image: {
+    resizeMode: 'cover',
+    width: '100%',
+    height: 320,
+    marginBottom: 10,
+    borderRadius: 10,
+  },
   textContainer: {
-    margin: 15
+    marginHorizontal: 15,
+    marginVertical: 10,
+    borderRadius: 10,
+    padding: 10,
   },
   subText: {
     fontSize: 17,
-    color: colors.secondary
+    fontFamily: 'Prompt-SemiBold',
+    color: colors.secondary,
+    marginBottom: 5,
   },
   desc: {
     fontSize: 15,
-    marginVertical: 3
+    fontFamily: 'Prompt-Regular',
+    marginVertical: 3,
   },
   viewVideo: {
     margin: 15,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.secondary,
     alignItems: 'center',
-    elevation: 2,
-    borderRadius: 25
+    borderRadius: 25,
+    paddingVertical: 10,
   },
   videoText: {
-    padding: 15,
-    fontSize: 18,
-    color: colors.white
+    padding: 8,
+    fontSize: 14,
+    fontFamily: 'Prompt-Regular',
+    color: colors.white,
   },
   videoModalContainer: {
-    backgroundColor: colors.white,
-    padding: 20,
-    borderRadius: 10,
+    flex: 1,
     justifyContent: 'center',
-
+    padding: 20,
+  },
+  closeButtonContainer: {
+    alignSelf: 'center',
+    marginBottom: 20,
   },
   closeButton: {
     fontSize: 18,
-    marginBottom: 100,
+    fontFamily: 'Prompt-Regular',
     color: colors.primary,
-    fontWeight: 'bold'
+    alignSelf:'center'
   },
-
 });
 
-export default SubserviceDetails
+export default SubserviceDetails;

@@ -24,6 +24,7 @@ import {ButtonText} from '../../components/ButtonText';
 import {changePassword} from './userSlice';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../../utils/colors';
+import showToast from '../../components/ShowToast/showToast';
 
 const ChangePassword = ({route, navigation}: any) => {
   const dispatch = useAppDispatch();
@@ -71,11 +72,11 @@ const ChangePassword = ({route, navigation}: any) => {
 
 
         if (result.status) {
-            ToastAndroid.show('Password changed successfully', ToastAndroid.SHORT);
-          
+            showToast(`${t('screens:passwordChaged')}`,'success','long')
           navigation.navigate('Home');
         } else {
-          console.log('Message with error should be set');
+          showToast(`${t('screens:requestFail')}`,'danger','long')
+          // console.log('Message with error should be set');
         }
       })
       .catch(rejectedValueOrSerializedError => {

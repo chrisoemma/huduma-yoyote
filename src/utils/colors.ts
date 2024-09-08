@@ -22,6 +22,8 @@ export const colors = {
     darkModeBackground:'#949494',
     orange:'#fcba03',
     blue:'#22538f',
-    darkYellow:'#747537'
+    darkYellow:'#747537',
+    blackBg:'#1a1a1a',
+
   };
   

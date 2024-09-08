@@ -18,6 +18,7 @@ export default {
     serviceDetails:'Service Details',
     viewServices:'Click for services',
     SubserviceDetails:'Sub service Details',
-    ProviderProfile:'Provider profile'
+    ProviderProfile:'Provider profile',
+    providerSubServiceDetails:'Sub service Details'
     
   };

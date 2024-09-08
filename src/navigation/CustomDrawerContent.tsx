@@ -12,6 +12,7 @@ import { colors } from '../utils/colors';
 import { userLogout } from '../features/auth/userSlice';
 import { useDispatch, useSelector,RootStateOrAny } from 'react-redux';
 import { makePhoneCall } from '../utils/utilts';
+import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -47,12 +48,15 @@ const DrawerRowsContainer = styled.View`
 const CustomDrawerContent = (props: any) => {
 
   const { t } = useTranslation();
+  const navigation = useNavigation();
 
   const { user, loading } = useSelector((state: RootStateOrAny) => state.user);
 
   const { isDarkMode } = props;
   React.useEffect(() => {
   }, [user]);
+
+
 
   const phoneNumber='+255684335955';
 
@@ -104,6 +108,10 @@ const CustomDrawerContent = (props: any) => {
 
  }
 
+ const NavigateNotifications = () => {
+  navigation.navigate('Notifications');
+}
+
   return (
     <DrawerContentScrollView {...props}>
       <DrawerHeader isDarkMode={isDarkMode}>
@@ -134,12 +142,36 @@ const CustomDrawerContent = (props: any) => {
                   size={25}
                 />
               </DrawerIconContainer>
-              <Text style={{ color: isDarkMode ? colors.white : colors.black }}>
+              <Text style={{ color: isDarkMode ? colors.white : colors.black,  
+                  fontFamily: 'Prompt-Regular', }}>
               {t(`navigate:${item.language}`)}
             </Text>
             </DrawerRow>
           );
         })}
+
+           <DrawerRow
+          onPress={() => {
+
+            NavigateNotifications();
+          }}
+          isDarkMode={isDarkMode}
+        >
+          <DrawerIconContainer>
+            <FontAwesome5
+              name="Notifications"
+              color={isDarkMode ? colors.white : colors.alsoGrey}
+              size={25}
+            />
+          </DrawerIconContainer>
+          <Text
+            style={{
+              color: isDarkMode ? colors.white : colors.black,
+              fontFamily: 'Prompt-Regular',
+            }}>
+            {t('screens:notifications')}
+          </Text>
+        </DrawerRow>
 
 <DrawerRow
           onPress={() => {
@@ -158,6 +190,7 @@ const CustomDrawerContent = (props: any) => {
           <Text
             style={{
               color: isDarkMode ? colors.white : colors.black,
+              fontFamily: 'Prompt-Regular',
             }}>
             {t('navigate:whatsapp')}
           </Text>
@@ -172,13 +205,15 @@ const CustomDrawerContent = (props: any) => {
           <DrawerIconContainer>
             <FontAwesome5
               name="phone"
-              color={isDarkMode ? colors.white : colors.alsoGrey}
+              color={isDarkMode ? colors.white : colors.alsoGrey
+              }
               size={25}
             />
           </DrawerIconContainer>
           <Text
             style={{
               color: isDarkMode ? colors.white : colors.black,
+              fontFamily: 'Prompt-Regular',
             }}>
             {t('navigate:support')}
           </Text>

@@ -13,6 +13,7 @@ import { updateProfile, userLogout } from '../auth/userSlice';
 import DocumentPicker, { types } from 'react-native-document-picker'
 import { ScrollView } from 'react-native-gesture-handler';
 import Notification from '../../components/Notification';
+import showToast from '../../components/ShowToast/showToast';
 
 const Account = ({ navigation }: any) => {
 
@@ -40,7 +41,7 @@ const Account = ({ navigation }: any) => {
   }
 
 
-console.log('userrr',user);
+//console.log('userrr',user);
 
   const makeid = (length: any) => {
     let result = '';
@@ -128,9 +129,10 @@ console.log('userrr',user);
           if (result.status) {
             setUploadingPic(false)
             console.log('executed this true block');
-            ToastAndroid.show("Picture successfully!", ToastAndroid.SHORT);
+            showToast("Picture successfully!",'success','long')
           } else {
-            setDisappearMessage('Unable to process request. Please try again later.');
+         
+            showToast(`${t('screens:requestFail')}`,'danger','long')
             console.log('don\'t navigate');
           }
 
@@ -240,10 +242,10 @@ console.log('userrr',user);
             />
           </TouchableOpacity>
         </View>
-        <Text style={{ color: isDarkMode ? colors.white : colors.secondary, fontWeight: 'bold', alignSelf: 'center' }}>{user.name}</Text>
+        <Text style={{ color: isDarkMode ? colors.white : colors.secondary, fontFamily: 'Prompt-Regular', alignSelf: 'center' }}>{user.name}</Text>
 
         <View style={{marginLeft:10}}>
-          <Text style={{color: isDarkMode ? colors.white : colors.black,fontWeight:'bold'}}>{t('auth:phone')}</Text>
+          <Text style={{color: isDarkMode ? colors.white : colors.black,fontFamily: 'Prompt-Regular'}}>{t('auth:phone')}</Text>
           <TouchableOpacity style={{ flexDirection: 'row', marginBottom: 10 }}
             onPress={() => makePhoneCall(phoneNumber)}
           >
@@ -252,19 +254,22 @@ console.log('userrr',user);
               color={isDarkMode ? colors.white : colors.black}
               size={25}
             />
-            <Text style={{ paddingHorizontal: 10, color: isDarkMode ? colors.white : colors.secondary }}>{user.phone}</Text>
+            <Text style={{ paddingHorizontal: 10, color: isDarkMode ? colors.white : colors.secondary,
+              fontFamily: 'Prompt-Regular'
+
+             }}>{user.phone}</Text>
           </TouchableOpacity>
-          <Text style={{color: isDarkMode ? colors.white : colors.black,fontWeight:'bold'}}>{t('auth:email')}:</Text>
+          <Text style={{color: isDarkMode ? colors.white : colors.black,fontFamily: 'Prompt-Regular'}}>{t('auth:email')}:</Text>
           <TouchableOpacity style={{ flexDirection: 'row', marginBottom: 10 }}>
             <Icon
               name="mail"
               color={isDarkMode ? colors.white : colors.black}
               size={25}
             />
-            {user?.email==null?(<Text  style={{color: isDarkMode ? colors.white : colors.alsoGrey}}> {t('screens:noEmail')}</Text>):(<Text style={{ paddingLeft: 10, color: isDarkMode ? colors.white : colors.black }}>{user?.email}</Text>)
+            {user?.email==null?(<Text  style={{color: isDarkMode ? colors.white : colors.alsoGrey,fontFamily: 'Prompt-Regular'}}> {t('screens:noEmail')}</Text>):(<Text style={{ paddingLeft: 10, color: isDarkMode ? colors.white : colors.black,fontFamily: 'Prompt-Regular' }}>{user?.email}</Text>)
             }
           </TouchableOpacity>
-          <Text style={{color: isDarkMode ? colors.white : colors.black,fontWeight:'bold'}}>{t('screens:location')}</Text>
+          <Text style={{color: isDarkMode ? colors.white : colors.black,fontFamily: 'Prompt-Regular'}}>{t('screens:location')}</Text>
           <TouchableOpacity style={{ flexDirection: 'row', marginBottom:10, marginTop: 5 }}>
             
             <Icon
@@ -273,7 +278,7 @@ console.log('userrr',user);
               size={25}
             />
             {
-              locationName =='' ? (<Text style={{color: isDarkMode ? colors.white : colors.alsoGrey}}> {t('screens:noresidenceData')}</Text>) : ( <Text style={{ color: isDarkMode ? colors.white : colors.alsoGrey }}>{breakTextIntoLines(locationName, 20)}</Text>)
+              locationName =='' ? (<Text style={{color: isDarkMode ? colors.white : colors.alsoGrey,fontFamily: 'Prompt-Regular'}}> {t('screens:noresidenceData')}</Text>) : ( <Text style={{ color: isDarkMode ? colors.white : colors.alsoGrey }}>{breakTextIntoLines(locationName, 20)}</Text>)
             }
 
           </TouchableOpacity>
@@ -290,7 +295,7 @@ console.log('userrr',user);
             color={isDarkMode ? colors.white : colors.secondary}
             size={25}
           />
-          <Text style={{ paddingLeft: 10, fontWeight: 'bold', color: isDarkMode ? colors.white : colors.secondary }}>{t('screens:changePassword')}</Text>
+          <Text style={{ paddingLeft: 10, fontFamily: 'Prompt-Regular', color: isDarkMode ? colors.white : colors.secondary }}>{t('screens:changePassword')}</Text>
         </TouchableOpacity>
         ):(<></>)}
         <TouchableOpacity style={{ flexDirection: 'row', marginHorizontal: 10, marginTop: 10 }}
@@ -303,7 +308,7 @@ console.log('userrr',user);
             color={colors.dangerRed}
             size={25}
           />
-          <Text style={{ paddingLeft: 10, fontWeight: 'bold', color: isDarkMode ? colors.white : colors.secondary }}>{t('navigate:logout')}</Text>
+          <Text style={{ paddingLeft: 10, fontFamily: 'Prompt-Regular', color: isDarkMode ? colors.white : colors.secondary }}>{t('navigate:logout')}</Text>
         </TouchableOpacity>
 
       </ScrollView>

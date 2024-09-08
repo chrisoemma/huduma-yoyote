@@ -20,6 +20,10 @@ import FCMMessageHandler from "../components/FCMMessageHandler";
 import ServiceDetails from "../features/Service/ServiceDetails";
 import SubserviceDetails from "../features/subservice/SubserviceDetails";
 import ProviderProfile from "../features/providers/ProviderProfile";
+import Notifications from "../features/Notifications/Notifications";
+import ProviderSubServiceDetails from "../features/subservice/ProviderSubServiceDetails";
+import { handleDeviceToken } from "../utils/handeDeviceToken";
+import { getActiveRequests } from "../features/requests/RequestSlice";
 
 
 
@@ -29,54 +33,30 @@ const AppStack = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
+
+  
+
   const screenOptions = {
-    headerShown: false,
+    headerShown: true,
+    headerTitleStyle: {
+      fontFamily: 'Prompt-Regular', 
+      fontSize: 15, 
+    },
   };
 
   const { user } = useSelector((state: RootStateOrAny) => state.user);
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
+
+
   useEffect(() => {
-    const retrieveDeviceToken = async () => {
-      try {
-        const token = await messaging().getToken();
-        console.log('Device Token:', token);
-        if (user) {
-          dispatch(postUserDeviceToken({ userId: user?.id, deviceToken: token }));
-        }
-      } catch (error) {
-        console.log('Error retrieving device token:', error);
-      }
-    };
-
-    const handleTokenRefresh = async (token) => {
-      console.log('New token:', token);
-      if (user) {
-        dispatch(postUserDeviceToken({ userId: user?.id, deviceToken: token }));
-      }
-    };
-    if (Platform.OS === 'ios') {
-      const requestPermission = async () => {
-        try {
-          await messaging().requestPermission();
-          retrieveDeviceToken();
-        } catch (error) {
-          console.log('Permission denied:', error);
-        }
-      };
-
-      requestPermission();
-    } else {
-      retrieveDeviceToken();
-    }
-    // Listen for token refresh
-    const unsubscribeOnTokenRefresh = messaging().onTokenRefresh(handleTokenRefresh);
-
+    const unsubscribe = handleDeviceToken(dispatch, user);
     return () => {
-      unsubscribeOnTokenRefresh();
+      if (unsubscribe) unsubscribe();
     };
   }, [dispatch, user]);
+
 
 
   useEffect(() => {
@@ -92,8 +72,8 @@ const AppStack = () => {
         console.log('App has come to the foreground!');
         if (user) {
           data.isOnline = true
+          dispatch(getActiveRequests(user?.client?.id));
           dispatch(postUserOnlineStatus({ userId: user?.id, data }));
-
         }
       }
       if (appState.current === 'background') {
@@ -117,7 +97,7 @@ const AppStack = () => {
     <>
 
       <FCMMessageHandler />
-      <Stack.Navigator initialRouteName="Home" >
+      <Stack.Navigator initialRouteName="Home" screenOptions={screenOptions} >
         <Stack.Screen name="Home" component={DrawerNavigator}
           options={{ headerShown: false }}
         />
@@ -145,6 +125,12 @@ const AppStack = () => {
           component={EditAccount}
           options={{ title: t('navigate:editAccount') }}
         />
+
+     <Stack.Screen name="providerSubServiceDetails"
+          component={ProviderSubServiceDetails}
+          options={{ title: t('navigate:providerSubServiceDetails') }}
+        />
+        
 
         <Stack.Screen name="Service Details"
           component={ServiceDetails}
@@ -183,6 +169,10 @@ const AppStack = () => {
           options={{ title: t('navigate:requestedServices') }}
 
         />
+           <Stack.Screen name="Notifications"
+         component={Notifications}
+         options={{ title: t('screens:notifications') }}
+          />
         <Stack.Screen
           name="Settings"
           component={Settings}

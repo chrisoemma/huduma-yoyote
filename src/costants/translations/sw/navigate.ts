@@ -18,5 +18,6 @@ export default {
     serviceDetails:'Taarifa zaidi za huduma',
     viewServices:'Bonyeza kuona huduma',
     SubserviceDetails:'Taarifa zaidi za huduma ndogo',
-    ProviderProfile:'Wasifu wa Mtoa huduma'
+    ProviderProfile:'Wasifu wa Mtoa huduma',
+     providerSubServiceDetails:'Taarifa za huduma'
   };

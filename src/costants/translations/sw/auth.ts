@@ -49,5 +49,7 @@ export default {
     checkNumber:'Tafuta Namba',
     createAccountPassword:'Tengeneza Nywila ya Akaunti',
     accountPasswordCreated:'Nywila ya Akaunti yako imetengenezwa kikamilifu',
-    resendOTP:'Tuma tena kodi'
+    resendOTP:'Tuma tena kodi',
+        confirmAccount:'Thibitisha Akaunti',
+    accountVerification:'Hakiki Akaunti'
 }

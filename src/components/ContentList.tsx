@@ -25,7 +25,7 @@ const ContentList = ({ data, navigation, isDarkMode }: any) => {
         source={{ uri: item?.images[0]?.img_url }}
         style={styles.image}
       />
-      <Text style={{ color: isDarkMode ? colors.white : colors.black }}>
+      <Text style={{ color: isDarkMode ? colors.white : colors.black, fontSize:12.7,   fontFamily: 'Prompt-Regular', }}>
         {selectedLanguage === 'en' ? item?.name?.en : item?.name?.sw}
       </Text>
     </TouchableOpacity>

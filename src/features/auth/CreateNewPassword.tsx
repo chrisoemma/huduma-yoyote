@@ -24,6 +24,7 @@ import { ButtonText } from '../../components/ButtonText';
 import { changePassword, createAccountPassword } from './userSlice';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../../utils/colors';
+import showToast from '../../components/ShowToast/showToast';
 
 const CreateNewPassword = ({ route, navigation }: any) => {
     const dispatch = useAppDispatch();
@@ -78,9 +79,11 @@ const CreateNewPassword = ({ route, navigation }: any) => {
 
 
                     if (result.status) {
-                        ToastAndroid.show(`${t('auth:accountPasswordCreated')}`, ToastAndroid.SHORT);
+                   
+                        showToast(`${t('screens:accountPasswordCreated')}`,'success','long')
                     } else {
-                        console.log('Message with error should be set');
+                        showToast(`${t('screens:requestFail')}`,'danger','long')
+                        // console.log('Message with error should be set');
                     }
                 })
                 .catch(rejectedValueOrSerializedError => {

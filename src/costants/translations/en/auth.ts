@@ -51,5 +51,7 @@ export default{
     createAccountPassword:'Create Account Password',
     accountPasswordCreated:'Account Password created Successfully',
     resendOTP:'Resend OTP',
+        confirmAccount:'Confirm account',
+    accountVerification:'Account verification'
     
 }

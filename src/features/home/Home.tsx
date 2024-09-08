@@ -165,8 +165,10 @@ const [loadingMore, setLoadingMore] = useState(false);
           numColumns={2}
           ListHeaderComponent={renderHeader}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          
+          contentContainerStyle={{ paddingBottom: 20,justifyContent:'center',alignContent:'center' }}
+          columnWrapperStyle={{
+            justifyContent: 'center',
+          }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={callGetHomeData} />
           }

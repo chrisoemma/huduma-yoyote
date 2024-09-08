@@ -178,7 +178,7 @@ export const getLocationName = async (latitude, longitude) => {
       return '';
     }
   } catch (error) {
-    console.error('Error fetching location data:', error);
+   // console.error('Error fetching location data:', error);
     return '';
   }
 };

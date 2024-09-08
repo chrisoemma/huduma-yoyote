@@ -78,7 +78,6 @@ export default {
    description:'Description',
    findProviders:'Find Providers',
    sameCategoryService:'Under same category',
-
    termsText:'By signing up,you agree to our',
    termsLink:'Terms & Conditions,',
    termsContinueText:'acknowledge our',
@@ -86,6 +85,11 @@ export default {
    continuePrivacyPolicy:'And confirm that you are over 18. We many send promotions related to our services-you can unsubscribe anytime in settings',
   shareAdditinalComment: "We’d love to hear any extra comments you have!",
   cancelRequest:'Cancel Request',
-   requestFail:'Request Fail'
+   requestFail:'Request Fail',
+   notifications: 'Notifications',
+   noNotificationFound:'No notifications found',
+   userUpdated:'Account updated',
+   passwordChaged:'Password changed',
+   accountExists:'Account Exist',
  
 };

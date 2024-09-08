@@ -14,6 +14,7 @@ const Requests = ({navigation}:any) => {
     (state: RootStateOrAny) => state.user,
 );
 
+
 const { isDarkMode } = useSelector(
   (state: RootStateOrAny) => state.theme,
 );
@@ -22,6 +23,7 @@ const { loading, activeRequests,pastRequests } = useSelector(
   (state: RootStateOrAny) => state.requests,
 );
 
+// console.log('past requests',pastRequests)
 
 const [refreshMessage,setRefreshMessage] =useState('');
 const dispatch = useAppDispatch();
@@ -65,11 +67,9 @@ const callGetRequests = React.useCallback(() => {
     );
 
   return (
-    <ScrollView
+    <SafeAreaView
     style={globalStyles().scrollBg}
-    refreshControl={
-      <RefreshControl refreshing={refreshing} onRefresh={callGetRequests} />
-  }
+
     >
     <View 
     >
@@ -99,11 +99,14 @@ const callGetRequests = React.useCallback(() => {
           data={activeTab === 'current'?activeRequests:pastRequests}
           renderItem={renderRequestItem}
           keyExtractor={(item) => item?.id?.toString()}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={callGetRequests} />
+        }
        
         />
       </View>
     </View>
-    </ScrollView>
+    </SafeAreaView>
   )
 }
 
@@ -132,6 +135,7 @@ const styles = StyleSheet.create({
     buttonText: {
       color:colors.primary,
       padding:10,
+      fontFamily: 'Prompt-Regular',
        marginRight:5
     },
     listContainer: {

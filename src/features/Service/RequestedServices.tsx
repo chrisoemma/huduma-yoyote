@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import ContentServiceList from '../../components/ContentServiceList';
 import MapDisplay from '../../components/MapDisplay';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { extractRatingData, makePhoneCall } from '../../utils/utilts';
+import { combineSubServices, extractRatingData, makePhoneCall } from '../../utils/utilts';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
 import { getProviderLastLocation, getProviderSubServices } from '../serviceproviders/ServiceProviderSlice';
@@ -27,6 +27,7 @@ import PusherOnlineListener from '../../components/PusherOnlineListener';
 import { getAboveRating, getBelowRating, getCancelTemplate } from '../feedbackTemplate/FeebackTemplateSlice';
 import CancelModal from '../../components/CancelModal';
 import showToast from '../../components/ShowToast/showToast';
+import RequestSubServiceList from '../../components/RequestSubServiceList';
 
 const RequestedServices = ({ navigation, route }: any) => {
 
@@ -70,6 +71,8 @@ const RequestedServices = ({ navigation, route }: any) => {
         setProviderLocation(providerLocation);
     }, []);
 
+    const requestSubService = combineSubServices(request);
+
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -100,6 +103,7 @@ const RequestedServices = ({ navigation, route }: any) => {
 
     }
 
+     
 
         const  confirmCancel=({selectedIds}:any)=>{
         data.client = user?.client?.id;
@@ -157,18 +161,19 @@ const RequestedServices = ({ navigation, route }: any) => {
         requestData.provider_latitude=providerLocation?.latitude
         requestData.provider_longitude=providerLocation?.longitude
         requestData.templateIds=selectedIds;
+        
         toggleModal();
         dispatch(rateRequest(requestData))
             .unwrap()
             .then(result => {
 
                 if (result.status) {
-                    ToastAndroid.show(`${t('screens:rateSubmitted')}`, ToastAndroid.SHORT);
+                    showToast(`${t('screens:rateSubmitted')}`,'success','long')
                     navigation.navigate('Requests', {
                         screen: 'Requests',
                     });
                 } else {
-                    console.log('dont do anything');
+                    showToast(`${t('screens:requestFail')}`,'danger','long')
                 }
             })
             .catch(rejectedValueOrSerializedError => {
@@ -306,9 +311,9 @@ const RequestedServices = ({ navigation, route }: any) => {
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <View>
-                                <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.black}}>{request?.provider.business_name?request?.provider?.business_name:request?.provider?.name}</Text>
+                                <Text style={{ marginVertical: 5, color:isDarkMode?colors.white:colors.black, fontFamily: 'Prompt-Regular'}}>{request?.provider.business_name?request?.provider?.business_name:request?.provider?.name}</Text>
                                 <RatingStars rating={request?.provider?.average_rating == null ? 0 : request?.provider?.average_rating} />
-                                <Text style={{ marginVertical: 5, color: colors.secondary }}>{ selectedLanguage=='en'? request?.service?.name?.en :request?.service?.name?.sw}</Text>
+                                <Text style={{ marginVertical: 5, color: colors.secondary, fontFamily: 'Prompt-Regular', }}>{ selectedLanguage=='en'? request?.service?.name?.en :request?.service?.name?.sw}</Text>
                             </View>
                             <TouchableOpacity style={{
                                 flexDirection: 'row',
@@ -324,32 +329,30 @@ const RequestedServices = ({ navigation, route }: any) => {
                                     size={20}
                                 />
                                 <Text style={{
-                                    paddingHorizontal: 5, fontWeight: 'bold',
+                                    paddingHorizontal: 5,
+                                    fontFamily: 'Prompt-Regular',
                                     color: isDarkMode ? colors.white : colors.black
                                 }}>{PhoneNumber}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.divOnline}>
-                        <IconOnline name={isOnline ? 'checkmark-circle' : 'close-circle'} size={24} color={isOnline ? 'green' :colors.darkGrey} />
-                        <Text style={styles.text}>{isOnline ? 'Online' : 'Offline'}</Text>
+                        {/* <IconOnline name={isOnline ? 'checkmark-circle' : 'close-circle'} size={24} color={isOnline ? 'green' :colors.darkGrey} />
+                        <Text style={styles.text}>{isOnline ? 'Online' : 'Offline'}</Text> */}
                         </View>
                         <View style={[stylesGlobal.chooseServiceBtn, { justifyContent: 'space-between',marginBottom:50 }]}>
-                            
-
                             <View style={[stylesGlobal.otherBtn, { backgroundColor: getStatusBackgroundColor(request_status) }]}>
-                                <Text style={{ color: colors.white }}>{getStatusTranslation(request_status)}</Text>
+                                <Text style={{ color: colors.white, fontFamily: 'Prompt-Regular', }}>{getStatusTranslation(request_status)}</Text>
                             </View>
                             <TouchableOpacity style={stylesGlobal.chooseBtn}
                                 onPress={() => handlePresentModalPress('Near providers')}
                             >
-                                <Text style={{ color: colors.white }}>{t('navigate:requestedServices')}</Text>
+                                <Text style={{ color: colors.white, fontFamily: 'Prompt-Regular', }}>{t('navigate:requestedServices')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
 
                     <View>
                         <View style={styles.mapContainer}>
-
                         {/* {loading && providerLoading && ( */}
         {/* <View style={{ ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color="#0000ff" />
@@ -384,7 +387,7 @@ const RequestedServices = ({ navigation, route }: any) => {
 
 
                                     <View style={stylesGlobal.subCategory}>
-                                        <ContentServiceList
+                                        {/* <ContentServiceList
                                             navigation={navigation}
                                             subServices={subServices}
                                             providerSubServices={providerSubServices}
@@ -392,6 +395,10 @@ const RequestedServices = ({ navigation, route }: any) => {
                                             selectedSubServices={selectedSubservice}
                                             screen="requested"
 
+                                        /> */}
+                                        <RequestSubServiceList 
+                                         navigation={navigation}
+                                          requestSubService={requestSubService}
                                         />
                                     </View>
 
@@ -415,10 +422,10 @@ const RequestedServices = ({ navigation, route }: any) => {
                                     justifyContent: 'center',
                                     padding: 20
                                 }}>
-                                <Text style={{ color: colors.white }}>{t('screens:comfirm')}</Text>
+                                <Text style={{ color: colors.white, fontFamily: 'Prompt-Regular', }}>{t('screens:comfirm')}</Text>
                             </TouchableOpacity>
 
-                        ) : <></>}
+                        ) :<></>}
 
                         {/* {request_status == 'Requested' || request_status == 'Accepted' ? (
                             <TouchableOpacity
@@ -431,6 +438,8 @@ const RequestedServices = ({ navigation, route }: any) => {
                                 <Text style={{ color: colors.white }}>{t('screens:cancel')}</Text>
                             </TouchableOpacity>
                         ) : <></>} */}
+                        
+
 
 
                              {request_status == 'Requested' || request_status == 'Accepted' ? (
@@ -441,7 +450,7 @@ const RequestedServices = ({ navigation, route }: any) => {
                                     justifyContent: 'center',
                                     padding: 20
                                 }}>
-                                <Text style={{ color: colors.white }}>{t('screens:cancel')}</Text>
+                                <Text style={{ color: colors.white, fontFamily: 'Prompt-Regular', }}>{t('screens:cancel')}</Text>
                             </TouchableOpacity>
                         ) : <></>}
 
@@ -455,7 +464,7 @@ const RequestedServices = ({ navigation, route }: any) => {
                                     justifyContent: 'center',
                                     padding: 20
                                 }}>
-                                <Text style={{ color: colors.white }}>{t('screens:rateService')}</Text>
+                                <Text style={{ color: colors.white, fontFamily: 'Prompt-Regular', }}>{t('screens:rateService')}</Text>
                             </TouchableOpacity>
                             {request_status=='Comfirmed'?(<TouchableOpacity
                                 onPress={() => toggleModalCancel('After')}
@@ -464,7 +473,7 @@ const RequestedServices = ({ navigation, route }: any) => {
                                     justifyContent: 'center',
                                     padding: 20
                                 }}>
-                                <Text style={{ color: colors.white }}>{t('screens:cancel')}</Text>
+                                <Text style={{ color: colors.white, fontFamily: 'Prompt-Regular', }}>{t('screens:cancel')}</Text>
                             </TouchableOpacity>):(<></>)
                             }
                           </>

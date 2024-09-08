@@ -66,7 +66,7 @@ const Category = ({ onPress, iconType,category }: any) => {
           }}
         />
       </View>
-      <Text style={{ color: '#525354' }}>{ selectedLanguage === 'en'? category?.name?.en:category?.name?.sw}</Text>
+      <Text style={{ color: '#525354', fontFamily: 'Prompt-Regular', }}>{ selectedLanguage === 'en'? category?.name?.en:category?.name?.sw}</Text>
     </TouchableOpacity>
   );
 };
@@ -76,9 +76,9 @@ touchableOpacityStyles: {
 
     },
     circle:{
-       height:60,
-       width:60,
-       borderRadius:60,
+       height:45,
+       width:45,
+       borderRadius:55,
        backgroundColor:colors.white,
        alignItems:'center',
        justifyContent:'center'

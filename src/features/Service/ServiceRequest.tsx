@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import ContentServiceList from '../../components/ContentServiceList';
 import MapDisplay from '../../components/MapDisplay';
 import Icon from 'react-native-vector-icons/AntDesign';
+import IconBusiness from 'react-native-vector-icons/Ionicons';
 import { makePhoneCall } from '../../utils/utilts';
 import { useSelector, RootStateOrAny } from 'react-redux';
 import { useAppDispatch } from '../../app/store';
@@ -20,9 +21,10 @@ import { getProviderLastLocation, getProviderSubServices } from '../serviceprovi
 import { BasicView } from '../../components/BasicView';
 import { createRequest } from '../requests/RequestSlice';
 import { selectLanguage } from '../../costants/languageSlice';
-import IconOnline from 'react-native-vector-icons/Ionicons';
+// import IconOnline from 'react-native-vector-icons/Ionicons';
 import PusherOnlineListener from '../../components/PusherOnlineListener';
 import showToast from '../../components/ShowToast/showToast';
+import CustomBackground from '../../components/CustomBgBottomSheet'
 
 
 const ServiceRequest = ({ navigation, route }: any) => {
@@ -34,7 +36,6 @@ const ServiceRequest = ({ navigation, route }: any) => {
     const { subServices, providerSubServices } = useSelector(
         (state: RootStateOrAny) => state.providers,
     );
-
 
     // console.log('subservice',subServices)
     // console.log('providerSubServices',providerSubServices)
@@ -237,9 +238,12 @@ const ServiceRequest = ({ navigation, route }: any) => {
                         </TouchableWithoutFeedback >
                         <View style={{ flexDirection: 'row' }}>
                             <View>
-                                <Text style={{ marginVertical: 5, color: isDarkMode ? colors.white : colors.black }}>{provider?.business_name ? provider.business_name : provider?.name}</Text>
+                                <Text style={{ marginVertical: 5, color: isDarkMode ? colors.white : colors.black, fontFamily: 'Prompt-Regular', }}>{provider?.business_name ? provider.business_name : provider?.name}</Text>
                                 <RatingStars rating={provider?.average_rating == null ? 0 : provider?.average_rating} />
-                                <Text style={{ marginVertical: 5, color: isDarkMode ? colors.white : colors.secondary, fontWeight: 'bold' }}>{selectedLanguage ? service?.name?.en : service?.name?.sw}</Text>
+                                <Text style={{ marginVertical: 5, color: isDarkMode ? colors.white : colors.secondary, fontFamily: 'Prompt-Regular', }}>
+                                <IconBusiness name="business" size={20} color={isDarkMode ? colors.white : colors.darkGrey} />
+                                {' '}
+                                    {selectedLanguage ? service?.name?.en : service?.name?.sw}</Text>
                             </View>
                             <TouchableOpacity style={{
                                 flexDirection: 'row',
@@ -254,21 +258,21 @@ const ServiceRequest = ({ navigation, route }: any) => {
                                     color={colors.successGreen}
                                     size={20}
                                 />
-                                <Text style={{ paddingHorizontal: 5, fontWeight: 'bold', color: isDarkMode ? colors.white : colors.blue }}>{PhoneNumber}</Text>
+                                <Text style={{ paddingHorizontal: 5,fontFamily: 'Prompt-Regular', color: isDarkMode ? colors.white : colors.blue }}>{PhoneNumber}</Text>
                             </TouchableOpacity>
                         </View>
                         <View>
-                            <View style={styles.divOnline}>
+                            {/* <View style={styles.divOnline}>
                                 <IconOnline name={isOnline ? 'checkmark-circle' : 'close-circle'} size={24} color={isOnline ? 'green' : colors.darkGrey} />
                                 <Text style={styles.text}>{isOnline ? 'Online' : 'Offline'}</Text>
-                            </View>
+                            </View> */}
                             {/* <Text style={{marginBottom:15}}>{selectedLanguage=='en'? service?.description?.en:service?.description?.sw}</Text> */}
 
                             <View style={stylesGlobal.chooseServiceBtn}>
                                 <TouchableOpacity style={[stylesGlobal.chooseBtn, { marginBottom: 50 }]}
                                     onPress={() => handlePresentModalPress('Near providers')}
                                 >
-                                    <Text style={{ color: colors.white }}>{t('screens:chooseService')}</Text>
+                                    <Text style={{ color: colors.white,fontFamily: 'Prompt-Regular' }}>{t('screens:chooseService')}</Text>
                              </TouchableOpacity>
                                 {/* <TouchableOpacity style={stylesGlobal.otherBtn}>
                                     <Text style={{ color: colors.white }}>{t('screens:otherService')}</Text>
@@ -295,7 +299,7 @@ const ServiceRequest = ({ navigation, route }: any) => {
                             <BottomSheetModal
                                 ref={bottomSheetModalRef}
                                 index={1}
-
+                                backgroundComponent={CustomBackground}
                                 snapPoints={snapPoints}
                                 onChange={handleSheetChanges}
 
@@ -413,9 +417,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     title: {
+        fontFamily: 'Prompt-Bold',
         alignSelf: 'center',
         fontSize: 15,
-        fontWeight: 'bold'
+ 
     },
     mapContainer: {
         flex: 1,

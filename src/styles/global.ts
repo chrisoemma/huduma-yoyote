@@ -29,6 +29,7 @@ import { colors } from '../utils/colors';
       padding: 10,
       fontSize: 16,
       color: textInputColor,
+   
     },
     autocompleteContainer: {
       position: 'absolute',
@@ -63,8 +64,8 @@ import { colors } from '../utils/colors';
     seeAll: {
       marginTop: 8,
       paddingRight: 10,
-      fontWeight:'bold',
       color: colors.secondary,
+      fontFamily: 'Prompt-Bold',
       fontSize: 13,
     },
     topServices: {
@@ -73,7 +74,8 @@ import { colors } from '../utils/colors';
     },
     serviceText: {
       color: isDarkMode ? 'white' : colors.black,
-      fontSize: 17,
+      fontFamily: 'Prompt-Regular',
+      fontSize: 15,
       marginBottom: 3,
     },
     homepageHeader: {
@@ -96,7 +98,8 @@ import { colors } from '../utils/colors';
     },
     searchText: {
       color: colors.white,
-      fontSize: 17,
+      fontSize: 15,
+      fontFamily: 'Prompt-Regular',
       marginLeft: 5,
     },
     searchContent: {
@@ -111,7 +114,7 @@ import { colors } from '../utils/colors';
     },
     horizontalLogo: {
       width: 150,
-      height: '63%',
+      height: 40,
       resizeMode: 'contain',
       alignSelf: 'center',
     },
@@ -310,6 +313,7 @@ import { colors } from '../utils/colors';
       backgroundColor: isDarkMode ? colors.darkGrey : colors.primary,
     },
     floatingBtnText: {
+      fontFamily: 'Prompt-Regular',
       color: colors.white,
       fontSize: 16,
     },
@@ -328,8 +332,9 @@ import { colors } from '../utils/colors';
     chooseBtn: {
       marginHorizontal: 3,
       backgroundColor:colors.secondary,
-      padding: 5,
-      borderRadius: 5,
+      paddingVertical: 5,
+      paddingHorizontal:8,
+      borderRadius: 20,
     },
     otherBtn: {
       marginHorizontal: 3,

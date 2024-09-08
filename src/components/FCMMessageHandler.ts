@@ -6,10 +6,13 @@ import { useAppDispatch } from '../app/store';
 import { setRequestStatus } from '../features/requests/RequestSlice';
 import { setClientChanges } from '../features/account/ClientSlice';
 import { unflatten } from '../utils/utilts';
+import { useNavigation } from '@react-navigation/native';
+import { addNotification } from '../features/Notifications/NotificationSlice';
 
 const FCMMessageHandler = () => {
   const { user } = useSelector((state: RootStateOrAny) => state.user);
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
@@ -21,8 +24,21 @@ const FCMMessageHandler = () => {
       handleRemoteMessage(remoteMessage);
     });
 
+    // Listen for notification clicks
+    const unsubscribeNotificationOpened = messaging().onNotificationOpenedApp(remoteMessage => {
+      handleNotificationClick(remoteMessage);
+    });
+
+    // Check if notification caused app to open from a closed state
+    messaging().getInitialNotification().then(remoteMessage => {
+      if (remoteMessage) {
+        handleNotificationClick(remoteMessage);
+      }
+    });
+
     return () => {
       unsubscribeForeground();
+      unsubscribeNotificationOpened();
     };
   }, []);
 
@@ -31,6 +47,16 @@ const FCMMessageHandler = () => {
 
     if (data && data.type) {
       const type = data.type;
+      if(data?.notification_type){
+        const notificationData = {
+          id: data.id,
+          type: data.notification_type,
+          title: data.title,
+          message: data.message,
+          viewed: false,
+        };
+        dispatch(addNotification(notificationData));
+      }
       switch (type) {
         case 'account_changed':
 
@@ -52,6 +78,13 @@ const FCMMessageHandler = () => {
           // Handle other types or default case
           break;
       }
+    }
+  };
+
+  const handleNotificationClick = remoteMessage => {
+    const { data } = remoteMessage;
+    if (data && data.type) {
+      navigation.navigate('Notifications');
     }
   };
 

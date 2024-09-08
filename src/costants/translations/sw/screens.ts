@@ -86,6 +86,10 @@ privacyPolicyLink: "Sera ya Faragha",
 continuePrivacyPolicy: "Na unathibitisha kuwa una zaidi ya miaka 18. Tunaweza kutuma matangazo yanayohusiana na huduma zetu - unaweza kujiondoa wakati wowote kwenye mipangilio.",
 shareAdditinalComment: "Tungetaka kusikia maoni yako ya ziada!",
  cancelRequest:'Ghairi huduma',
- requestFail:'Ombi limeshindikana'
+ requestFail:'Ombi limeshindikana',
+ notifications: 'Arifa',
+ noNotificationFound:'Hakuna taharifa yeyote',
+   userUpdated:'Akaunti imehaririwa',
+   passwordChaged:'Neno siri limebadilishwa'
 
 };

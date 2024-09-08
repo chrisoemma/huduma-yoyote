@@ -9,6 +9,8 @@ import ForgotPasswordScreen from '../features/auth/ForgotPassword';
 import { useSelector,RootStateOrAny } from 'react-redux';
 import CheckPhoneNumber from '../features/auth/CheckPhoneNumber';
 import CreateNewPassword from '../features/auth/CreateNewPassword';
+import PasswordMultiAccount from '../features/auth/PasswordMultiAccount';
+import NewAccount from '../features/auth/NewAccount';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +31,8 @@ const AuthStack = () => {
       <Stack.Screen name="PasswordReset" component={PasswordResetScreen} />
       <Stack.Screen name="CheckPhoneNumber" component={CheckPhoneNumber} />
       <Stack.Screen name="CreateNewPassword" component={CreateNewPassword} />
+      <Stack.Screen name="New account"  component={NewAccount} />
+      <Stack.Screen name="NewAccountPassword" component={PasswordMultiAccount} />
     </Stack.Navigator>
   );
 };

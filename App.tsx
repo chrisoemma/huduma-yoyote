@@ -7,6 +7,7 @@ import Navigation from './src/navigation';
 import store from './src/app/store';
 import { MenuProvider } from 'react-native-popup-menu'; 
 import { RootSiblingParent } from 'react-native-root-siblings';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 
@@ -21,7 +22,9 @@ const App = () => {
     <PersistGate loading={null} persistor={persistor}>
     <RootSiblingParent>
        <MenuProvider>
-        <Navigation />
+       <GestureHandlerRootView style={{ flex: 1 }}>
+            <Navigation />
+        </GestureHandlerRootView>
        </MenuProvider>
       </RootSiblingParent>
     </PersistGate>

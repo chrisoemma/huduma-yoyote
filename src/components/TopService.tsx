@@ -63,8 +63,8 @@ const TopService = ({ onPress, service }) => {
 
 const styles = StyleSheet.create({
   touchableOpacityStyles: {
-    width: '41%',
-    height: 150,
+    width: '40%',
+    height: 110,
     borderRadius: 16,
     marginHorizontal:15,
     marginVertical: 8,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   serviceText: {
     color: colors.white,
-    fontWeight: 'bold',
+    fontFamily: 'Prompt-Regular',
     fontSize: 14,
   },
 });

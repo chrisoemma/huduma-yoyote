@@ -11,6 +11,7 @@ import Requests from '../features/requests/Requests';
 import Account from '../features/account/Account';
 import { useSelector,RootStateOrAny } from 'react-redux';
 import { StatusBar } from 'react-native';
+import BadgeIcon from '../components/BadgeIcon';
 
 
 const Tab = createBottomTabNavigator();
@@ -47,28 +48,35 @@ export default function BottomHomeTabNavigator() {
     
 );
 
+
+const notifications = useSelector((state: RootStateOrAny) => state.notifications.notifications);
+
+const requestsBadgeCount = notifications.filter(notification => notification.type === 'Request' && !notification.viewed).length;
+const accountBadgeCount = notifications.filter(notification => notification.type === 'Account' && !notification.viewed).length;
+
+
 const tabNavScreenOptions = ({ route }: any) => ({
-  
   headerShown: false,
   tabBarIcon: ({ focused, color, size }: any) => {
     let iconName;
+    let badgeCount = 0;
 
     if (route.name === 'Home') {
       iconName = 'home';
       return <Icon name={iconName as string} size={size} color={color} />;
     } else if (route.name === 'Requests') {
       iconName = 'rotate-3d-variant';
+      badgeCount = requestsBadgeCount;
     } else if (route.name === 'Account') {
       iconName = 'account-circle';
+      badgeCount = accountBadgeCount;
     } 
-    
-    return <FontAwesome5 name={iconName as string} size={size} color={color} />;
+    // You can return any component that you like here!
+    return <BadgeIcon name={iconName as string} size={size} color={color} badgeCount={badgeCount} />;;
   },
   tabBarActiveTintColor: colors.secondary,
-  tabBarInactiveTintColor:isDarkMode?colors.white:colors.black,
-  tabBarStyle: {
-    backgroundColor: isDarkMode ? colors.blackBackground : colors.white, // Set your desired background color here
-  },
+  tabBarInactiveTintColor:isDarkMode?colors.white:colors.blackBg,
+  
 });
   const { t } = useTranslation();
 

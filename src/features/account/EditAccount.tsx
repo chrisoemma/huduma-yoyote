@@ -27,6 +27,7 @@ import { updateUserInfo} from '../auth/userSlice';
 import GooglePlacesInput from '../../components/GooglePlacesInput';
 import { validateTanzanianPhoneNumber } from '../../utils/utilts';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import showToast from '../../components/ShowToast/showToast';
 
 const EditAccount = ({ route, navigation }: any) => {
 
@@ -125,17 +126,18 @@ const EditAccount = ({ route, navigation }: any) => {
         console.log('resultsss', result);
         if (result.status) {
           console.log('excuted this true block')
-          ToastAndroid.show("User updated successfuly!", ToastAndroid.SHORT);
+          showToast(`${t('screens:userUpdated')}`,'success','long')
           navigation.navigate('Account', {
             screen: 'Account',
             message: message
           });
         }else{
+       
           if (result.error) {
-            setDisappearMessage(result.error
-            );
+            showToast(result.error,'danger','long')
           } else {
-            setDisappearMessage(result.message);
+            showToast(result.message,'danger','long')
+       
           }
         }
       })

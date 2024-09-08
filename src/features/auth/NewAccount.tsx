@@ -9,6 +9,7 @@ import {
   Dimensions,
   StyleSheet,
 } from 'react-native';
+import ToastNotification from '../../components/ShowToast/showToast';
 
 
 import { useForm, Controller } from 'react-hook-form';
@@ -139,7 +140,8 @@ const NewAccount = ({ route, navigation }: any) => {
 
           if (result.status) {
             console.log('excuted this true block')
-            ToastAndroid.show(`${t('screens:userMultiAccountCreated')}`, ToastAndroid.LONG);
+            ToastNotification(`${t('screens:userMultiAccountCreated')}`,'success','long')
+           
           } else {
             if (result.error) {
               setDisappearMessage(result.error);

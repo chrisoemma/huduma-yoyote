@@ -129,33 +129,44 @@ const RequestSlice = createSlice({
       state.status = null;
     },
 
-    setRequestStatus:(state,action)=>{
+    setRequestStatus: (state, action) => {
+      const updatedRequest = action.payload;
+      const requestIndex = state.activeRequests.findIndex(
+        (request) => request.id === updatedRequest.id
+      );
     
-    const updatedRequest = action.payload;
-    const requestIndex = state.activeRequests.findIndex(
-      (request) => request.id === updatedRequest.id
-    );
-
-    if (requestIndex !== -1) {
-      if (['Requested', 'Accepted', 'Confirmed'].includes(status)) {
-        // Update the request in activeRequests
-        state.activeRequests = [
-          ...state.activeRequests.slice(0, requestIndex),
-          updatedRequest,
-          ...state.activeRequests.slice(requestIndex + 1),
-        ];
-      } else if (['Cancelled', 'Rejected', 'Completed'].includes(status)) {
-        // Remove the request from activeRequests
-        state.activeRequests = [
-          ...state.activeRequests.slice(0, requestIndex),
-          ...state.activeRequests.slice(requestIndex + 1),
-        ];
-
-        // Add the request to pastRequests
-        state.pastRequests = [...state.pastRequests, updatedRequest];
+      if (requestIndex !== -1) {
+        const newStatus = updatedRequest.statuses[updatedRequest.statuses.length - 1].status;
+    
+        // Determine if the status is in the list of past statuses
+        const isPastStatus = ['Cancelled', 'Rejected', 'Completed'].includes(newStatus);
+    
+        if (isPastStatus) {
+          // Remove from activeRequests and add to pastRequests
+          state.activeRequests = [
+            ...state.activeRequests.slice(0, requestIndex),
+            ...state.activeRequests.slice(requestIndex + 1),
+          ];
+    
+          state.pastRequests = [
+            ...state.pastRequests,
+            {
+              ...updatedRequest,
+              statuses: updatedRequest.statuses,
+            },
+          ];
+        } else {
+          // Update the request in activeRequests
+          state.activeRequests = [
+            ...state.activeRequests.slice(0, requestIndex),
+            {
+              ...state.activeRequests[requestIndex],
+              statuses: updatedRequest.statuses,
+            },
+            ...state.activeRequests.slice(requestIndex + 1),
+          ];
+        }
       }
-    }
-
     },
 
   
@@ -213,7 +224,7 @@ const RequestSlice = createSlice({
    
       updateStatus(state, '');
 
-      console.log('action.payload.data.activeReques', action.payload.data.activeRequest)
+   //   console.log('action.payload.data.activeReques', action.payload.data.activeRequest)
 
       if (action.payload &&  action.payload.status) {
         state.activeRequest = { ...action.payload.data.activeRequest };
@@ -268,7 +279,7 @@ const RequestSlice = createSlice({
 
 
     builder.addCase(updateRequestStatus.fulfilled, (state, action) => {
-      console.log('payload', action.payload);
+     // console.log('payload', action.payload);
     
       if (action.payload && action.payload.status) {
         const updatedRequest = action.payload.data.request;
@@ -282,25 +293,26 @@ const RequestSlice = createSlice({
           const isPastStatus = ['Cancelled', 'Rejected', 'Completed'].includes(newStatus);
     
           if (isPastStatus) {
-            // Remove the request from activeRequests
+            // Move request from activeRequests to pastRequests
+            const requestToMove = {
+              ...state.activeRequests[requestIndex], // Preserve all other details
+              statuses: updatedRequest.statuses,      // Update statuses only
+            };
+    
             state.activeRequests = [
               ...state.activeRequests.slice(0, requestIndex),
               ...state.activeRequests.slice(requestIndex + 1),
             ];
     
-            // Add the request to pastRequests
             state.pastRequests = [
               ...state.pastRequests,
-              {
-                ...state.activeRequests[requestIndex], // Preserve other request details
-                statuses: updatedRequest.statuses,
-              },
+              requestToMove,
             ];
           } else {
             // Update the statuses if it's still an active request
             state.activeRequests[requestIndex] = {
               ...state.activeRequests[requestIndex],
-              statuses: updatedRequest.statuses,
+              statuses: updatedRequest.statuses, // Update statuses only
             };
           }
         }
@@ -309,6 +321,7 @@ const RequestSlice = createSlice({
       state.changeStatusLoading = false;
       updateStatus(state, '');
     });
+    
     
 
     builder.addCase(updateRequestStatus.rejected, (state, action) => {
@@ -319,13 +332,11 @@ const RequestSlice = createSlice({
 
 
     builder.addCase(rateRequest.pending, state => {
-      console.log('Pending');
       state.loading = true;
       updateStatus(state, '');
     });
-    builder.addCase(rateRequest.fulfilled, (state, action) => {
-      //console.log('payload', action.payload);
     
+    builder.addCase(rateRequest.fulfilled, (state, action) => {
       if (action.payload && action.payload.status) {
         const updatedRequest = action.payload.data.request;
         const newStatus = updatedRequest.statuses[updatedRequest.statuses.length - 1].status;
@@ -334,46 +345,45 @@ const RequestSlice = createSlice({
         );
     
         if (requestIndex !== -1) {
-          // Determine if the status has changed to a past status
           const isPastStatus = ['Cancelled', 'Rejected', 'Completed'].includes(newStatus);
     
           if (isPastStatus) {
-            // Remove the request from activeRequests
             const requestToMove = {
-              ...state.activeRequests[requestIndex], // Preserve other request details
-              statuses: updatedRequest.statuses, // Update the statuses only
+              ...state.activeRequests[requestIndex],
+              statuses: updatedRequest.statuses,
+              rating: updatedRequest.rating, // Add the rating
             };
     
+            // Remove from activeRequests and add to pastRequests
             state.activeRequests = [
               ...state.activeRequests.slice(0, requestIndex),
               ...state.activeRequests.slice(requestIndex + 1),
             ];
     
-            // Add the request to pastRequests
             state.pastRequests = [
               ...state.pastRequests,
               requestToMove,
             ];
           } else {
-            // Update the statuses if it's still an active request
+            // Update only statuses and rating if still active
             state.activeRequests[requestIndex] = {
               ...state.activeRequests[requestIndex],
               statuses: updatedRequest.statuses,
+              rating: updatedRequest.rating, // Update the rating
             };
           }
         }
       }
-    
       state.loading = false;
       updateStatus(state, '');
     });
+    
     
     builder.addCase(rateRequest.rejected, (state, action) => {
-      console.log('Rejected');
       state.loading = false;
       updateStatus(state, '');
     });
-
+    
 
   },
 });

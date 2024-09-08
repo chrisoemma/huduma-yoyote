@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
     recentSearch: {
-        marginHorizontal:7,
+        marginHorizontal: 7,
     },
     item: {
         backgroundColor: "#fafafa",
@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
         color: "red",
         marginLeft: 14,
         fontSize: 21,
+        fontFamily: 'Prompt-Regular',
     },
     searchHeader: {
         height: 60,
@@ -268,6 +269,7 @@ const styles = StyleSheet.create({
     },
     input: {
         borderWidth: 0.1,
+        fontFamily: 'Prompt-Regular',
     },
     inputContainer: {
         width: 220,
@@ -278,13 +280,14 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 18,
-        color: '#b0aeae'
+        color: '#b0aeae',
+        fontFamily: 'Prompt-Regular',
     },
     innerTitle: {
         fontSize: 13,
+        fontFamily: 'Prompt-Regular',
     },
     singleSearch: {
         marginVertical: 6,
-
     }
-})
+});

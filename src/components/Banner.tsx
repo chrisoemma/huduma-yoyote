@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 10,
     marginRight: 10,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.secondary,
   },
   modal: {
     margin: 0,
